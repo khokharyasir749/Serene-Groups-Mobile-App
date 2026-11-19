@@ -16,7 +16,7 @@ export function FloatingHeader({ title, onBack, action }: Props) {
     <View style={styles.bar}>
       {onBack ? (
         <Pressable onPress={onBack} hitSlop={8} style={styles.back} accessibilityLabel="Go back" accessibilityRole="button">
-          <Ionicons name="arrow-back" size={20} color={colors.ink} />
+          <Ionicons name="arrow-back-outline" size={20} color={colors.ink} />
         </Pressable>
       ) : null}
       {onBack ? null : (

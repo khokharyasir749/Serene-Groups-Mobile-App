@@ -58,7 +58,7 @@ export function FloatingDock({ state, descriptors, emitter, navigateToTab, blurT
       {showTop ? (
         <GlassSurface blurTarget={blurTarget} radius={16} intensity={30} style={styles.top}>
           <Pressable onPress={scrollActiveToTop} style={styles.topHit} accessibilityRole="button" accessibilityLabel="Scroll to top">
-            <Ionicons name="chevron-up" size={15} color={colors.pineBrand} />
+            <Ionicons name="chevron-up-outline" size={15} color={colors.pineBrand} />
           </Pressable>
         </GlassSurface>
       ) : null}

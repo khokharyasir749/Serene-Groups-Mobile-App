@@ -32,7 +32,7 @@ export function ReceiptSheet({ payment: p, onClose, onOpenBooking }: Props) {
         <View style={styles.top}>
           <Text style={styles.topTitle}>Payment receipt</Text>
           <Pressable onPress={onClose} hitSlop={10} style={styles.close} accessibilityRole="button" accessibilityLabel="Close">
-            <Ionicons name="close" size={20} color={colors.ink} />
+            <Ionicons name="close-outline" size={20} color={colors.ink} />
           </Pressable>
         </View>
         {p ? (
@@ -50,7 +50,7 @@ export function ReceiptSheet({ payment: p, onClose, onOpenBooking }: Props) {
               <View style={styles.idRow}>
                 <Text style={styles.id}>{`No. ${p.receiptRef ?? "—"}`}</Text>
                 <View style={styles.verified}>
-                  <Ionicons name="checkmark-circle" size={12} color={colors.pineBrand} />
+                  <Ionicons name="shield-checkmark-outline" size={12} color={colors.pineBrand} />
                   <Text style={styles.verifiedText}>VERIFIED</Text>
                 </View>
               </View>

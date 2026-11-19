@@ -12,7 +12,7 @@ import { useAuthStore } from "@/core/stores/authStore";
 import { InvestorGate } from "@/features/portfolio/components/InvestorGate";
 import { PortfolioView } from "@/features/portfolio/components/PortfolioView";
 import { WealthCalculator } from "@/features/payments/components/WealthCalculator";
-import { LedgerBanner } from "@/features/payments/components/LedgerBanner";
+import { LedgerSummary } from "@/features/payments/components/LedgerSummary";
 
 // Serene Investors: sign-in is required up front. Investors see their own portfolio; staff get the ledger console.
 export default function InvestorsScreen() {
@@ -30,13 +30,13 @@ export default function InvestorsScreen() {
         <InvestorGate signedInAsOther={authed} />
       ) : staff ? (
         <View style={{ gap: spacing.lg }}>
-          <LedgerBanner summary={summary} />
+          <LedgerSummary summary={summary} />
           <View style={styles.actions}>
             <View style={styles.flex}>
-              <Button compact height={52} label="Staff Ledger" onPress={() => router.push("/staff/ledger")} />
+              <Button compact height={52} showBadge={false} icon="receipt-outline" label="Staff Ledger" onPress={() => router.push("/staff/ledger")} />
             </View>
             <View style={styles.flex}>
-              <Button compact height={52} variant="secondary" label="Plan Calculator" onPress={() => scrollRef.current?.scrollTo({ y: calcY.current + spacing.lg - 8, animated: true })} />
+              <Button compact height={52} variant="secondary" icon="calculator-outline" label="Plan Calculator" onPress={() => scrollRef.current?.scrollTo({ y: calcY.current + spacing.lg - 8, animated: true })} />
             </View>
           </View>
           <View onLayout={(e) => (calcY.current = e.nativeEvent.layout.y)}>

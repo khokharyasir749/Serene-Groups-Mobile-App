@@ -39,7 +39,7 @@ export function AccountButton({ compact }: { compact?: boolean }) {
           <View style={styles.top}>
             <Text style={styles.topTitle}>Account & Workspace</Text>
             <Pressable onPress={() => setOpen(false)} hitSlop={10} style={styles.close} accessibilityRole="button" accessibilityLabel="Close">
-              <Ionicons name="close" size={22} color={colors.ink} />
+              <Ionicons name="close-outline" size={22} color={colors.ink} />
             </Pressable>
           </View>
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

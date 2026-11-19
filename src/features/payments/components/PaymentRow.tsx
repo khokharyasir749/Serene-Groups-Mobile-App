@@ -16,7 +16,7 @@ export function PaymentRow({ payment: p, onPress }: { payment: Payment; onPress?
   return (
     <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
       <View style={[styles.dot, down && styles.dotDown]}>
-        <Ionicons name={down ? "arrow-down" : "checkmark"} size={14} color={colors.pineBrand} />
+        <Ionicons name={down ? "arrow-down-outline" : "checkmark"} size={14} color={colors.pineBrand} />
       </View>
       <View style={styles.main}>
         <Text style={styles.name} numberOfLines={1}>

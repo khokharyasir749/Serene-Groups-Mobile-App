@@ -26,7 +26,7 @@ function Row({ icon, label, value, onPress }: { icon: keyof typeof Ionicons.glyp
         <Text style={styles.rowLabel}>{label}</Text>
         <Text style={styles.rowValue}>{value}</Text>
       </View>
-      <Ionicons name="chevron-forward" size={16} color={colors.muted} />
+      <Ionicons name="chevron-forward-outline" size={16} color={colors.muted} />
     </Pressable>
   );
 }
@@ -62,7 +62,7 @@ export function GroupFooter() {
 
       <Text style={styles.small}>{`© ${new Date().getFullYear()} ${GROUP.name} · ${GROUP.developer} · since ${GROUP.founded}`}</Text>
       <Pressable onPress={toTop} style={styles.top} accessibilityRole="button">
-        <Ionicons name="arrow-up" size={14} color={colors.ink} />
+        <Ionicons name="arrow-up-outline" size={14} color={colors.ink} />
         <Text style={styles.topText}>Back to top</Text>
       </Pressable>
     </View>

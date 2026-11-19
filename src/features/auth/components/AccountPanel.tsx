@@ -23,7 +23,7 @@ export function AccountPanel({ onDone }: { onDone?: () => void }) {
   const rows: Row[] = [];
   if (has(P.PORTFOLIO_READ) && !has(P.PAYMENTS_READ)) rows.push({ label: "My Portfolio", hint: "Holdings, instalments and receipts", path: "/payments", icon: "pie-chart-outline" });
   if (has(P.MY_STAYS) && !has(P.BOOKINGS_READ)) rows.push({ label: "My Stays", hint: "Your reservations", path: "/bookings", icon: "bed-outline" });
-  if (has(P.BOOKINGS_READ)) rows.push({ label: "Staff · Bookings", hint: "All bookings, filters, new booking", path: "/staff/bookings", icon: "albums-outline" });
+  if (has(P.BOOKINGS_READ)) rows.push({ label: "Staff · Bookings", hint: "All bookings, filters, new booking", path: "/staff/bookings", icon: "calendar-number-outline" });
   if (has(P.PAYMENTS_READ)) rows.push({ label: "Staff · Ledger", hint: "Payments, instalments, receipts", path: "/staff/ledger", icon: "receipt-outline" });
   const remembered = bio.account !== null && bio.account.email === user?.email;
 
@@ -56,7 +56,7 @@ export function AccountPanel({ onDone }: { onDone?: () => void }) {
             <Text style={styles.rowTitle}>{r.label}</Text>
             <Text style={styles.rowHint}>{r.hint}</Text>
           </View>
-          <Ionicons name="arrow-forward" size={18} color={colors.ink} />
+          <Ionicons name="arrow-forward-outline" size={18} color={colors.ink} />
         </Pressable>
       ))}
 

@@ -103,7 +103,7 @@ export function ReserveSheet() {
           </View>
           </View>
           <Pressable onPress={close} hitSlop={10} style={styles.closeBtn} accessibilityRole="button" accessibilityLabel="Close">
-            <Ionicons name="close" size={20} color={colors.ink} />
+            <Ionicons name="close-outline" size={20} color={colors.ink} />
           </Pressable>
         </View>
         <ScrollView ref={scrollRef} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
@@ -127,7 +127,7 @@ export function ReserveSheet() {
                   return (
                     <Pressable key={r.slug} onPress={() => setRoom(r.slug)} style={({ pressed }) => [styles.roomCard, on && styles.roomOn, pressed && styles.pressed]} accessibilityRole="radio" accessibilityState={{ selected: on }}>
                       <View style={[styles.roomIcon, on && styles.roomIconOn]}>
-                        <Ionicons name="home-outline" size={16} color={on ? colors.snow : colors.ink} />
+                        <Ionicons name="bed-outline" size={16} color={on ? colors.snow : colors.ink} />
                       </View>
                       <View style={styles.flex}>
                         <Text style={styles.roomName}>{r.name}</Text>

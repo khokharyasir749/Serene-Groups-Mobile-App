@@ -38,7 +38,7 @@ export function StoryCard() {
         </>
       ) : null}
       <Pressable onPress={() => setOpen((v) => !v)} style={({ pressed }) => [styles.toggle, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={open ? "Show less of the group story" : "Read the full group story"} accessibilityState={{ expanded: open }}>
-        <Ionicons name={open ? "chevron-up" : "chevron-down"} size={22} color={colors.goldAccent} />
+        <Ionicons name={open ? "chevron-up-outline" : "chevron-down-outline"} size={22} color={colors.goldAccent} />
       </Pressable>
     </Card>
   );

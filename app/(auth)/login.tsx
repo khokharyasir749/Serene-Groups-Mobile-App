@@ -27,7 +27,7 @@ export default function LoginScreen() {
           <View style={styles.form}>
             <SignInPanel />
             <Pressable onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))} style={styles.back} accessibilityRole="button" hitSlop={8}>
-              <Ionicons name="arrow-back" size={14} color={colors.ink} />
+              <Ionicons name="arrow-back-outline" size={14} color={colors.ink} />
               <Text style={styles.backText}>Back to Explore</Text>
             </Pressable>
           </View>
