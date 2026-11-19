@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { StyleSheet, TextInput, View, Pressable, type TextInputProps } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
 
 type Props = TextInputProps & {
   label?: string;
   error?: string;
   hint?: string;
-  icon?: keyof typeof Feather.glyphMap;
+  icon?: keyof typeof Ionicons.glyphMap;
   showToggle?: boolean;
 };
 
@@ -20,7 +20,7 @@ export function Input({ label, error, hint, icon, showToggle, secureTextEntry, s
     <View style={styles.wrap}>
       <View style={[styles.card, focused && styles.focused, error ? styles.errorBorder : null, style]}>
         {icon ? (
-          <Feather name={icon} size={18} color={focused ? colors.pineBrand : colors.muted} style={styles.icon} />
+          <Ionicons name={icon} size={18} color={focused ? colors.pineBrand : colors.muted} style={styles.icon} />
         ) : null}
 
         <View style={styles.inner}>
@@ -45,7 +45,7 @@ export function Input({ label, error, hint, icon, showToggle, secureTextEntry, s
 
         {showToggle || secureTextEntry ? (
           <Pressable onPress={() => setHidden((v) => !v)} hitSlop={10} style={styles.toggleBtn}>
-            <Feather name={hidden ? "eye" : "eye-off"} size={18} color={colors.muted} />
+            <Ionicons name={hidden ? "eye-outline" : "eye-off-outline"} size={18} color={colors.muted} />
           </Pressable>
         ) : null}
       </View>

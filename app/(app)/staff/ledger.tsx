@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
 import { Redirect, router } from "expo-router";
 import { useGetPaymentSummaryQuery, useListPaymentsQuery } from "@/core/api/endpoints/paymentsApi";
 import { DataList } from "@/core/components/DataList";
 import { Pager } from "@/core/components/Pager";
 import { PermissionGate } from "@/core/components/PermissionGate";
-import { Pill } from "@/core/components/Pill";
+import { HeaderAction } from "@/core/components/FloatingHeader";
 import { Screen } from "@/core/components/Screen";
 import { P } from "@/core/constants/api";
-import { spacing } from "@/core/constants/theme";
 import { parseError } from "@/core/lib/errorParser";
 import { LedgerBanner } from "@/features/payments/components/LedgerBanner";
 import { PaymentFilterBar } from "@/features/payments/components/PaymentFilterBar";
@@ -27,7 +25,16 @@ function StaffLedger() {
   const back = () => (router.canGoBack() ? router.back() : router.replace("/"));
 
   return (
-    <Screen scroll={false} title="Staff · Ledger" onBack={back}>
+    <Screen
+      scroll={false}
+      title="Staff · Ledger"
+      onBack={back}
+      right={
+        <PermissionGate permission={P.PAYMENTS_RECORD}>
+          <HeaderAction primary label="+ Record Payment" onPress={() => router.push("/record-payment")} />
+        </PermissionGate>
+      }
+    >
       <PermissionGate permission={P.PAYMENTS_READ} fallback="screen">
         <DataList
           data={data?.items}
@@ -42,11 +49,6 @@ function StaffLedger() {
           header={
             <>
               <LedgerBanner summary={summary} />
-              <View style={styles.actions}>
-                <PermissionGate permission={P.PAYMENTS_RECORD}>
-                  <Pill label="Record payment" selected onPress={() => router.push("/record-payment")} />
-                </PermissionGate>
-              </View>
               <PaymentFilterBar f={f} />
             </>
           }
@@ -58,7 +60,6 @@ function StaffLedger() {
   );
 }
 
-const styles = StyleSheet.create({ actions: { flexDirection: "row", gap: spacing.sm } });
 
 // Staff consoles are signed-in only: signed-out visitors go to sign-in and come straight back here.
 export default function StaffLedgerRoute() {

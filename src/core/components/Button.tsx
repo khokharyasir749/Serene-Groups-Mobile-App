@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Text } from "@/core/components/Text";
 import { colors, font, fonts, radius, shadows, spacing } from "@/core/constants/theme";
 
@@ -14,12 +14,16 @@ type Props = {
   /** Smaller pill + badge for narrow (two-column) cards. */
   compact?: boolean;
   /** Optional leading icon (used by onDark outline buttons). */
-  icon?: keyof typeof Feather.glyphMap;
+  icon?: keyof typeof Ionicons.glyphMap;
   /** Glyph inside the gold badge (default "→"). */
   arrow?: string;
+  /** Fixed pill height (and min-height), so side-by-side buttons match exactly. */
+  height?: number;
+  /** Corner radius override for a rounded-square button (the gold badge follows). */
+  corner?: number;
 };
 
-export function Button({ label, onPress, variant = "primary", loading, disabled, showBadge, compact, icon, arrow = "→" }: Props) {
+export function Button({ label, onPress, variant = "primary", loading, disabled, showBadge, compact, icon, arrow = "→", height, corner }: Props) {
   const off = disabled || loading;
   const isPillCta = variant === "primary" || variant === "gold" || variant === "whatsapp";
   const displayBadge = showBadge !== undefined ? showBadge : isPillCta;
@@ -41,6 +45,8 @@ export function Button({ label, onPress, variant = "primary", loading, disabled,
         variant === "goldLine" && styles.goldLine,
         displayBadge && !isPillCta && styles.withBadge,
         variant === "danger" && styles.danger,
+        height !== undefined && { height, minHeight: height },
+        corner !== undefined && { borderRadius: corner },
         off && styles.off,
         pressed && styles.pressed,
       ]}
@@ -49,7 +55,7 @@ export function Button({ label, onPress, variant = "primary", loading, disabled,
         <ActivityIndicator color={fg} />
       ) : (
         <>
-          {icon ? <Feather name={icon} size={18} color={variant === "goldLine" ? colors.goldAccent : fg} style={styles.icon} /> : null}
+          {icon ? <Ionicons name={icon} size={18} color={variant === "goldLine" ? colors.goldAccent : fg} style={styles.icon} /> : null}
           <Text style={[styles.label, { color: fg }, isPillCta && styles.ctaLabel, compact && styles.compactLabel]} numberOfLines={1}>
           {label}
           </Text>
@@ -57,7 +63,7 @@ export function Button({ label, onPress, variant = "primary", loading, disabled,
       )}
 
       {displayBadge ? (
-        <View style={[styles.goldBadge, compact && styles.compactBadge]}>
+        <View style={[styles.goldBadge, compact && styles.compactBadge, corner !== undefined && { borderRadius: corner - 6 }]}>
           {loading ? (
             <ActivityIndicator size="small" color={colors.pineBrand} />
           ) : (

@@ -25,7 +25,7 @@ export function InvestorGate({ signedInAsOther }: { signedInAsOther?: boolean })
             : "Your holdings, instalment schedule and receipts are private to you."}
         </Text>
         <Button variant="light" label="Sign in" onPress={() => router.push("/login")} />
-        <Button variant="onDark" icon="message-circle" label="Become an investor" onPress={() => void openWhatsApp("Hello Serene Heights, I'd like to become a Serene investor. Please tell me how to get started.")} />
+        <Button variant="onDark" icon="logo-whatsapp" label="Become an investor" onPress={() => void openWhatsApp("Hello Serene Heights, I'd like to become a Serene investor. Please tell me how to get started.")} />
       </Card>
 
       <Button variant="secondary" label="Try the plan calculator" onPress={() => router.push("/calculator")} />

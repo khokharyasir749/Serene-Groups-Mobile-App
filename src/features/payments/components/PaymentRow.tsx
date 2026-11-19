@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { projectName } from "@/core/constants/serene";
 import { colors, font, fonts, radius, shadows, spacing } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";
@@ -16,7 +16,7 @@ export function PaymentRow({ payment: p, onPress }: { payment: Payment; onPress?
   return (
     <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
       <View style={[styles.dot, down && styles.dotDown]}>
-        <Feather name={down ? "arrow-down-left" : "check"} size={14} color={colors.pineBrand} />
+        <Ionicons name={down ? "arrow-down" : "checkmark"} size={14} color={colors.pineBrand} />
       </View>
       <View style={styles.main}>
         <Text style={styles.name} numberOfLines={1}>
@@ -45,10 +45,10 @@ const styles = StyleSheet.create({
   dot: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.cardUnselected, alignItems: "center", justifyContent: "center" },
   dotDown: { backgroundColor: colors.goldSoft },
   main: { flex: 1, gap: 2 },
-  name: { color: colors.ink, fontSize: font.md, fontFamily: fonts.uiBold },
+  name: { color: colors.ink, fontSize: font.md + 1, fontFamily: fonts.uiBold },
   meta: { color: colors.muted, fontSize: font.xs + 1 },
   end: { alignItems: "flex-end", gap: 5 },
   amount: { color: colors.ink, fontSize: font.md, fontFamily: fonts.uiBold, fontVariant: ["tabular-nums"] },
-  tag: { color: colors.pineBrand, backgroundColor: colors.cardUnselected, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: 0.8, paddingHorizontal: 8, paddingVertical: 3, borderRadius: radius.pill, overflow: "hidden" },
-  tagDown: { backgroundColor: colors.goldSoft },
+  tag: { color: colors.white, backgroundColor: colors.pineBrand, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: 0.8, paddingHorizontal: 8, paddingVertical: 3, borderRadius: radius.pill, overflow: "hidden" },
+  tagDown: { color: colors.pineBrand, backgroundColor: colors.goldAccent },
 });

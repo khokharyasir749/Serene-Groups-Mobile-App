@@ -386,12 +386,11 @@ function route(c: Ctx): Result {
   const pii = user.permissions.includes(P.CUSTOMERS_PII);
 
   if (root === "stays") {
+    // Guest stays are public: any signed-in account (guest, staff, investor, admin) can reserve and list its own stays.
     if (a === "mine" && c.method === "GET") {
-      need(user, P.MY_STAYS);
       return { data: STAYS.filter((x) => x.ownerId === user.id) };
     }
     if (!a && c.method === "POST") {
-      need(user, P.MY_STAYS);
       const room = ROOMS.find((r) => r.slug === c.body.roomSlug);
       if (!room) throw new HttpError(422, "Choose a residence type.");
       const checkIn = String(c.body.checkIn ?? "");

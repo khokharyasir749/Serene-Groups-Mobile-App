@@ -10,5 +10,5 @@ export function SignOutButton() {
       { text: "Cancel", style: "cancel" },
       { text: "Sign out", style: "destructive", onPress: () => void logout() },
     ]);
-  return <HeaderAction label="Logout" onPress={confirm} />;
+  return <HeaderAction tone="account" label="Logout" onPress={confirm} />;
 }

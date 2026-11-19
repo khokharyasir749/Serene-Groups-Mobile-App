@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, font, fonts, radius, shadows, spacing, toneColors, type Tone } from "@/core/constants/theme";
 
 type Props = {
@@ -38,7 +38,7 @@ export function Pill({ label, tone = "neutral", selected, onPress, showCheck }: 
       {withCheck ? (
         selected ? (
           <View style={styles.radioOn}>
-            <Feather name="check" size={11} color={colors.white} />
+            <Ionicons name="checkmark" size={11} color={colors.white} />
           </View>
         ) : (
           <View style={styles.radioOff} />

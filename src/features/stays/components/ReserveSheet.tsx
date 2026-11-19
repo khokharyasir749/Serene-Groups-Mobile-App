@@ -5,7 +5,7 @@ import { Text } from "@/core/components/Text";
 import { useReserveStayMutation } from "@/core/api/endpoints/staysApi";
 import { Button } from "@/core/components/Button";
 import { Input } from "@/core/components/Input";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { ROOMS } from "@/core/constants/serene";
 import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";
@@ -17,6 +17,7 @@ import { stayEnquirySchema } from "@/features/home/schemas/stay.schema";
 import { useReserveStore } from "../hooks/useReserveStore";
 import type { Stay } from "../types";
 import { GuestAuthPanel } from "./GuestAuthPanel";
+import { ReservationPass } from "./ReservationPass";
 
 const GUESTS = [1, 2, 3, 4];
 
@@ -102,28 +103,12 @@ export function ReserveSheet() {
           </View>
           </View>
           <Pressable onPress={close} hitSlop={10} style={styles.closeBtn} accessibilityRole="button" accessibilityLabel="Close">
-            <Feather name="x" size={20} color={colors.ink} />
+            <Ionicons name="close" size={20} color={colors.ink} />
           </Pressable>
         </View>
         <ScrollView ref={scrollRef} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {done ? (
-            <View style={styles.passCard}>
-              <View style={styles.passHeader}>
-                <Text style={styles.eyebrow}>RESERVATION CONFIRMATION PASS</Text>
-                <View style={styles.statusPill}><Text style={styles.statusText}>REQUESTED</Text></View>
-              </View>
-              <Text style={styles.title}>{done.reference}</Text>
-              <View style={styles.passDivider} />
-              <View style={styles.passDetails}>
-                <Text style={styles.passRoom}>{done.roomName}</Text>
-                <Text style={styles.p}>
-                  {formatDate(done.checkIn)} → {formatDate(done.checkOut)} · {done.adults} adult{done.adults > 1 ? "s" : ""}
-                </Text>
-              </View>
-              <Text style={styles.fine}>Our team will confirm shortly. You can follow it under My stays.</Text>
-              <Button variant="secondary" label="Message us on WhatsApp" onPress={() => void openWhatsApp(`Hello Serene Heights, I've requested reservation ${done.reference}. Could you please confirm?`)} />
-              <Button label="Done" onPress={close} />
-            </View>
+            <ReservationPass stay={done} onClose={close} />
           ) : needAuth && !authed ? (
             <GuestAuthPanel
               onSignedIn={() => {
@@ -142,23 +127,23 @@ export function ReserveSheet() {
                   return (
                     <Pressable key={r.slug} onPress={() => setRoom(r.slug)} style={({ pressed }) => [styles.roomCard, on && styles.roomOn, pressed && styles.pressed]} accessibilityRole="radio" accessibilityState={{ selected: on }}>
                       <View style={[styles.roomIcon, on && styles.roomIconOn]}>
-                        <Feather name="home" size={16} color={on ? colors.snow : colors.ink} />
+                        <Ionicons name="home-outline" size={16} color={on ? colors.snow : colors.ink} />
                       </View>
                       <View style={styles.flex}>
                         <Text style={styles.roomName}>{r.name}</Text>
                         <Text style={styles.roomCue}>{`${r.size} · ${r.guests}`}</Text>
                       </View>
-                      <View style={[styles.check, on && styles.checkOn]}>{on ? <Feather name="check" size={13} color={colors.white} /> : null}</View>
+                      <View style={[styles.check, on && styles.checkOn]}>{on ? <Ionicons name="checkmark" size={13} color={colors.white} /> : null}</View>
                     </Pressable>
                   );
                 })}
               </View>
               <View style={styles.row} onLayout={(e) => (datesY.current = e.nativeEvent.layout.y)}>
                 <View style={styles.flex}>
-                  <Input icon="calendar" label="Check in" value={checkIn} onChangeText={setCheckIn} placeholder="YYYY-MM-DD" keyboardType="numbers-and-punctuation" />
+                  <Input icon="calendar-outline" label="Check in" value={checkIn} onChangeText={setCheckIn} placeholder="YYYY-MM-DD" keyboardType="numbers-and-punctuation" />
                 </View>
                 <View style={styles.flex}>
-                  <Input icon="calendar" label="Check out" value={checkOut} onChangeText={setCheckOut} placeholder="YYYY-MM-DD" keyboardType="numbers-and-punctuation" />
+                  <Input icon="calendar-outline" label="Check out" value={checkOut} onChangeText={setCheckOut} placeholder="YYYY-MM-DD" keyboardType="numbers-and-punctuation" />
                 </View>
               </View>
               <Text style={styles.label}>GUESTS</Text>

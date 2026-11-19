@@ -68,5 +68,38 @@ export async function getDeviceId(): Promise<string> {
   return id;
 }
 
+const BIO_KEY = "serene.biometricAccount";
+let memoryBio: BiometricAccount | null = null;
+
+/** The one account this device may unlock with a fingerprint. Written only after a successful sign-in the user opted in to. */
+export type BiometricAccount = { email: string; password: string; name?: string };
+
+export async function getBiometricAccount(): Promise<BiometricAccount | null> {
+  try {
+    const raw = await SecureStore.getItemAsync(BIO_KEY);
+    return raw ? (JSON.parse(raw) as BiometricAccount) : memoryBio;
+  } catch {
+    return memoryBio;
+  }
+}
+
+export async function setBiometricAccount(account: BiometricAccount): Promise<void> {
+  memoryBio = account;
+  try {
+    await SecureStore.setItemAsync(BIO_KEY, JSON.stringify(account));
+  } catch {
+    // memory fallback keeps it for this run
+  }
+}
+
+export async function clearBiometricAccount(): Promise<void> {
+  memoryBio = null;
+  try {
+    await SecureStore.deleteItemAsync(BIO_KEY);
+  } catch {
+    // nothing stored
+  }
+}
+
 /** Wipe everything sensitive. The device id is intentionally kept. */
 export const wipeSecureStore = clearRefreshToken;

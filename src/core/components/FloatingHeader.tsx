@@ -7,43 +7,62 @@ import { SereneLogoMark } from "./SereneLogoMark";
 
 type Props = { title: string; onBack?: () => void; action?: ReactNode };
 
-/** Frameless top bar shared by every screen, identical in structure to the Explore bar: crest (or back) circle · serif title · right action. */
+/**
+ * Shared screen header: crest badge and serif title on the left (plus a back circle on pushed screens), action pill on the right, hairline below.
+ * The crest matches Explore's exactly (40px, gold ring); the SERENE GROUP eyebrow text is dropped so titles stay single-line.
+ */
 export function FloatingHeader({ title, onBack, action }: Props) {
   return (
     <View style={styles.bar}>
-      <Pressable onPress={onBack} disabled={!onBack} hitSlop={8} style={[styles.mark, onBack && styles.back]} accessibilityLabel={onBack ? "Go back" : "Serene Group"}>
-        {onBack ? <Ionicons name="chevron-back" size={20} color={colors.ink} /> : <SereneLogoMark width={19} fill={colors.snow} snow={colors.pineBrand} />}
-      </Pressable>
-      <View style={styles.titles}>
-        <Text style={styles.eyebrow} numberOfLines={1}>
-          SERENE GROUP
-        </Text>
-        <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>
-          {title}
-        </Text>
+      {onBack ? (
+        <Pressable onPress={onBack} hitSlop={8} style={styles.back} accessibilityLabel="Go back" accessibilityRole="button">
+          <Ionicons name="arrow-back" size={20} color={colors.ink} />
+        </Pressable>
+      ) : null}
+      <View style={styles.crest}>
+        <SereneLogoMark width={22} fill={colors.snow} snow={colors.pineBrand} />
       </View>
+      <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>
+        {title}
+      </Text>
       {action}
     </View>
   );
 }
 
-/** White pill used for header actions ("Staff", "Logout", "+ Book"), matching Explore's Concierge pill. */
-export function HeaderAction({ label, onPress }: { label: string; onPress: () => void }) {
+type ActionProps = {
+  label: string;
+  onPress: () => void;
+  /** portal = Pine pill with gold hairline (Staff / Portal / + Book); account = white pill with gold ring (Logout). */
+  tone?: "portal" | "account";
+  /** Overrides the tone's default icon. Pass `null` for a text-only pill. */
+  icon?: keyof typeof Ionicons.glyphMap | null;
+  /** Legacy flag: a text-only portal pill. */
+  primary?: boolean;
+};
+
+/** Header action pill shared by every screen. */
+export function HeaderAction({ label, onPress, tone = "portal", icon, primary }: ActionProps) {
+  const account = tone === "account";
+  const glyph = icon === null || primary ? null : icon ?? (account ? "log-out-outline" : "shield-checkmark-outline");
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.cta, pressed && styles.pressed]} accessibilityRole="button">
-      <Text style={styles.ctaText}>{label}</Text>
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.cta, account ? styles.ctaAccount : styles.ctaPortal, pressed && styles.pressed]} accessibilityRole="button">
+      {glyph ? <Ionicons name={glyph} size={16} color={account ? colors.pineBrand : colors.goldAccent} /> : null}
+      <Text style={[styles.ctaText, account ? styles.ctaTextAccount : styles.ctaTextPortal]}>{label}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md, backgroundColor: colors.paper },
-  mark: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.pineBrand, alignItems: "center", justifyContent: "center" },
-  back: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, ...shadows.card },
-  titles: { flex: 1, justifyContent: "center" },
-  eyebrow: { color: colors.muted, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: 2 },
-  title: { color: colors.ink, fontFamily: fonts.display, fontSize: 21, lineHeight: 24, letterSpacing: 0.6 },
-  cta: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: radius.pill, paddingHorizontal: 14, height: 40, justifyContent: "center", ...shadows.card },
+  bar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 64, paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md, backgroundColor: colors.paper, borderBottomWidth: 1, borderBottomColor: colors.line },
+  crest: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.pineBrand, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
+  back: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, alignItems: "center", justifyContent: "center", ...shadows.card },
+  title: { flex: 1, color: colors.ink, fontFamily: fonts.display, fontSize: 24, lineHeight: 28, letterSpacing: 0.3 },
+  cta: { flexDirection: "row", alignItems: "center", gap: 6, borderRadius: radius.pill, paddingHorizontal: 14, height: 40, ...shadows.card },
+  ctaPortal: { backgroundColor: colors.pineBrand, borderWidth: 1, borderColor: colors.goldAccent },
+  ctaAccount: { backgroundColor: colors.white, borderWidth: 1.5, borderColor: colors.goldAccent },
+  ctaTextPortal: { color: colors.white },
+  ctaTextAccount: { color: colors.pineBrand },
   pressed: { opacity: 0.88, transform: [{ scale: 0.97 }] },
-  ctaText: { color: colors.ink, fontSize: font.sm, fontFamily: fonts.uiSemi },
+  ctaText: { fontSize: font.sm, fontFamily: fonts.uiBold },
 });

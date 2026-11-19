@@ -14,16 +14,16 @@ import type { PaymentSummary } from "@/features/payments/types";
 
 type Props = { stats?: BookingStats; payments?: PaymentSummary };
 
-function Kpi({ label, value, hero, tone }: { label: string; value: string; hero?: boolean; tone?: "danger" | "gold" }) {
+function Kpi({ label, value, hero, compact, tone }: { label: string; value: string; hero?: boolean; compact?: boolean; tone?: "danger" | "gold" }) {
   return (
-    <View style={[styles.kpi, hero && styles.kpiHero, tone === "danger" && styles.kpiDanger]}>
+    <View style={[styles.kpi, hero && styles.kpiHero, compact && styles.kpiCompact, tone === "danger" && styles.kpiDanger]}>
       <View style={styles.kpiHead}>
         {tone === "gold" ? <View style={styles.goldDot} /> : null}
         <Text style={[styles.kpiLabel, hero && styles.kpiLabelHero, tone === "danger" && styles.kpiLabelDanger]} numberOfLines={1}>
           {label.toUpperCase()}
         </Text>
       </View>
-      <Text style={[styles.kpiValue, hero && styles.kpiValueHero, tone === "danger" && styles.kpiValueDanger]} numberOfLines={1} adjustsFontSizeToFit>
+      <Text style={[styles.kpiValue, hero && styles.kpiValueHero, compact && styles.kpiValueCompact, tone === "danger" && styles.kpiValueDanger]} numberOfLines={1} adjustsFontSizeToFit>
         {value}
       </Text>
     </View>
@@ -48,10 +48,10 @@ export function CommandCard({ stats, payments }: Props) {
             <Kpi hero label="Collected" value={formatPKRCompact(payments?.collected)} />
           </View>
           <View style={styles.pair}>
-            <Kpi label="Outstanding" value={formatPKRCompact(payments?.outstanding)} />
-            <Kpi tone="danger" label="Overdue" value={formatPKRCompact(payments?.overdueAmount)} />
+            <Kpi compact label="Outstanding" value={formatPKRCompact(payments?.outstanding)} />
+            <Kpi compact tone="danger" label="Overdue" value={formatPKRCompact(payments?.overdueAmount)} />
+            <Kpi compact tone="gold" label="This week" value={formatPKRCompact(payments?.dueThisWeekAmount)} />
           </View>
-          <Kpi tone="gold" label="Due this week" value={formatPKRCompact(payments?.dueThisWeekAmount)} />
         </View>
       </PermissionGate>
 
@@ -95,14 +95,16 @@ const styles = StyleSheet.create({
   pair: { flexDirection: "row", gap: spacing.sm },
   kpi: { flex: 1, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: radius.lg, padding: spacing.md + 2, gap: 4, ...shadows.card },
   kpiHero: { ...shadows.cardElevated, padding: spacing.lg },
-  kpiDanger: { backgroundColor: colors.dangerSoft, borderColor: colors.danger },
+  kpiCompact: { padding: spacing.md },
+  kpiDanger: { backgroundColor: colors.white, borderColor: colors.danger, borderWidth: 1.5, elevation: 0, shadowOpacity: 0 },
   kpiHead: { flexDirection: "row", alignItems: "center", gap: 6 },
   goldDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.goldAccent },
-  kpiLabel: { color: colors.muted, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
+  kpiLabel: { color: colors.muted, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
   kpiLabelHero: { color: colors.goldText },
   kpiLabelDanger: { color: colors.danger },
   kpiValue: { color: colors.ink, fontFamily: fonts.display, fontSize: 24, lineHeight: 28, fontVariant: ["tabular-nums"] },
   kpiValueHero: { fontSize: 28, lineHeight: 32 },
+  kpiValueCompact: { fontSize: 20, lineHeight: 24 },
   kpiValueDanger: { color: colors.danger },
   inv: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.md, ...shadows.card },
   invHead: { flexDirection: "row", alignItems: "baseline", gap: spacing.md },

@@ -14,7 +14,7 @@ type DockProps = {
 };
 
 const ICON: Record<string, { off: keyof typeof Ionicons.glyphMap; on: keyof typeof Ionicons.glyphMap }> = {
-  index: { off: "apps-outline", on: "apps" },
+  index: { off: "compass-outline", on: "compass" },
   "bookings/index": { off: "calendar-outline", on: "calendar" },
   "payments/index": { off: "trending-up-outline", on: "trending-up" },
 };
@@ -27,7 +27,7 @@ function Item({ icon, label, focused, onPress }: { icon: keyof typeof Ionicons.g
     <Pressable onPress={onPress} onPressIn={() => to(0.92)} onPressOut={() => to(1)} accessibilityRole="button" accessibilityState={{ selected: focused }} accessibilityLabel={label} style={styles.item}>
       <Animated.View style={[styles.pill, focused && styles.pillOn, { transform: [{ scale }] }]}>
         <Ionicons name={icon} size={21} color={tint} />
-        <Text style={[styles.label, { color: tint }]}>{label}</Text>
+        <Text style={[styles.label, { color: focused ? colors.white : tint }]}>{label}</Text>
       </Animated.View>
     </Pressable>
   );
@@ -56,9 +56,9 @@ export function FloatingDock({ state, descriptors, emitter, navigateToTab }: Doc
 
 const styles = StyleSheet.create({
   wrap: { position: "absolute", left: 20, right: 20 },
-  dock: { flexDirection: "row", alignItems: "center", height: 64, borderRadius: 999, paddingHorizontal: 8, backgroundColor: colors.pineBrand, borderWidth: 1, borderColor: colors.dockBorder, ...shadows.dock },
+  dock: { flexDirection: "row", alignItems: "center", height: 64, borderRadius: 999, paddingHorizontal: 8, backgroundColor: colors.dockSurface, borderWidth: 1, borderColor: colors.dockBorder, ...shadows.dock },
   item: { flex: 1, alignItems: "center", justifyContent: "center" },
-  pill: { alignItems: "center", justifyContent: "center", gap: 2, paddingHorizontal: 18, height: 50, borderRadius: 999 },
+  pill: { alignItems: "center", justifyContent: "center", gap: 1, paddingHorizontal: 18, height: 48, borderRadius: 999 },
   pillOn: { backgroundColor: colors.dockActivePill },
   label: { fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: 1.2, textTransform: "uppercase" },
 });

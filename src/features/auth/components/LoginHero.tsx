@@ -3,7 +3,7 @@ import { Text } from "@/core/components/Text";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Path } from "react-native-svg";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { MEDIA } from "@/core/constants/media";
 import { colors, fonts, gradients, radius, SCRIM_STOPS, spacing } from "@/core/constants/theme";
@@ -32,7 +32,7 @@ export function LoginHero() {
       <View style={styles.callout}>
         <Text style={styles.kicker}>STAFF & INVESTOR ACCESS</Text>
         <View style={styles.pill}>
-          <Feather name="shield" size={12} color={colors.goldAccent} />
+          <Ionicons name="shield-checkmark-outline" size={12} color={colors.goldAccent} />
           <Text style={styles.pillText}>Serene Heights Group · Management & Investors</Text>
         </View>
       </View>

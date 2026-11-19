@@ -29,9 +29,9 @@ export function StayDiscovery() {
       </View>
       <StayBooker />
       <RoomShowcase availability={data} />
-      <Text style={styles.sum}>
-        {ROOMS.map((r) => r.units).join(" + ")} = {NATHIA_GALI_TOTAL_UNITS} apartments across five residence types
-      </Text>
+      <View style={styles.sumWrap}>
+        <Text style={styles.sum}>{`${NATHIA_GALI_TOTAL_UNITS} CURATED HOTEL APARTMENTS · ${ROOMS.length} RESIDENCE CATEGORIES`}</Text>
+      </View>
     </View>
   );
 }
@@ -42,5 +42,6 @@ const styles = StyleSheet.create({
   tags: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   tag: { color: colors.ink, fontSize: font.xs, fontFamily: fonts.uiSemi, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, paddingHorizontal: 10, paddingVertical: 5, borderRadius: radius.pill, overflow: "hidden" },
   p: { color: colors.ink2, fontSize: font.md, lineHeight: 23 },
-  sum: { color: colors.muted, fontSize: font.xs, textAlign: "center" },
+  sumWrap: { alignSelf: "center", backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm + 2 },
+  sum: { color: colors.pineBrand, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: 1.2, textAlign: "center", lineHeight: 15 },
 });

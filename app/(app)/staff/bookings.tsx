@@ -28,7 +28,7 @@ function StaffBookings() {
       scroll={false}
       title="Staff · Bookings"
       onBack={back}
-      right={<PermissionGate permission={P.BOOKINGS_CREATE}><HeaderAction label="+ Book" onPress={() => router.push("/new-booking")} /></PermissionGate>}
+      right={<PermissionGate permission={P.BOOKINGS_CREATE}><HeaderAction icon={null} label="+ Book" onPress={() => router.push("/new-booking")} /></PermissionGate>}
     >
       <PermissionGate permission={P.BOOKINGS_READ} fallback="screen">
         <DataList
@@ -44,7 +44,7 @@ function StaffBookings() {
           emptyMessage="Try a different search or filter."
           header={
             <>
-              <Input icon="search" placeholder="Search name or reference" value={f.search} onChangeText={f.setSearch} />
+              <Input icon="search-outline" placeholder="Search name or reference" value={f.search} onChangeText={f.setSearch} />
               <SiteFilterPills value={f.project} onChange={f.setProject} />
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm }}>
                 <Pill label="Any status" selected={f.status === undefined} onPress={() => f.setStatus(undefined)} />

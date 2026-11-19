@@ -16,13 +16,13 @@ export function GuestAuthPanel({ onSignedIn }: { onSignedIn: () => void }) {
       <Text style={styles.p}>Browsing is open to everyone. We only need to know who is booking.</Text>
       {a.step === "details" ? (
         <>
-          <Input icon="user" label="Your name" value={a.name} onChangeText={a.setName} autoCapitalize="words" />
-          <Input icon="phone" label="Mobile" value={a.phone} onChangeText={a.setPhone} keyboardType="phone-pad" placeholder="0300-1234567" />
+          <Input icon="person-outline" label="Your name" value={a.name} onChangeText={a.setName} autoCapitalize="words" />
+          <Input icon="call-outline" label="Mobile" value={a.phone} onChangeText={a.setPhone} keyboardType="phone-pad" placeholder="0300-1234567" />
           <Button label="Send code" onPress={() => void a.sendCode()} loading={a.busy} />
         </>
       ) : (
         <>
-          <Input icon="key" label="6-digit code" value={a.code} onChangeText={a.setCode} keyboardType="number-pad" maxLength={6} hint={isMockMode ? "Mock mode: the code is 123456" : `Sent to ${a.phone}`} />
+          <Input icon="key-outline" label="6-digit code" value={a.code} onChangeText={a.setCode} keyboardType="number-pad" maxLength={6} hint={isMockMode ? "Mock mode: the code is 123456" : `Sent to ${a.phone}`} />
           <Button label="Verify & continue" onPress={() => void a.verify()} loading={a.busy} />
           <Text style={styles.link} onPress={a.back}>
             Use a different number

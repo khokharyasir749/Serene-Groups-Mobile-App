@@ -79,10 +79,11 @@ export const colors = {
   lineNight: snow(0.18),
   glassNight: pine(0.72),
   trackNight: snow(0.20),
-  dockActivePill: gold(0.16),
-  dockBorder: gold(0.45),
+  dockSurface: WHITE,
+  dockActivePill: PINE,
+  dockBorder: GOLD,
   dockActiveBorder: snow(0.42),
-  dockInactive: snow(0.55),
+  dockInactive: pine(0.6),
 
   // ── Champagne Gold accents ──
   gold: GOLD,

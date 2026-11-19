@@ -33,10 +33,10 @@ export default function InvestorsScreen() {
           <LedgerBanner summary={summary} />
           <View style={styles.actions}>
             <View style={styles.flex}>
-              <Button compact label="Staff Ledger" onPress={() => router.push("/staff/ledger")} />
+              <Button compact height={52} label="Staff Ledger" onPress={() => router.push("/staff/ledger")} />
             </View>
             <View style={styles.flex}>
-              <Button compact variant="secondary" label="Plan Calculator" onPress={() => scrollRef.current?.scrollTo({ y: calcY.current + spacing.lg - 8, animated: true })} />
+              <Button compact height={52} variant="secondary" label="Plan Calculator" onPress={() => scrollRef.current?.scrollTo({ y: calcY.current + spacing.lg - 8, animated: true })} />
             </View>
           </View>
           <View onLayout={(e) => (calcY.current = e.nativeEvent.layout.y)}>
