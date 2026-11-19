@@ -1,0 +1,70 @@
+import { useEffect } from "react";
+import { View } from "react-native";
+import { Slot } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
+import { Provider } from "react-redux";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import NetInfo from "@react-native-community/netinfo";
+import {
+  CormorantGaramond_500Medium,
+  CormorantGaramond_500Medium_Italic,
+  CormorantGaramond_600SemiBold,
+  CormorantGaramond_700Bold,
+} from "@expo-google-fonts/cormorant-garamond";
+import {
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+} from "@expo-google-fonts/plus-jakarta-sans";
+import { store } from "@/core/stores/store";
+import { hydrateSession } from "@/core/auth/session";
+import { useUiStore } from "@/core/stores/uiStore";
+import { ToastHost } from "@/core/components/Toast";
+import { colors, fonts } from "@/core/constants/theme";
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
+
+export default function RootLayout() {
+  const [fontsReady, fontError] = useFonts({
+    [fonts.displayMedium]: CormorantGaramond_500Medium,
+    [fonts.displayItalic]: CormorantGaramond_500Medium_Italic,
+    [fonts.displaySemi]: CormorantGaramond_600SemiBold,
+    [fonts.displayBold]: CormorantGaramond_700Bold,
+    [fonts.ui]: PlusJakartaSans_400Regular,
+    [fonts.uiMedium]: PlusJakartaSans_500Medium,
+    [fonts.uiSemi]: PlusJakartaSans_600SemiBold,
+    [fonts.uiBold]: PlusJakartaSans_700Bold,
+  });
+
+  const typeReady = fontsReady || Boolean(fontError);
+
+  // Hide the native splash once the type is ready.
+  useEffect(() => {
+    if (typeReady) SplashScreen.hideAsync().catch(() => {});
+  }, [typeReady]);
+
+  useEffect(() => {
+    void hydrateSession();
+    const unsub = NetInfo.addEventListener((s) => useUiStore.getState().setOffline(s.isConnected === false));
+    return unsub;
+  }, []);
+
+  // The native splash stays up until the type is ready (a font error falls back to system type).
+  if (!typeReady) return <View style={{ flex: 1, backgroundColor: colors.splashCanvas }} />;
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg }}>
+      <Provider store={store}>
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
+          <Slot />
+          <ToastHost />
+        </SafeAreaProvider>
+      </Provider>
+    </GestureHandlerRootView>
+  );
+}
