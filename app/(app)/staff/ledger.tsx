@@ -31,7 +31,7 @@ function StaffLedger() {
       onBack={back}
       right={
         <PermissionGate permission={P.PAYMENTS_RECORD}>
-          <HeaderAction primary label="+ Record Payment" onPress={() => router.push("/record-payment")} />
+          <HeaderAction primary label="+ Record" onPress={() => router.push("/record-payment")} />
         </PermissionGate>
       }
     >

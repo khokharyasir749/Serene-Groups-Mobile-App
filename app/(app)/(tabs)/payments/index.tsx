@@ -3,8 +3,8 @@ import { StyleSheet, View, type ScrollViewInstance } from "react-native";
 import { router } from "expo-router";
 import { useGetPaymentSummaryQuery } from "@/core/api/endpoints/paymentsApi";
 import { Button } from "@/core/components/Button";
+import { AccountButton } from "@/core/components/AccountButton";
 import { Screen } from "@/core/components/Screen";
-import { SignOutButton } from "@/core/components/SignOutButton";
 import { P } from "@/core/constants/api";
 import { spacing } from "@/core/constants/theme";
 import { usePermissions } from "@/core/hooks/usePermissions";
@@ -25,7 +25,7 @@ export default function InvestorsScreen() {
   const { data: summary } = useGetPaymentSummaryQuery(undefined, { skip: !staff });
 
   return (
-    <Screen scrollRef={scrollRef} title="Serene Investors" right={authed ? <SignOutButton /> : undefined}>
+    <Screen scrollRef={scrollRef} title="Serene Investors" right={<AccountButton />}>
       {!authed || (!staff && !investor) ? (
         <InvestorGate signedInAsOther={authed} />
       ) : staff ? (

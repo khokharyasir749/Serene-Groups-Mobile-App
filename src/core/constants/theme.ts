@@ -80,10 +80,13 @@ export const colors = {
   glassNight: pine(0.72),
   trackNight: snow(0.20),
   dockSurface: WHITE,
-  dockActivePill: PINE,
-  dockBorder: GOLD,
+  /** Light ivory glass over a light blur. */
+  dockGlass: "rgba(255, 253, 249, 0.16)",
+  dockActivePill: white(0.32),
+  /** Specular glass hairline (no gold outline on the dock). */
+  dockBorder: white(0.55),
   dockActiveBorder: snow(0.42),
-  dockInactive: pine(0.6),
+  dockInactive: pine(0.78),
 
   // ── Champagne Gold accents ──
   gold: GOLD,

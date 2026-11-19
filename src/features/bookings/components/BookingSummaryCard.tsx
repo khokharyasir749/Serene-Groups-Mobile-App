@@ -25,8 +25,12 @@ function Fact({ label, value }: { label: string; value: string }) {
 function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
   return (
     <View style={styles.row}>
-      <Text style={styles.muted}>{label}</Text>
-      <Text style={[styles.value, strong && { color: colors.gold, fontWeight: "700" }]}>{value}</Text>
+      <Text style={[styles.muted, styles.rowLabel]} numberOfLines={2}>
+        {label}
+      </Text>
+      <Text style={[styles.value, strong && { color: colors.gold, fontWeight: "700" }]} numberOfLines={1} adjustsFontSizeToFit>
+        {value}
+      </Text>
     </View>
   );
 }
@@ -65,7 +69,9 @@ export function BookingSummaryCard({ booking: b }: { booking: Booking }) {
 
         <View style={styles.rule} />
         <Text style={styles.eyebrow}>PAYMENT PLAN</Text>
-        <Text style={styles.total}>{formatPKR(b.totalPrice)}</Text>
+        <Text style={styles.total} numberOfLines={1} adjustsFontSizeToFit>
+          {formatPKR(b.totalPrice)}
+        </Text>
         <AnimatedBar onDark value={b.totalPrice ? b.paidTotal / b.totalPrice : 0} height={8} />
         <Row label="Paid so far" value={formatPKR(b.paidTotal)} />
         <Row label="Outstanding" value={formatPKR(b.outstanding)} strong />
@@ -97,7 +103,8 @@ const styles = StyleSheet.create({
   rule: { height: StyleSheet.hairlineWidth, backgroundColor: colors.goldLine },
   eyebrow: { color: colors.gold, fontSize: font.xs, fontWeight: "700", letterSpacing: letter.eyebrow },
   total: { color: dark.text, fontSize: font.display, fontWeight: "500", letterSpacing: letter.display },
-  row: { flexDirection: "row", justifyContent: "space-between", gap: spacing.md },
+  row: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: spacing.md },
+  rowLabel: { flex: 1 },
   muted: { color: dark.muted, fontSize: font.sm },
   value: { color: dark.text, fontSize: font.md },
 });

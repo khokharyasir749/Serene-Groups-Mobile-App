@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Button } from "@/core/components/Button";
+import { Ionicons } from "@expo/vector-icons";
 import { Card } from "@/core/components/Card";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { WEB } from "@/core/constants/serene";
@@ -37,7 +37,9 @@ export function StoryCard() {
           <Text style={styles.p}>{WEB.hero.note}</Text>
         </>
       ) : null}
-      <Button variant="light" showBadge label={open ? "Show less" : "Read full story"} onPress={() => setOpen((v) => !v)} />
+      <Pressable onPress={() => setOpen((v) => !v)} style={({ pressed }) => [styles.toggle, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={open ? "Show less of the group story" : "Read the full group story"} accessibilityState={{ expanded: open }}>
+        <Ionicons name={open ? "chevron-up" : "chevron-down"} size={22} color={colors.goldAccent} />
+      </Pressable>
     </Card>
   );
 }
@@ -53,4 +55,6 @@ const styles = StyleSheet.create({
   dot: { width: 4, height: 4, borderRadius: 2, backgroundColor: colors.goldAccent },
   pillarText: { color: dark.text, fontSize: font.sm, fontFamily: fonts.uiSemi },
   p: { color: dark.muted, fontSize: font.md - 1, lineHeight: 22 },
+  toggle: { alignSelf: "center", width: 44, height: 44, borderRadius: 22, borderWidth: 1.5, borderColor: colors.goldAccent, backgroundColor: colors.white16, alignItems: "center", justifyContent: "center", marginTop: spacing.xs },
+  pressed: { opacity: 0.8 },
 });

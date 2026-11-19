@@ -1,7 +1,9 @@
-import type { ReactNode, RefObject } from "react";
+import { useCallback, useRef, type ReactNode, type RefObject } from "react";
+import { useFocusEffect } from "expo-router";
 import { RefreshControl, ScrollView, StyleSheet, View, type ScrollViewInstance } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CLEARANCE, colors, spacing } from "@/core/constants/theme";
+import { SCROLL_TOP_THRESHOLD, useScrollTopStore } from "@/core/lib/scrollTop";
 import { FloatingHeader } from "./FloatingHeader";
 
 type Props = {
@@ -22,12 +24,34 @@ type Props = {
 };
 
 export function Screen({ title, onBack, right, children, scroll = true, flush = false, scrollRef, refreshing = false, onRefresh }: Props) {
+  const own = useRef<ScrollViewInstance>(null);
+  const ref = scrollRef ?? own;
+  const y = useRef(0);
+  // While this screen is focused, the dock's up-arrow scrolls it back to the top and shows once it is scrolled down.
+  useFocusEffect(
+    useCallback(() => {
+      if (!scroll) return undefined;
+      const store = useScrollTopStore.getState();
+      store.register(() => ref.current?.scrollTo({ y: 0, animated: true }));
+      store.setVisible(y.current > SCROLL_TOP_THRESHOLD);
+      return () => {
+        const s = useScrollTopStore.getState();
+        s.register(null);
+        s.setVisible(false);
+      };
+    }, [scroll, ref]),
+  );
   return (
     <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       {title ? <FloatingHeader title={title} onBack={onBack} action={right} /> : null}
       {scroll ? (
         <ScrollView
-          ref={scrollRef}
+          ref={ref}
+          onScroll={(e) => {
+            y.current = e.nativeEvent.contentOffset.y;
+            useScrollTopStore.getState().setVisible(y.current > SCROLL_TOP_THRESHOLD);
+          }}
+          scrollEventThrottle={32}
           contentContainerStyle={[styles.content, flush && styles.flush]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}

@@ -1,5 +1,6 @@
-import { Linking, StyleSheet, View } from "react-native";
+import { Linking, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "@/core/components/Button";
@@ -8,7 +9,7 @@ import { GlassPill } from "@/core/components/GlassPill";
 import { SectionHeader } from "@/core/components/SectionHeader";
 import { SegmentedTabs } from "@/core/components/SegmentedTabs";
 import { MEDIA, WEB_MEDIA } from "@/core/constants/media";
-import { COMPLETED_PROJECTS, PROJECTS, PROJECT_GEO, PROJECT_URL, WEB, type ProjectSlug } from "@/core/constants/serene";
+import { CONTACT, FARMS, PROJECTS, PROJECT_GEO, PROJECT_URL, WEB, type ProjectSlug } from "@/core/constants/serene";
 import { colors, dark, font, fonts, gradients, letter, radius, SCRIM_STOPS, spacing } from "@/core/constants/theme";
 import { openSite } from "@/core/lib/openSite";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
@@ -24,6 +25,24 @@ const TABS = [
 const PHOTO = { "nathia-gali": MEDIA.nathiaGali, lahore: MEDIA.lahoreTower } as const;
 const mapsFor = (slug: ProjectSlug) => `https://www.google.com/maps/search/?api=1&query=${PROJECT_GEO[slug].lat},${PROJECT_GEO[slug].lon}`;
 
+type Action = { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void };
+
+/** Three equal luxury pills: Directions · Call · Email. */
+function QuickActions({ actions }: { actions: Action[] }) {
+  return (
+    <View style={styles.actions}>
+      {actions.map((a) => (
+        <Pressable key={a.label} onPress={a.onPress} style={({ pressed }) => [styles.action, pressed && styles.actionPressed]} accessibilityRole="button" accessibilityLabel={a.label}>
+          <Ionicons name={a.icon} size={16} color={colors.pineBrand} />
+          <Text style={styles.actionText} numberOfLines={1}>
+            {a.label}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
+  );
+}
+
 function Project({ slug }: { slug: ProjectSlug }) {
   const p = PROJECTS.find((x) => x.slug === slug)!;
   return (
@@ -31,13 +50,14 @@ function Project({ slug }: { slug: ProjectSlug }) {
       <View style={styles.photo}>
         <Image source={PHOTO[slug]} style={styles.fill} contentFit="cover" transition={300} />
         <LinearGradient colors={gradients.heroScrim} locations={[...SCRIM_STOPS]} style={StyleSheet.absoluteFill} />
+        <LinearGradient colors={[colors.clear, colors.scrim]} style={styles.bottomFade} />
         <View style={styles.meta}>
           {[p.since, p.kind].map((m) => (
             <GlassPill key={m} label={m} />
           ))}
         </View>
         <View style={styles.photoBody}>
-          <Text style={styles.status}>{p.status.toUpperCase()}</Text>
+          <Text style={[styles.status, styles.statusOnPhoto]}>{p.status.toUpperCase()}</Text>
           <Text style={styles.title}>Serene Heights {p.name}</Text>
           <Text style={styles.place}>{p.place}</Text>
         </View>
@@ -52,24 +72,19 @@ function Project({ slug }: { slug: ProjectSlug }) {
           ))}
         </View>
         <Button label={`Visit Official ${p.name} Website`} onPress={() => void openSite(PROJECT_URL[slug])} />
-        <View style={styles.links}>
-          <Text style={styles.link} onPress={() => void Linking.openURL(mapsFor(slug))}>
-            Directions ↗
-          </Text>
-          <Text style={styles.link} onPress={() => void Linking.openURL(`tel:${p.phone.replace(/[^\d+]/g, "")}`)}>
-            {p.phone}
-          </Text>
-          <Text style={styles.link} onPress={() => void Linking.openURL(`mailto:${p.email}`)}>
-            Email
-          </Text>
-        </View>
+        <QuickActions
+          actions={[
+            { icon: "navigate-outline", label: "Directions", onPress: () => void Linking.openURL(mapsFor(slug)) },
+            { icon: "call-outline", label: "Call", onPress: () => void Linking.openURL(`tel:${p.phone.replace(/[^\d+]/g, "")}`) },
+            { icon: "mail-outline", label: "Email", onPress: () => void Linking.openURL(`mailto:${p.email}`) },
+          ]}
+        />
       </View>
     </>
   );
 }
 
 function More() {
-  const farms = COMPLETED_PROJECTS[0];
   const u = WEB.upcoming;
   const images = [WEB_MEDIA.upClouds, WEB_MEDIA.upSnow];
   return (
@@ -78,16 +93,31 @@ function More() {
         <Image source={MEDIA.farms} style={styles.fill} contentFit="cover" transition={300} />
         <LinearGradient colors={gradients.heroScrim} locations={[...SCRIM_STOPS]} style={StyleSheet.absoluteFill} />
         <View style={styles.meta}>
-          <GlassPill label="Completed" gold />
-          <GlassPill label="Horizontal development" />
+          <GlassPill label={FARMS.status} gold />
+          <GlassPill label={FARMS.kind} />
         </View>
         <View style={styles.photoBody}>
-          <Text style={styles.title}>{farms.name}</Text>
-          <Text style={styles.place}>{farms.place}</Text>
+          <Text style={styles.title}>{FARMS.name}</Text>
+          <Text style={styles.place}>{FARMS.place}</Text>
         </View>
       </View>
       <View style={styles.body}>
-        <Text style={styles.summary}>{`${farms.note}. Before Nathia Gali and Lahore came Serene Farms on Barki Road, Lahore.`}</Text>
+        <Text style={styles.summary}>{FARMS.summary}</Text>
+        <View style={styles.facts}>
+          {FARMS.facts.map((f) => (
+            <Text key={f} style={styles.fact}>
+              {f}
+            </Text>
+          ))}
+        </View>
+        <Button label="Register interest in Serene Farms" onPress={() => void openWhatsApp(FARMS.interest)} />
+        <QuickActions
+          actions={[
+            { icon: "navigate-outline", label: "Directions", onPress: () => void Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Serene Farms, Barki Road")}`) },
+            { icon: "call-outline", label: "Call", onPress: () => void Linking.openURL(CONTACT.uanHref) },
+            { icon: "mail-outline", label: "Email", onPress: () => void Linking.openURL(`mailto:${PROJECTS[0].email}`) },
+          ]}
+        />
         <Text style={styles.caption}>Illustrative image of the Galiyat — a Serene Farms photograph is not yet available.</Text>
 
         <View style={styles.upNext}>
@@ -136,8 +166,12 @@ const styles = StyleSheet.create({
   summary: { color: colors.ink2, fontSize: font.md - 1, lineHeight: 21 },
   facts: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   fact: { color: colors.ink, fontSize: font.xs + 1, fontFamily: fonts.uiMedium, backgroundColor: colors.cardUnselected, paddingHorizontal: 10, paddingVertical: 5, borderRadius: radius.pill, overflow: "hidden" },
-  links: { flexDirection: "row", gap: spacing.lg, flexWrap: "wrap" },
-  link: { color: colors.ink, fontSize: font.sm, fontFamily: fonts.uiSemi, textDecorationLine: "underline" },
+  actions: { flexDirection: "row", gap: 8 },
+  action: { flex: 1, height: 40, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: colors.paper, borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill },
+  actionPressed: { opacity: 0.78 },
+  actionText: { color: colors.pineBrand, fontSize: font.sm, fontFamily: fonts.uiSemi },
+  bottomFade: { position: "absolute", left: 0, right: 0, bottom: 0, height: 150 },
+  statusOnPhoto: { color: colors.white },
   caption: { color: colors.muted, fontSize: font.xs, lineHeight: 16 },
   upNext: { gap: spacing.md, borderTopWidth: 1, borderTopColor: colors.line, paddingTop: spacing.md },
   rowKicker: { color: colors.muted, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },

@@ -19,9 +19,7 @@ export function Input({ label, error, hint, icon, showToggle, secureTextEntry, s
   return (
     <View style={styles.wrap}>
       <View style={[styles.card, focused && styles.focused, error ? styles.errorBorder : null, style]}>
-        {icon ? (
-          <Ionicons name={icon} size={18} color={focused ? colors.pineBrand : colors.muted} style={styles.icon} />
-        ) : null}
+        {icon ? <Ionicons name={icon} size={18} color={focused ? colors.pineBrand : colors.muted} style={styles.icon} /> : null}
 
         <View style={styles.inner}>
           {label ? <Text style={styles.microLabel}>{label.toUpperCase()}</Text> : null}

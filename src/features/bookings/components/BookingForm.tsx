@@ -59,7 +59,9 @@ export function BookingForm() {
           <Text style={styles.eyebrow}>
             {PLAN_RULES.downPercent}% DOWN + {PLAN_RULES.months} INSTALMENTS
           </Text>
-          <Text style={styles.total}>{formatPKR(preview.total)}</Text>
+          <Text style={styles.total} numberOfLines={1} adjustsFontSizeToFit>
+            {formatPKR(preview.total)}
+          </Text>
           <Text style={styles.muted}>Down payment {formatPKR(preview.down)}</Text>
           <Text style={styles.muted}>
             {preview.months} × {formatPKR(preview.monthly)} (last {formatPKR(preview.lastMonthly)})

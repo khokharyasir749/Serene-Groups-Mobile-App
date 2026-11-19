@@ -8,7 +8,7 @@ import { SereneLogoMark } from "./SereneLogoMark";
 type Props = { title: string; onBack?: () => void; action?: ReactNode };
 
 /**
- * Shared screen header: crest badge and serif title on the left (plus a back circle on pushed screens), action pill on the right, hairline below.
+ * Shared screen header: crest badge and serif title on the left (pushed screens swap the crest for a back circle to leave room for long titles and actions), action pill on the right, hairline below.
  * The crest matches Explore's exactly (40px, gold ring); the SERENE GROUP eyebrow text is dropped so titles stay single-line.
  */
 export function FloatingHeader({ title, onBack, action }: Props) {
@@ -19,9 +19,11 @@ export function FloatingHeader({ title, onBack, action }: Props) {
           <Ionicons name="arrow-back" size={20} color={colors.ink} />
         </Pressable>
       ) : null}
-      <View style={styles.crest}>
-        <SereneLogoMark width={22} fill={colors.snow} snow={colors.pineBrand} />
-      </View>
+      {onBack ? null : (
+        <View style={styles.crest}>
+          <SereneLogoMark width={22} fill={colors.snow} snow={colors.pineBrand} />
+        </View>
+      )}
       <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>
         {title}
       </Text>

@@ -26,7 +26,9 @@ export function PortfolioView() {
       <SectionHeader eyebrow="Serene Investors" title="Your" soft="portfolio." />
       <Card variant="emerald" style={styles.card}>
         <Text style={styles.eyebrow}>TOTAL INVESTED</Text>
-        <Text style={styles.big}>{formatPKR(t.invested)}</Text>
+        <Text style={styles.big} numberOfLines={1} adjustsFontSizeToFit>
+          {formatPKR(t.invested)}
+        </Text>
         <AnimatedBar onDark height={8} value={t.invested ? t.paid / t.invested : 0} />
         <View style={styles.row}>
           <Stat label="Paid" value={formatPKR(t.paid)} />
@@ -57,7 +59,9 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.stat}>
       <Text style={styles.statLabel}>{label.toUpperCase()}</Text>
-      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
+        {value}
+      </Text>
     </View>
   );
 }

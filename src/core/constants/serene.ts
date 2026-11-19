@@ -59,9 +59,17 @@ export const PROJECTS: readonly ProjectInfo[] = [
   },
 ] as const;
 
-export const COMPLETED_PROJECTS = [
-  { name: "Serene Farms", place: "Barki Road, Lahore", note: "Completed horizontal development" },
-] as const;
+/** Serene Farms — an upcoming horizontal (low-rise, land-led) development on Barki Road. Highlights are descriptive; no acreage or pricing is published yet. */
+export const FARMS = {
+  name: "Serene Farms",
+  place: "Barki Road",
+  status: "Upcoming",
+  kind: "Horizontal development",
+  summary:
+    "Serene Farms is the group's upcoming horizontal development: gated farmstead living, green acreage and a master-planned retreat — the same in-house planning, building and management that stand behind our hotels, applied to land.",
+  facts: ["Gated farmsteads", "Organic orchards", "Private green acreage", "Master-planned retreat living"],
+  interest: "Hello Serene Heights, I'd like early updates on Serene Farms. Please share what's available.",
+} as const;
 
 export const projectName = (slug: ProjectSlug) => PROJECTS.find((p) => p.slug === slug)?.name ?? slug;
 
@@ -126,7 +134,7 @@ export const WEB = {
     label: "About the group",
     caption: "Real elevation of the Galiyat · 18 km across · contours every 100 m",
     p1: "Serene Heights Group is home to the developments of DM Consortium — hotels, resorts and city addresses that are planned, built, sold and then managed by the same team.",
-    p2: "Led by Chief Executive Fahad Masud Lone, the group started in the Galiyat with Pakistan's first winter resort, and now rises on Gulberg Main Boulevard. Before both came Serene Farms on Barki Road, Lahore.",
+    p2: "Led by Chief Executive Fahad Masud Lone, the group started in the Galiyat with Pakistan's first winter resort, and now rises on Gulberg Main Boulevard.",
     pins: [
       { name: "Serene Heights Nathia Gali", sub: "Kala Bagh Road · 7,906 ft" },
       { name: "Serene Heights Lahore", sub: "300 km this way · Gulberg" },

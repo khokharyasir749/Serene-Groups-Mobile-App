@@ -13,13 +13,14 @@ import { LAHORE_URL, NATHIA_GALI_URL } from "@/core/constants/serene";
 import { colors, dark, fonts, gradients, radius, SCRIM_STOPS, shadows, spacing } from "@/core/constants/theme";
 import { openSite } from "@/core/lib/openSite";
 import { useScrollTo } from "./scrollTarget";
+import { useShowcaseStore } from "./showcaseStore";
 
 type Go = "site-ng" | "site-lhr" | "stay" | "invest" | "upcoming" | "story";
 type Card = { tag: string; top: string; bottom: string; image?: ImageSource; go: Go; cta: string };
 
 // The web intro's showcase cards, in the same order and wording; each card's button says where it goes.
 const CARDS: Card[] = [
-  { tag: "Lahore", top: "Own the", bottom: "address", image: MEDIA.lahore, go: "site-lhr", cta: "Visit Lahore" },
+  { tag: "Lahore", top: "Own the", bottom: "address", image: MEDIA.lahoreTower, go: "site-lhr", cta: "Visit Lahore" },
   { tag: "Serene Booking", top: "Stay at", bottom: "7,906 ft", image: WEB_MEDIA.pool, go: "stay", cta: "Reserve Your Stay" },
   { tag: "Upcoming", top: "Beyond", bottom: "the mountains", image: WEB_MEDIA.upClouds, go: "upcoming", cta: "View Upcoming Projects" },
   { tag: "Hotels & Resorts", top: "Managed as", bottom: "one hotel", image: MEDIA.nathiaGaliNight, go: "story", cta: "Discover Our Story" },
@@ -30,7 +31,13 @@ const CARDS: Card[] = [
 /** Explore hero: a drag-around 3D card ring with the web's own cards, and one button that always matches the centred card. */
 export function HeroShowcase() {
   const [active, setActive] = useState(0);
-  const toUpcoming = useScrollTo("upcoming");
+  const setTab = useShowcaseStore((s) => s.setTab);
+  const scrollToShowcase = useScrollTo("upcoming");
+  // Upcoming = Serene Farms: show its tab first, then bring the section into view.
+  const toUpcoming = () => {
+    setTab("more");
+    scrollToShowcase();
+  };
   const toStory = useScrollTo("story");
   const act = (go: Go) => {
     if (go === "site-ng") void openSite(NATHIA_GALI_URL);

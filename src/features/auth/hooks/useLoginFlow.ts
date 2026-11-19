@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useLoginMutation } from "@/core/api/endpoints/authApi";
+import { isMockMode } from "@/core/auth/session";
 import { parseError } from "@/core/lib/errorParser";
 import { useBiometric } from "./useBiometric";
 
 /** Email/password sign-in plus the returning-user fingerprint path. */
 export function useLoginFlow() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // Mock mode pre-fills the admin test account so one tap on Sign in works.
+  const [email, setEmail] = useState(isMockMode ? "admin@serene.local" : "");
+  const [password, setPassword] = useState(isMockMode ? "demo" : "");
   const [error, setError] = useState<string | null>(null);
   const [login, { isLoading }] = useLoginMutation();
   const bio = useBiometric();

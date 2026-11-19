@@ -31,7 +31,7 @@ export function BookingCard({ booking: b, onPress }: Props) {
           </View>
           <Pill label={meta.label} tone={meta.tone} />
         </View>
-        <Text style={styles.name} numberOfLines={1}>
+        <Text style={styles.name} numberOfLines={1} adjustsFontSizeToFit>
           {b.customer.name || "—"}
         </Text>
         <Text style={styles.muted} numberOfLines={1}>
@@ -40,10 +40,10 @@ export function BookingCard({ booking: b, onPress }: Props) {
         </Text>
         <AnimatedBar value={progress} height={4} />
         <View style={styles.row}>
-          <Text style={styles.muted}>
+          <Text style={[styles.muted, styles.shrink]} numberOfLines={1}>
             {formatPKRCompact(b.paidTotal)} of {formatPKRCompact(b.totalPrice)}
           </Text>
-          {b.overdueCount > 0 ? <Pill label={`${b.overdueCount} overdue`} tone="danger" /> : b.nextDue ? <Text style={styles.muted}>Next {formatDate(b.nextDue.dueDate)}</Text> : null}
+          {b.overdueCount > 0 ? <Pill label={`${b.overdueCount} overdue`} tone="danger" /> : b.nextDue ? <Text style={styles.muted} numberOfLines={1}>{`Next ${formatDate(b.nextDue.dueDate)}`}</Text> : null}
         </View>
       </View>
     </Card>
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm },
   ref: { borderColor: colors.lineStrong, borderWidth: 1, backgroundColor: colors.pineSoft, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2 },
   refText: { color: colors.goldText, fontSize: font.xs, fontWeight: "800", letterSpacing: letter.eyebrow / 2 },
-  name: { color: colors.text, fontSize: 24, fontFamily: fonts.display },
+  name: { color: colors.text, fontSize: 22, fontFamily: fonts.display },
+  shrink: { flexShrink: 1 },
   muted: { color: colors.textMuted, fontSize: font.sm },
 });

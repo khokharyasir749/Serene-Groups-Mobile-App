@@ -11,13 +11,12 @@ import { P } from "@/core/constants/api";
 import { WEB } from "@/core/constants/serene";
 import { colors, fonts, spacing } from "@/core/constants/theme";
 import { usePermissions } from "@/core/hooks/usePermissions";
-import { InvestorReasons } from "@/features/payments/components/InvestorReasons";
-import { WealthCalculator } from "@/features/payments/components/WealthCalculator";
 import { CommandCard } from "./CommandCard";
 import { ExploreTopBar } from "./ExploreTopBar";
 import { GroupFooter } from "./GroupFooter";
 import { HeritageStrip } from "./HeritageStrip";
 import { HeroShowcase } from "./HeroShowcase";
+import { InvestTeaser } from "./InvestTeaser";
 import { StoryCard } from "./StoryCard";
 import { PropertyShowcase } from "./PropertyShowcase";
 import { RoomShowcase } from "./RoomShowcase";
@@ -63,10 +62,7 @@ export function HubPage() {
         </Anchor>
 
         <Anchor id="investors">
-          <View style={styles.block}>
-            <WealthCalculator />
-            <InvestorReasons />
-          </View>
+          <InvestTeaser />
         </Anchor>
 
         <RoomShowcase availability={rooms.data} />
@@ -84,5 +80,4 @@ const styles = StyleSheet.create({
   welcome: { gap: spacing.sm, marginBottom: -spacing.sm },
   titleGold: { color: colors.goldAccent, fontFamily: fonts.displayItalic },
   title: { color: colors.ink, fontFamily: fonts.display, fontSize: 46, lineHeight: 48, letterSpacing: -0.8 },
-  block: { gap: spacing.xl },
 });

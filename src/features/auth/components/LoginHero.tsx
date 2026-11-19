@@ -8,7 +8,7 @@ import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { MEDIA } from "@/core/constants/media";
 import { colors, fonts, gradients, radius, SCRIM_STOPS, spacing } from "@/core/constants/theme";
 
-/** Architectural photo under a deep-forest scrim: brand lockup top-left, gold kicker + glass pill, arched edge into the Sand canvas. */
+/** Architectural photo with a light neutral edge fade: brand lockup top-left, gold kicker + glass pill, arched edge into the Sand canvas. */
 export function LoginHero() {
   return (
     <View style={styles.hero}>
@@ -32,7 +32,7 @@ export function LoginHero() {
       <View style={styles.callout}>
         <Text style={styles.kicker}>STAFF & INVESTOR ACCESS</Text>
         <View style={styles.pill}>
-          <Ionicons name="shield-checkmark-outline" size={12} color={colors.goldAccent} />
+          <Ionicons name="shield-checkmark-outline" size={13} color={colors.goldAccent} />
           <Text style={styles.pillText}>Serene Heights Group · Management & Investors</Text>
         </View>
       </View>
