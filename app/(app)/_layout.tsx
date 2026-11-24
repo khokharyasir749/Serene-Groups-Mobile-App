@@ -1,5 +1,6 @@
 import { ActivityIndicator, View } from "react-native";
 import { Stack } from "expo-router";
+import { MiniAppSplashTransition } from "@/core/components/MiniAppSplashTransition";
 import { useMeQuery } from "@/core/api/endpoints/authApi";
 import { useAppStateRefresh } from "@/core/hooks/useAppStateRefresh";
 import { useAuthStore } from "@/core/stores/authStore";
@@ -29,7 +30,11 @@ export default function AppLayout() {
   return (
     <>
       <SessionWatcher />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
+        <Stack.Screen name="serene-bookings" options={{ animation: "fade" }} />
+        <Stack.Screen name="serene-services" options={{ animation: "fade" }} />
+      </Stack>
+      <MiniAppSplashTransition />
     </>
   );
 }

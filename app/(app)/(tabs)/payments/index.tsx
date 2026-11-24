@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { useGetPaymentSummaryQuery } from "@/core/api/endpoints/paymentsApi";
 import { Button } from "@/core/components/Button";
 import { AccountButton } from "@/core/components/AccountButton";
+import { GroupsMenu } from "@/core/components/GroupsMenu";
 import { Screen } from "@/core/components/Screen";
 import { P } from "@/core/constants/api";
 import { spacing } from "@/core/constants/theme";
@@ -25,7 +26,7 @@ export default function InvestorsScreen() {
   const { data: summary } = useGetPaymentSummaryQuery(undefined, { skip: !staff });
 
   return (
-    <Screen scrollRef={scrollRef} title="Serene Investors" right={<AccountButton />}>
+    <Screen scrollRef={scrollRef} title="Serene Investors" right={<><AccountButton compact /><GroupsMenu /></>}>
       {!authed || (!staff && !investor) ? (
         <InvestorGate signedInAsOther={authed} />
       ) : staff ? (

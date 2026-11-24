@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
 import { AccountButton } from "@/core/components/AccountButton";
+import { GroupsMenu } from "@/core/components/GroupsMenu";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { SUPER_APP } from "@/core/constants/serene";
 import { colors, fonts, spacing } from "@/core/constants/theme";
@@ -12,10 +13,11 @@ export function ExploreTopBar() {
       <View style={styles.crest}>
         <SereneLogoMark width={26} fill={colors.snow} snow={colors.pineBrand} />
       </View>
-      <Text style={styles.brand} numberOfLines={1}>
+      <Text style={styles.brand} numberOfLines={1} adjustsFontSizeToFit>
         {SUPER_APP.wordmark}
       </Text>
       <AccountButton compact />
+      <GroupsMenu />
     </View>
   );
 }
