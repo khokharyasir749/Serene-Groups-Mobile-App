@@ -16,7 +16,7 @@ export default function Reviews() {
     <View style={canvas}>
       <PageHeader title="Guest reviews" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, paddingTop: 20, paddingBottom: insets.bottom + 40 }}>
-        <Text style={styles.eyebrow}>GUEST IMPRESSIONS</Text>
+        <Text style={styles.eyebrow}>Guest reviews</Text>
         <Text style={styles.title}>Moments at Serene Heights</Text>
 
         <View style={styles.scoreCard}>
@@ -71,13 +71,13 @@ const ReviewCard = memo(function ReviewCard({ item }: { item: (typeof REVIEWS)[n
 });
 
 const styles = StyleSheet.create({
-  eyebrow: { fontFamily: FONTS.uiBold, fontSize: 10, letterSpacing: 1.8, color: C.gold },
+  eyebrow: { fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0, color: C.gold },
   title: { fontFamily: FONTS.display, fontSize: 28, lineHeight: 32, color: C.ink, marginTop: 4 },
   scoreCard: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 16, marginBottom: 18, paddingVertical: 16, paddingHorizontal: 20, borderRadius: 20, backgroundColor: C.pine, borderWidth: 1, borderColor: C.goldLine, ...glassCardDark },
   scoreBig: { fontFamily: FONTS.display, fontSize: 46, lineHeight: 50, color: C.cream, fontVariant: ['tabular-nums'] },
   scoreDivider: { width: StyleSheet.hairlineWidth, alignSelf: 'stretch', backgroundColor: C.goldLine },
   scoreLabel: { fontFamily: FONTS.display, fontSize: 20, lineHeight: 24, color: C.cream, marginTop: 6 },
-  scoreSub: { fontFamily: FONTS.ui, fontSize: 12.5, color: C.cream70, marginTop: 1 },
+  scoreSub: { fontFamily: FONTS.ui, fontSize: 14, color: C.cream70, marginTop: 1 },
   starsRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   card: { padding: 20, backgroundColor: C.white, borderRadius: 22, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...shadow.card, ...glassCard },
   top: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', height: 30 },
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   body: { fontFamily: FONTS.ui, fontSize: 13.5, lineHeight: 20.5, color: C.ink70, marginTop: 8 },
   footer: { flexDirection: 'row', alignItems: 'center', gap: 11, marginTop: 16, paddingTop: 14, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line },
   avatar: { width: S.well, height: S.well, borderRadius: 18, backgroundColor: C.pine, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontFamily: FONTS.uiBold, fontSize: 11.5, letterSpacing: 0.5, color: C.gold },
-  author: { fontFamily: FONTS.uiSemi, fontSize: 13, color: C.ink },
-  room: { fontFamily: FONTS.ui, fontSize: 11.5, color: C.ink55, marginTop: 1 },
+  avatarText: { fontFamily: FONTS.uiBold, fontSize: 13, letterSpacing: 0.5, color: C.gold },
+  author: { fontFamily: FONTS.uiSemi, fontSize: 14, color: C.ink },
+  room: { fontFamily: FONTS.ui, fontSize: 13, color: C.ink55, marginTop: 1 },
 });

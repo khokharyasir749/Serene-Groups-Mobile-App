@@ -43,7 +43,7 @@ function ContactRow({ icon, label, value, cta, href, first }: { icon: string; la
         <View style={styles.well}>
           <Ionicons name={icon as IconName} size={17} color={C.cream} />
         </View>
-        <Text style={[styles.label, { flex: 1 }]}>{label.toUpperCase()}</Text>
+        <Text style={[styles.label, { flex: 1 }]}>{label}</Text>
         {cta && (
           <View style={styles.cta}>
             <Text style={styles.ctaText}>{cta}</Text>
@@ -71,7 +71,7 @@ function Fact({ icon, k, v }: { icon: IconName; k: string; v: string }) {
   return (
     <View style={styles.fact}>
       <Ionicons name={icon} size={18} color={C.pine} />
-      <Text style={styles.factK}>{k.toUpperCase()}</Text>
+      <Text style={styles.factK}>{k}</Text>
       <Text style={styles.factV}>{v}</Text>
     </View>
   );
@@ -93,7 +93,7 @@ export default function Location() {
             <Scrim bottom={0.6} />
             <View style={{ flex: 1 }} />
             <View style={{ padding: 20 }}>
-              <Text style={styles.heroKicker}>NATHIA GALI · 7,906 FT</Text>
+              <Text style={styles.heroKicker}>Nathia Gali, 7,906 ft</Text>
               <Text style={styles.heroTitle}>Getting here</Text>
             </View>
           </View>
@@ -141,7 +141,7 @@ export default function Location() {
               <Ionicons name="location-outline" size={18} color={C.gold} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.arriveTitle}>Serene Heights</Text>
-                <Text style={styles.arriveSub}>KALA BAGH AIR BASE ROAD · 7,906 FT</Text>
+                <Text style={styles.arriveSub}>KALA BAGH AIR BASE ROAD · 7,906 ft</Text>
               </View>
             </View>
           </View>
@@ -190,7 +190,7 @@ export default function Location() {
 
 const styles = StyleSheet.create({
   hero: { height: 230, borderRadius: S.card, overflow: 'hidden', backgroundColor: C.snow },
-  heroKicker: { color: C.cream, fontFamily: FONTS.uiBold, fontSize: 10, letterSpacing: 2 },
+  heroKicker: { color: C.cream, fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0 },
   heroTitle: { color: C.cream, fontFamily: FONTS.display, fontSize: S.well, lineHeight: 40, marginTop: 4 },
   section: { paddingHorizontal: S.gutter, marginTop: 40 },
   card: { borderRadius: S.card, backgroundColor: C.pureWhite, paddingHorizontal: 16, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...glassCard },
@@ -198,22 +198,22 @@ const styles = StyleSheet.create({
   rowLine: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line },
   rowHead: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   well: { width: S.well, height: S.well, borderRadius: 18, backgroundColor: C.pine, alignItems: 'center', justifyContent: 'center' },
-  label: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 10, letterSpacing: 1.4 },
+  label: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0 },
   value: { color: C.ink, fontFamily: FONTS.uiSemi, fontSize: 15.5, lineHeight: 22, marginTop: 10, fontVariant: ['tabular-nums'] },
   cta: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12, height: 32, borderRadius: 999, backgroundColor: C.snow },
-  ctaText: { fontFamily: FONTS.uiBold, fontSize: 12, color: C.pine },
+  ctaText: { fontFamily: FONTS.uiBold, fontSize: 13, color: C.pine },
   facts: { flexDirection: 'row', gap: 10, marginTop: 14 },
   fact: { flex: 1, alignItems: 'center', gap: 4, paddingVertical: 14, borderRadius: 16, backgroundColor: C.snow, ...glassCard },
-  factK: { fontFamily: FONTS.uiBold, fontSize: 9, letterSpacing: 1.3, color: C.ink55, marginTop: 2 },
+  factK: { fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0, color: C.ink55, marginTop: 2 },
   factV: { fontFamily: FONTS.display, fontSize: 18, color: C.ink, fontVariant: ['tabular-nums'] },
   stop: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 },
-  stopNum: { width: 22, color: C.ink40, fontFamily: FONTS.uiBold, fontSize: 11, letterSpacing: 1.1, fontVariant: ['tabular-nums'] },
+  stopNum: { width: 22, color: C.ink40, fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0, fontVariant: ['tabular-nums'] },
   stopName: { flex: 1, fontFamily: FONTS.display, fontSize: 18, lineHeight: 21, color: C.ink },
-  stopDist: { fontFamily: FONTS.uiBold, fontSize: 12.5, color: C.ink, fontVariant: ['tabular-nums'] },
-  stopDrive: { fontFamily: FONTS.ui, fontSize: 11.5, color: C.ink55, marginTop: 1 },
+  stopDist: { fontFamily: FONTS.uiBold, fontSize: 14, color: C.ink, fontVariant: ['tabular-nums'] },
+  stopDrive: { fontFamily: FONTS.ui, fontSize: 13, color: C.ink55, marginTop: 1 },
   arrive: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: -14, paddingHorizontal: 14, paddingVertical: 16, backgroundColor: C.pine, borderBottomLeftRadius: S.card, borderBottomRightRadius: S.card },
   arriveTitle: { color: C.cream, fontFamily: FONTS.display, fontSize: 20 },
-  arriveSub: { color: C.cream70, fontFamily: FONTS.uiBold, fontSize: 9.5, letterSpacing: 1.2, marginTop: 2 },
+  arriveSub: { color: C.cream70, fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0, marginTop: 2 },
   mapCard: { marginTop: 16, borderRadius: S.card, overflow: 'hidden', backgroundColor: C.pureWhite, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...glassCard },
   mapPhoto: { width: '100%', aspectRatio: 16 / 10 },
   mapBody: { padding: 16 },

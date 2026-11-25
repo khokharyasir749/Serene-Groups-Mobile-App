@@ -33,10 +33,10 @@ const TRIPS = 2;
 const NATIVE = Platform.OS !== 'web';
 
 // Dock tint: 'black' or 'pine'.
-const LOOK: 'black' | 'pine' = 'black';
+const LOOK: 'black' | 'pine' = 'pine';
 const TINT = {
   black: { bar: ['rgba(46, 47, 49, 0.88)', 'rgba(22, 23, 24, 0.94)'] as const, lens: 'rgba(12, 12, 13, 0.55)', ball: 'rgba(20, 21, 22, 0.9)' },
-  pine: { bar: ['rgba(24, 50, 38, 0.82)', 'rgba(11, 31, 21, 0.92)'] as const, lens: 'rgba(11, 31, 21, 0.55)', ball: 'rgba(11, 31, 21, 0.82)' },
+  pine: { bar: ['rgba(27, 56, 43, 0.96)', 'rgba(14, 35, 26, 0.98)'] as const, lens: 'rgba(11, 31, 21, 0.55)', ball: 'rgba(11, 31, 21, 0.82)' },
 }[LOOK];
 
 const H = S.tabBar;
@@ -300,9 +300,9 @@ const styles = StyleSheet.create({
   cell: { height: H, alignItems: 'center', justifyContent: 'center', gap: 2 },
   glyph: { width: 26, height: 25 },
   layer: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
-  label: { color: HEX.white, fontSize: 10.5, lineHeight: 14, fontFamily: FONTS.uiSemi },
+  label: { color: HEX.white, fontSize: 12.5, lineHeight: 14, fontFamily: FONTS.uiSemi },
   count: { position: 'absolute', top: -4, left: 15, minWidth: 16, height: 16, borderRadius: 8, paddingHorizontal: 4, backgroundColor: HEX.gold, alignItems: 'center', justifyContent: 'center' },
-  countText: { color: HEX.pine, fontSize: 9.5, lineHeight: 12, fontFamily: FONTS.uiBold },
+  countText: { color: HEX.pine, fontSize: 12, lineHeight: 12, fontFamily: FONTS.uiBold },
   lens: { position: 'absolute', left: 0, top: PAD, height: LENS_H },
   cap: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderRadius: LENS_H / 2 },
   round: { borderRadius: LENS_H / 2 },

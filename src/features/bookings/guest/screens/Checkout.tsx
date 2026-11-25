@@ -78,10 +78,6 @@ export default function Checkout() {
   };
 
   const submit = () => {
-    if (!user) {
-      router.push({ pathname: '/login', params: { reason: 'booking' } });
-      return;
-    }
     const e = validate(g, accept);
     setErrors(e);
     if (Object.keys(e).length) {
@@ -102,17 +98,17 @@ export default function Checkout() {
   return (
     <View style={canvas}>
       <View style={[styles.barBg, { height: insets.top + 56 }]} />
-      <BackBar onBack={() => router.back()} title="Complete booking" />
+      <BackBar onBack={() => router.back()} title="" />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView ref={scrollRef} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 72, paddingBottom: 28, paddingHorizontal: S.gutter }}>
           <BookingSteps current={2} />
-          <Text style={[T.h1, { marginTop: 18 }]}>Complete your booking</Text>
+          <Text style={[T.h1, { marginTop: 26 }]} accessibilityRole="header">Almost there</Text>
 
           {!user && (
             <Pressable onPress={() => router.push({ pathname: '/login', params: { reason: 'booking' } })} style={styles.signin}>
               <View style={{ flex: 1 }}>
-                <Text style={T.h3}>Sign in to book</Text>
-                <Text style={[T.small, { marginTop: 2 }]}>We’ll fill in your details and keep this stay in Trips.</Text>
+                <Text style={T.h3}>Have an account?</Text>
+                <Text style={[T.small, { marginTop: 2 }]}>Sign in and we’ll fill in your details.</Text>
               </View>
               <Text style={{ fontSize: 14, fontWeight: '700', color: C.pine }}>Sign in</Text>
             </Pressable>
@@ -131,7 +127,6 @@ export default function Checkout() {
 
           {/* 01 Lead guest */}
           <View onLayout={(e) => (guestY.current = e.nativeEvent.layout.y)} style={styles.card}>
-            <Caps color={C.ink40}>01</Caps>
             <Text style={styles.h3}>Lead guest details</Text>
             <Text style={[T.small, { marginTop: 4 }]}>The name must match the CNIC or passport shown at check-in.</Text>
             <View style={styles.formTop}>
@@ -145,7 +140,7 @@ export default function Checkout() {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 10 }}>
               {ARRIVAL_TIMES.map((a) => (
                 <Pressable key={a} onPress={() => setArrival(a)} style={[styles.chip, arrival === a && styles.chipOn]}>
-                  <Text style={{ fontSize: 12.5, color: arrival === a ? C.sand : C.ink70 }}>{a}</Text>
+                  <Text style={{ fontSize: 14, color: arrival === a ? C.sand : C.ink70 }}>{a}</Text>
                 </Pressable>
               ))}
             </ScrollView>
@@ -154,7 +149,6 @@ export default function Checkout() {
 
           {/* 02 Payment */}
           <View style={styles.card}>
-            <Caps color={C.ink40}>02</Caps>
             <Text style={styles.h3}>How would you like to pay?</Text>
             <View style={[styles.pay, styles.payOn]}>
               <View style={styles.radio}><View style={styles.radioDot} /></View>
@@ -174,7 +168,6 @@ export default function Checkout() {
 
           {/* 03 Confirm */}
           <Animated.View onLayout={(e) => { confirmY.current = e.nativeEvent.layout.y; }} style={[styles.card, shakeStyle]}>
-            <Caps color={C.ink40}>03</Caps>
             <Text style={styles.h3}>Confirm</Text>
             <Pressable onPress={() => { setAccept((a) => !a); setErrors((e) => ({ ...e, acceptTerms: undefined })); }} style={styles.terms}>
               <View style={[styles.box, accept && { backgroundColor: C.pine, borderColor: C.pine }]}>{accept && <Check size={13} color={C.sand} strokeWidth={2.5} />}</View>
@@ -184,15 +177,15 @@ export default function Checkout() {
             </Pressable>
             {errors.acceptTerms && <Text style={styles.error}>{errors.acceptTerms}</Text>}
             {Object.keys(errors).some((k) => errors[k as keyof Errors]) && !errors.acceptTerms && <Text style={styles.error}>Please check the details above.</Text>}
-            <Text style={[T.small, { marginTop: 14, fontSize: 12 }]}>No payment is taken now. You’ll pay at the property.</Text>
+            <Text style={[T.small, { marginTop: 14, fontSize: 13 }]}>No payment is taken now. You’ll pay at the property.</Text>
           </Animated.View>
         </ScrollView>
         <View style={[styles.bottom, { paddingBottom: insets.bottom + 12 }]}>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontFamily: F.display, fontSize: 20, color: C.ink }}>{money(q.grandTotal)}</Text>
-            <Text style={[T.small, { fontSize: 11.5 }]}>Total incl. taxes</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={{ fontFamily: FONTS.uiBold, fontSize: 20, color: C.ink }}>{money(q.grandTotal)}</Text>
+            <Text style={[T.small, { fontSize: 13 }]}>Total incl. taxes</Text>
           </View>
-          <Button label={submitting ? 'Confirming…' : 'Confirm booking'} disabled={submitting || unavailable} onPress={submit} icon={<Lock size={14} color={C.sand} strokeWidth={1.75} />} />
+          <Button label={submitting ? 'Confirming…' : 'Confirm'} disabled={submitting || unavailable} onPress={submit} icon={<Lock size={14} color={C.sand} strokeWidth={1.75} />} />
         </View>
       </KeyboardAvoidingView>
     </View>
@@ -203,7 +196,7 @@ function Field({ label, hint, error, multiline, ...rest }: TextInputProps & { la
   const [focus, setFocus] = useState(false);
   return (
     <View style={{ marginBottom: 16 }}>
-      <Caps color={C.ink70} style={{ marginBottom: 8, fontSize: 10 }}>{label}</Caps>
+      <Caps color={C.ink70} style={{ marginBottom: 8, fontSize: 12.5 }}>{label}</Caps>
       <TextInput
         {...rest}
         multiline={multiline}
@@ -212,27 +205,27 @@ function Field({ label, hint, error, multiline, ...rest }: TextInputProps & { la
         placeholderTextColor={C.ink40}
         style={[styles.input, multiline && { minHeight: 84, textAlignVertical: 'top' }, focus && { borderColor: C.pine }, error && { borderColor: C.danger }]}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : hint ? <Text style={[T.small, { fontSize: 11.5, marginTop: 5 }]}>{hint}</Text> : null}
+      {error ? <Text style={styles.error}>{error}</Text> : hint ? <Text style={[T.small, { fontSize: 13, marginTop: 5 }]}>{hint}</Text> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  barBg: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 15, backgroundColor: C.sand, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },
+  barBg: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 15, backgroundColor: C.sand },
   signin: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 16, padding: 16, borderRadius: S.card, backgroundColor: C.white, borderWidth: 1.5, borderColor: C.pine, ...glassCard },
-  card: { backgroundColor: C.white, padding: 20, marginTop: 18, borderRadius: S.radius, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...glassCard },
-  h3: { fontFamily: F.display, fontSize: 23, color: C.ink, marginTop: 6 },
+  card: { backgroundColor: C.white, padding: 22, marginTop: 16, marginHorizontal: -8, borderRadius: 32, ...glassCard },
+  h3: { fontFamily: F.display, fontSize: 29, lineHeight: 33, color: C.ink },
   formTop: { marginTop: 18, paddingTop: 18, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line },
-  input: { fontFamily: FONTS.ui, borderWidth: 1, borderColor: C.lineStrong, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: C.ink, backgroundColor: C.sand, borderRadius: 12 },
-  error: { color: C.danger, fontSize: 12, marginTop: 5 },
-  chip: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: 999, borderWidth: StyleSheet.hairlineWidth, borderColor: C.lineStrong },
+  input: { fontFamily: FONTS.ui, borderWidth: 1, borderColor: C.lineStrong, paddingHorizontal: 14, minHeight: 56, paddingVertical: 14, fontSize: 16.5, color: C.ink, backgroundColor: C.sand, borderRadius: 18 },
+  error: { color: C.danger, fontSize: 13, marginTop: 5 },
+  chip: { height: 46, justifyContent: 'center', paddingHorizontal: 18, borderRadius: 999, borderWidth: 1, borderColor: C.lineStrong },
   chipOn: { backgroundColor: C.pine, borderColor: C.pine },
-  pay: { flexDirection: 'row', gap: 14, alignItems: 'center', padding: 16, marginTop: 12, borderWidth: 1, borderColor: C.line, borderRadius: 14 },
+  pay: { flexDirection: 'row', gap: 14, alignItems: 'center', padding: 18, marginTop: 12, borderWidth: 1.5, borderColor: C.line, borderRadius: 22 },
   payOn: { borderColor: C.pine, backgroundColor: C.sand },
-  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 1, borderColor: C.ink55, alignItems: 'center', justifyContent: 'center' },
-  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: C.pine },
+  radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 1.5, borderColor: C.ink55, alignItems: 'center', justifyContent: 'center' },
+  radioDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: C.pine },
   terms: { flexDirection: 'row', gap: 12, marginTop: 16, paddingTop: 16, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line },
-  box: { width: 20, height: 20, borderWidth: 1, borderColor: C.ink55, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
+  box: { width: 26, height: 26, borderRadius: 9, borderWidth: 1.5, borderColor: C.ink55, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
   bottom: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: S.gutter, paddingTop: 12, backgroundColor: C.sand, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line },
   warn: { marginTop: 18, padding: 16, borderLeftWidth: 2, borderLeftColor: C.danger, backgroundColor: C.white },
 });

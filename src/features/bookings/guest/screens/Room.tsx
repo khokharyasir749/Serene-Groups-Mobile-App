@@ -12,7 +12,7 @@ import { BackBar, Button, Photo } from '@/features/bookings/guest/components/ui'
 import { areaRangeOf, PROPERTY, REVIEW_SCORE, REVIEWS, roomType } from '@/features/bookings/guest/data/catalog';
 import { availability, lowestQuote, money, plural } from '@/features/bookings/guest/lib/stay';
 import { useBooking } from '@/features/bookings/guest/state/booking';
-import { C, S, T } from '@/features/bookings/guest/theme';
+import { C, FONTS, S, T } from '@/features/bookings/guest/theme';
 import { canvas, glassCard, glassCardDark } from '@/features/bookings/guest/theme/glass';
 
 const POPULAR = [
@@ -49,6 +49,7 @@ export default function RoomDetail() {
   const groups = [...new Set(PROPERTY.amenities.map((a) => a.group))];
   const openRates = () => router.push({ pathname: '/rates/[slug]', params: { slug: t.slug } });
   const openStay = () => router.push({ pathname: '/stay', params: { type: t.slug } });
+  const openGuests = () => router.push({ pathname: '/stay', params: { type: t.slug, tab: 'guests' } });
 
   const tiles = [
     { k: 'Size', v: areaRangeOf(t.slug) },
@@ -62,23 +63,18 @@ export default function RoomDetail() {
       <BackBar onBack={() => router.back()} />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 + insets.bottom }}>
-        <HeroGallery photos={photos} height={Math.round(height * 0.48)} />
+        <HeroGallery photos={photos} height={Math.round(height * 0.58)} />
 
-        <View style={{ paddingHorizontal: S.gutter, paddingTop: 22 }}>
+        <View style={{ paddingHorizontal: S.gutter, paddingTop: 28 }}>
           {/* Overview */}
-          <Text style={T.eyebrow}>Hotel apartment · Nathia Gali</Text>
-          <Text style={[T.h1, { marginTop: 4 }]}>{t.name}</Text>
-          <View style={styles.meta}>
-            <Star size={13} color={C.ink} fill={C.ink} />
-            <Text style={styles.metaStrong}>{REVIEW_SCORE.average.toFixed(1)}</Text>
-            <Text style={T.small}>· {REVIEW_SCORE.count} reviews · 7,906 ft</Text>
-          </View>
+          <Text style={T.h1} accessibilityRole="header">{t.name.replace(' Apartment', '')}</Text>
+          <Text style={[T.body, { marginTop: 8 }]}>{t.tagline}</Text>
 
           <View style={styles.tiles}>
             {tiles.map((f) => (
               <View key={f.k} style={styles.tile}>
                 <Text style={T.small}>{f.k}</Text>
-                <Text style={[T.h3, { fontSize: 16, lineHeight: 20, marginTop: 4 }]} numberOfLines={2}>{f.v}</Text>
+                <Text style={styles.tileValue}>{f.v}</Text>
               </View>
             ))}
           </View>
@@ -88,25 +84,25 @@ export default function RoomDetail() {
           <View style={styles.popular}>
             {POPULAR.map(({ Icon, label }) => (
               <View key={label} style={styles.pop}>
-                <Icon size={16} color={C.pine} strokeWidth={1.6} />
-                <Text style={[T.small, { color: C.ink70 }]} numberOfLines={1}>{label}</Text>
+                <Icon size={21} color={C.goldInk} strokeWidth={1.6} />
+                <Text style={[T.small, { color: C.ink, fontSize: 15 }]} numberOfLines={1}>{label}</Text>
               </View>
             ))}
           </View>
 
           {/* Prices */}
           <View style={styles.prices}>
-            <Text style={[T.h2, { color: C.cream }]}>Prices & availability</Text>
+            <Text style={[T.h2, { color: C.cream }]}>Your stay</Text>
             <Text style={[T.small, { color: C.cream70, marginTop: 4, marginBottom: 14 }]}>Total for your stay, taxes included. No prepayment.</Text>
-            <StayBar stay={stay} onPress={openStay} />
+            <StayBar stay={stay} onDates={openStay} onGuests={openGuests} />
             {bookable ? (
               <View style={styles.priceRow}>
                 <View style={{ flex: 1 }}>
-                  <Text style={[T.small, { color: C.gold, fontWeight: '700', fontSize: 10, letterSpacing: 1.4 }]}>FROM</Text>
-                  <Text style={[T.price, { color: C.cream, fontSize: 21 }]}>{money(best.q.grandTotal)}</Text>
-                  <Text style={[T.small, { fontSize: 12, color: C.cream70 }]}>{plural(best.q.nights, 'night')} · {best.plan.name}</Text>
+                  <Text style={[T.small, { color: C.goldBright }]}>From</Text>
+                  <Text style={[T.price, { color: C.cream, fontSize: 24, lineHeight: 30 }]}>{money(best.q.grandTotal)}</Text>
+                  <Text style={[T.small, { fontSize: 13, color: C.cream70 }]}>{plural(best.q.nights, 'night')} · {best.plan.name}</Text>
                 </View>
-                <Button variant="light" label="See rates" onPress={openRates} style={{ paddingHorizontal: 24, borderColor: C.gold, borderWidth: 1 }} />
+                <Button variant="light" label="See rates" onPress={openRates} style={{ paddingHorizontal: 24 }} />
               </View>
             ) : (
               <Text style={[T.small, { color: C.gold, marginTop: 14 }]}>
@@ -117,7 +113,7 @@ export default function RoomDetail() {
           </View>
 
           {/* Secondary sections */}
-          <View style={{ marginTop: 28 }}>
+          <View style={{ marginTop: 38 }}>
             <Accordion first title="Facilities" summary={`${t.features.length} in your apartment · ${PROPERTY.amenities.length} at the resort`}>
               <List title="In your apartment" items={t.features} />
               {groups.map((g) => (
@@ -172,7 +168,7 @@ export default function RoomDetail() {
           {bookable ? (
             <>
               <Text style={T.price}>{money(best.q.grandTotal)}</Text>
-              <Text style={[T.small, { fontSize: 12 }]}>{plural(best.q.nights, 'night')} · from, incl. taxes</Text>
+              <Text style={[T.small, { fontSize: 13 }]}>{plural(best.q.nights, 'night')} · from, incl. taxes</Text>
             </>
           ) : (
             <Text style={[T.small, { color: C.danger }]}>Not available for your search</Text>
@@ -199,13 +195,12 @@ function List({ title, items }: { title: string; items: string[] }) {
 }
 
 const styles = StyleSheet.create({
-  meta: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 8 },
-  metaStrong: { fontSize: 13.5, fontWeight: '700', color: C.ink },
-  tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 20 },
-  tile: { width: '48.5%', flexGrow: 1, padding: 14, backgroundColor: C.white, borderRadius: 16, ...glassCard },
-  popular: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 18, rowGap: 12 },
+  tileValue: { fontFamily: FONTS.uiSemi, fontSize: 16, lineHeight: 22, color: C.ink, flex: 1, textAlign: 'right' },
+  tiles: { marginTop: 24, borderBottomWidth: 1, borderBottomColor: C.line },
+  tile: { minHeight: 54, flexDirection: 'row', alignItems: 'center', gap: 16, borderTopWidth: 1, borderTopColor: C.line },
+  popular: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 18, rowGap: 18 },
   pop: { width: '50%', flexDirection: 'row', alignItems: 'center', gap: 9, paddingRight: 8 },
-  prices: { marginTop: 28, padding: 18, backgroundColor: C.pine, borderRadius: S.card, borderWidth: 1, borderColor: C.goldLine, ...glassCardDark },
+  prices: { marginTop: 40, marginHorizontal: -8, padding: 20, backgroundColor: C.pine, borderRadius: 34, ...glassCardDark },
   priceRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 16 },
   rule: { paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },
   dist: { flexDirection: 'row', justifyContent: 'space-between', gap: 12, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },

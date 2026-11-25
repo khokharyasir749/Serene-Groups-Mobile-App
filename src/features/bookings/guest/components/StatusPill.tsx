@@ -14,7 +14,7 @@ export default function StatusPill({ tab }: { tab: Tab }) {
   const m = MAP[tab];
   return (
     <View style={{ backgroundColor: m.bg, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999 }}>
-      <Caps color={m.fg} style={{ fontSize: 8.5 }}>{m.label}</Caps>
+      <Caps color={m.fg} style={{ fontSize: 12 }}>{m.label}</Caps>
     </View>
   );
 }

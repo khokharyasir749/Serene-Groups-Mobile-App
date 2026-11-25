@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   sub: {
     fontFamily: FONTS.ui,
-    fontSize: 12,
+    fontSize: 13,
     color: C.ink55,
     marginTop: 2,
   },

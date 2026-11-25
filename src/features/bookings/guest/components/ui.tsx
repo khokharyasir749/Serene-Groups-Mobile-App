@@ -1,5 +1,5 @@
 import { Image, type ImageStyle } from 'expo-image';
-import { Check, ChevronLeft, Minus, Plus, X } from '@/features/bookings/guest/components/icons';
+import { ChevronLeft, Minus, Plus, X } from '@/features/bookings/guest/components/icons';
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, View, type GestureResponderEvent, type PressableProps, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import { Text } from '@/features/bookings/guest/components/Text';
@@ -8,7 +8,7 @@ import { EASE } from '@/features/bookings/guest/components/motion';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { photo } from '@/features/bookings/guest/data/photos';
-import { C, F, S, T } from '@/features/bookings/guest/theme';
+import { C, F, FONTS, S, T } from '@/features/bookings/guest/theme';
 
 // ── Text ─────────────────────────────────────────────────────────────────
 export function Caps({ children, style, color }: { children: ReactNode; style?: StyleProp<TextStyle>; color?: string }) {
@@ -17,7 +17,7 @@ export function Caps({ children, style, color }: { children: ReactNode; style?: 
 
 export function Display({ children, size = 30, style, color, upper }: { children: ReactNode; size?: number; style?: StyleProp<TextStyle>; color?: string; upper?: boolean }) {
   return (
-    <Text style={[T.display, { fontSize: size, lineHeight: Math.round(size * 1.12), letterSpacing: upper ? size * 0.06 : 0 }, upper && { textTransform: 'uppercase' }, color ? { color } : null, style]}>
+    <Text style={[T.display, { fontSize: size, lineHeight: Math.round(size * 1.12), letterSpacing: upper ? size * 0.06 : 0 }, upper && {  }, color ? { color } : null, style]}>
       {children}
     </Text>
   );
@@ -93,12 +93,12 @@ export function PressableScale({
 }
 
 export function Button({ label, onPress, variant = 'primary', icon, style, disabled }: { label: string; onPress?: () => void; variant?: 'primary' | 'secondary' | 'light'; icon?: ReactNode; style?: StyleProp<ViewStyle>; disabled?: boolean }) {
-  const bg = variant === 'primary' ? C.pine : variant === 'light' ? C.sand : 'transparent';
-  const fg = variant === 'primary' ? C.sand : C.ink;
+  const bg = variant === 'primary' ? C.pine : variant === 'light' ? C.goldBright : 'transparent';
+  const fg = variant === 'primary' ? C.sand : C.pine;
   return (
-    <PressableScale onPress={onPress} disabled={disabled} style={[styles.btn, { backgroundColor: bg, borderColor: variant === 'secondary' ? C.lineStrong : bg }, style]}>
+    <PressableScale onPress={onPress} disabled={disabled} accessibilityRole="button" accessibilityLabel={label} style={[styles.btn, { backgroundColor: bg, borderColor: variant === 'secondary' ? C.lineStrong : bg }, style]}>
       {icon}
-      <Caps color={fg} style={{ letterSpacing: 2.4 }}>{label}</Caps>
+      <Text numberOfLines={1} maxFontSizeMultiplier={1.15} style={{ fontFamily: FONTS.uiBold, fontSize: 16, lineHeight: 22, color: fg }}>{label}</Text>
     </PressableScale>
   );
 }
@@ -119,28 +119,20 @@ export function BackBar({ onBack, title, right, light }: { onBack: () => void; t
 }
 
 // ── Booking funnel progress ──────────────────────────────────────────────
-const STEPS = ['Selection', 'Details', 'Confirmed'];
+const STEPS = ['Your rate', 'Your details', 'Confirmed'];
 export function BookingSteps({ current }: { current: 1 | 2 | 3 }) {
   return (
-    <View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        {STEPS.map((label, i) => {
-          const n = i + 1;
-          const done = n < current || current === 3;
-          const active = n === current;
-          return (
-            <View key={label} style={{ flex: n < 3 ? 1 : 0, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <View style={[styles.step, done ? { backgroundColor: C.pine, borderColor: C.pine } : active ? { borderColor: C.ink } : { borderColor: C.line }]}>
-                {done ? <Check size={13} color={C.sand} /> : <Text style={{ fontFamily: F.display, fontSize: 11, color: active ? C.ink : C.ink40 }}>0{n}</Text>}
-              </View>
-              {n < 3 && <View style={{ flex: 1, height: StyleSheet.hairlineWidth * 2, backgroundColor: done ? C.pine : C.line }} />}
-            </View>
-          );
-        })}
+    <View accessible accessibilityLabel={`Step ${current} of 3, ${STEPS[current - 1]}`}>
+      <View style={{ flexDirection: 'row', gap: 6 }}>
+        {STEPS.map((label, i) => (
+          <View key={label} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i < current ? C.pine : C.line }} />
+        ))}
       </View>
-      <Caps color={C.ink55} style={{ fontSize: 9, marginTop: 10 }}>
-        Step {current} of 3 · {STEPS[current - 1]}
-      </Caps>
+      <View style={{ flexDirection: 'row', gap: 6, marginTop: 8 }}>
+        {STEPS.map((label, i) => (
+          <Text key={label} style={{ flex: 1, fontSize: 13, lineHeight: 18, fontFamily: i + 1 === current ? FONTS.uiBold : FONTS.ui, color: i < current ? C.ink : C.ink55 }}>{label}</Text>
+        ))}
+      </View>
     </View>
   );
 }
@@ -191,7 +183,7 @@ export function Sheet({ open, onClose, title, children, footer }: { open: boolea
       <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: C.sand }, backdrop]} />
       <Animated.View style={[styles.sheet, { paddingTop: insets.top, paddingBottom: insets.bottom + 12 }, panel]}>
         <View style={styles.sheetHead}>
-          <Caps>{title}</Caps>
+          <Text style={T.h3}>{title}</Text>
           <Pressable onPress={onClose} hitSlop={12} style={[styles.round, { borderColor: C.line }]}>
             <X size={16} color={C.ink} strokeWidth={1.5} />
           </Pressable>
@@ -204,12 +196,11 @@ export function Sheet({ open, onClose, title, children, footer }: { open: boolea
 }
 
 const styles = StyleSheet.create({
-  btn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 16, paddingHorizontal: 22, borderWidth: 1, borderRadius: S.radius },
+  btn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 58, paddingVertical: 14, paddingHorizontal: 26, borderWidth: 1, borderRadius: 999 },
   backBar: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8 },
   round: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  step: { width: 28, height: 28, borderRadius: 14, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   stepperRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },
-  stepBtn: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: C.lineStrong, alignItems: 'center', justifyContent: 'center' },
+  stepBtn: { width: 46, height: 46, borderRadius: 23, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, alignItems: 'center', justifyContent: 'center' },
   sheet: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: C.sand },
   sheetHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: S.gutter, paddingTop: 14, paddingBottom: 10 },
 });

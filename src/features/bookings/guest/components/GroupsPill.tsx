@@ -20,5 +20,5 @@ const styles = StyleSheet.create({
   pill: { flexDirection: 'row', alignItems: 'center', gap: 5, height: 38, paddingHorizontal: 11, borderRadius: 999 },
   light: { backgroundColor: C.sand, borderWidth: 1, borderColor: C.gold },
   pressed: { opacity: 0.8, transform: [{ scale: 0.97 }] },
-  label: { fontSize: 12.5, fontFamily: FONTS.uiBold },
+  label: { fontSize: 14, fontFamily: FONTS.uiBold },
 });

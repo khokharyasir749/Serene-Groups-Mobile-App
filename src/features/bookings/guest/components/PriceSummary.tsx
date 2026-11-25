@@ -14,24 +14,24 @@ export default function PriceSummary({ stay, roomName, plan, q }: { stay: Stay; 
   return (
     <View style={styles.box}>
       <View style={styles.head}>
-        <Caps color={C.gold} style={{ fontSize: 9.5 }}>Your stay</Caps>
+        <Caps color={C.goldBright} style={{ fontSize: 12 }}>Your stay</Caps>
         <Text style={styles.room}>{roomName}</Text>
-        <Text style={{ fontSize: 13, color: C.cream70, marginTop: 4 }}>{plan.name}</Text>
+        <Text style={{ fontSize: 14, color: C.cream70, marginTop: 4 }}>{plan.name}</Text>
       </View>
       <View style={{ flexDirection: 'row' }}>
         <View style={[styles.cell, { borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: C.line }]}>
-          <Caps color={C.ink55} style={{ fontSize: 9 }}>Check-in</Caps>
+          <Caps color={C.ink55} style={{ fontSize: 12 }}>Check-in</Caps>
           <Text style={styles.date}>{fmtDate(stay.checkIn)}</Text>
-          <Text style={[T.small, { fontSize: 11.5 }]}>From 2:00 PM</Text>
+          <Text style={[T.small, { fontSize: 13 }]}>From 2:00 PM</Text>
         </View>
         <View style={styles.cell}>
-          <Caps color={C.ink55} style={{ fontSize: 9 }}>Check-out</Caps>
+          <Caps color={C.ink55} style={{ fontSize: 12 }}>Check-out</Caps>
           <Text style={styles.date}>{fmtDate(stay.checkOut)}</Text>
-          <Text style={[T.small, { fontSize: 11.5 }]}>Until 12:00 PM</Text>
+          <Text style={[T.small, { fontSize: 13 }]}>Until 12:00 PM</Text>
         </View>
       </View>
       <View style={[styles.cell, styles.top]}>
-        <Caps color={C.ink55} style={{ fontSize: 9 }}>Guests</Caps>
+        <Caps color={C.ink55} style={{ fontSize: 12 }}>Guests</Caps>
         <Text style={{ marginTop: 6, color: C.ink, fontSize: 14 }}>
           {guestsLabel(stay.adults, stay.children)} · {plural(stay.rooms, 'apartment')} · {plural(q.nights, 'night')}
         </Text>
@@ -39,14 +39,14 @@ export default function PriceSummary({ stay, roomName, plan, q }: { stay: Stay; 
       <View style={[styles.top, { padding: 18, gap: 9 }]}>
         <Row label={`${plural(stay.rooms, 'apartment')} × ${plural(q.nights, 'night')}`} value={money(q.roomSubtotal)} />
         <Pressable onPress={() => setNights((s) => !s)} hitSlop={8}>
-          <Caps color={C.ink55} style={{ fontSize: 9, textDecorationLine: 'underline' }}>{nights ? 'Hide' : 'Show'} nightly rates</Caps>
+          <Caps color={C.ink55} style={{ fontSize: 12, textDecorationLine: 'underline' }}>{nights ? 'Hide' : 'Show'} nightly rates</Caps>
         </Pressable>
         {nights && (
           <Enter duration={250} dy={0} style={styles.nightly}>
             {q.nightly.map((n) => (
               <View key={n.date} style={styles.nightRow}>
-                <Text style={[T.small, { fontSize: 12 }]}>{fmtShort(n.date)}</Text>
-                <Text style={[T.small, { fontSize: 12 }]}>{money(n.rate)} per apartment</Text>
+                <Text style={[T.small, { fontSize: 13 }]}>{fmtShort(n.date)}</Text>
+                <Text style={[T.small, { fontSize: 13 }]}>{money(n.rate)} per apartment</Text>
               </View>
             ))}
           </Enter>
@@ -58,7 +58,7 @@ export default function PriceSummary({ stay, roomName, plan, q }: { stay: Stay; 
           <Caps>Total</Caps>
           <Text style={{ fontFamily: F.display, fontSize: 28, color: C.ink }}>{money(q.grandTotal)}</Text>
         </View>
-        <Text style={[T.small, { fontSize: 12 }]}>Payable at the property in Pakistani rupees.</Text>
+        <Text style={[T.small, { fontSize: 13 }]}>Payable at the property in Pakistani rupees.</Text>
       </View>
     </View>
   );
@@ -74,9 +74,9 @@ function Row({ label, value, color }: { label: string; value: string; color?: st
 }
 
 const styles = StyleSheet.create({
-  box: { backgroundColor: C.white, borderRadius: S.radius, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...glassCard },
-  head: { backgroundColor: C.pine, padding: 20 },
-  room: { fontFamily: F.display, fontSize: 21, lineHeight: 25, color: C.sand, marginTop: 10, textTransform: 'uppercase', letterSpacing: 0.8 },
+  box: { backgroundColor: C.white, marginHorizontal: -8, borderRadius: 32, overflow: 'hidden', ...glassCard },
+  head: { backgroundColor: C.deep, padding: 22 },
+  room: { fontFamily: F.display, fontSize: 30, lineHeight: 33, color: C.sand, marginTop: 4 },
   cell: { flex: 1, padding: 16 },
   top: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line },
   date: { fontFamily: F.display, fontSize: 16, color: C.ink, marginTop: 6, marginBottom: 2 },

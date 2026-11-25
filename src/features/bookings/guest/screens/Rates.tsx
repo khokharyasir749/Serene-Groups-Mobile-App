@@ -51,7 +51,7 @@ export default function RatesModal() {
           <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
             <Photo src={type.images[0]} style={styles.thumb} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.eyebrowGold}>YOUR SELECTION</Text>
+              <Text style={styles.eyebrowGold}>Your selection</Text>
               <Text style={styles.roomName} numberOfLines={2}>{type.name}</Text>
               <Text style={styles.roomSpecs} numberOfLines={1}>{type.bedType} · {type.outdoorSpace}</Text>
             </View>
@@ -101,8 +101,8 @@ export default function RatesModal() {
       {/* Footer: the running total and the one action */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.footLabel} numberOfLines={1}>{plan.name.toUpperCase()}</Text>
-          <Text style={styles.footTotal}>{money(q.grandTotal)}</Text>
+          <Text style={styles.footLabel} numberOfLines={1}>{plan.name}</Text>
+          <Text style={styles.footTotal} numberOfLines={1} adjustsFontSizeToFit>{money(q.grandTotal)}</Text>
           <Text style={styles.footNote}>Total incl. taxes</Text>
         </View>
         <Pressable
@@ -124,7 +124,7 @@ export default function RatesModal() {
 function DateCell({ label, top, value, align }: { label: string; top: string; value: string; align?: 'right' }) {
   return (
     <View style={{ alignItems: align === 'right' ? 'flex-end' : 'flex-start' }}>
-      <Text style={styles.cellLabel}>{label.toUpperCase()}</Text>
+      <Text style={styles.cellLabel}>{label}</Text>
       <Text style={styles.cellValue}>{value}</Text>
       <Text style={styles.cellTop}>{top}</Text>
     </View>
@@ -147,7 +147,7 @@ function RateCard({ rp, on, onPress, q }: { rp: RatePlan; on: boolean; onPress: 
           {rp.discountPercent > 0 && (
             <View style={styles.save}>
               <Ionicons name="pricetag-outline" size={11} color={C.cream} />
-              <Text style={styles.saveText}>SAVE {rp.discountPercent}%</Text>
+              <Text style={styles.saveText}>Save {rp.discountPercent}%</Text>
             </View>
           )}
         </View>
@@ -170,44 +170,44 @@ function RateCard({ rp, on, onPress, q }: { rp: RatePlan; on: boolean; onPress: 
 }
 
 const styles = StyleSheet.create({
-  summary: { padding: 18, borderRadius: S.card, backgroundColor: C.pine, ...glassCardDark },
+  summary: { padding: 20, marginHorizontal: -8, borderRadius: 32, ...glassCardDark },
   thumb: { width: 76, height: 76, borderRadius: 18 },
-  eyebrowGold: { color: C.gold, fontFamily: FONTS.uiBold, fontSize: 9.5, letterSpacing: 1.6 },
+  eyebrowGold: { color: C.goldBright, fontFamily: FONTS.uiSemi, fontSize: 12, letterSpacing: 0 },
   roomName: { color: C.cream, fontFamily: FONTS.display, fontSize: 23, lineHeight: 26, marginTop: 4 },
-  roomSpecs: { color: C.cream70, fontFamily: FONTS.ui, fontSize: 12.5, marginTop: 4 },
+  roomSpecs: { color: C.cream70, fontFamily: FONTS.ui, fontSize: 14, marginTop: 4 },
   dates: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 18, paddingTop: 16, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(236, 238, 237, 0.2)' },
-  cellLabel: { color: C.cream45, fontFamily: FONTS.uiBold, fontSize: 9, letterSpacing: 1.3 },
+  cellLabel: { color: C.cream45, fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0 },
   cellValue: { color: C.cream, fontFamily: FONTS.display, fontSize: 27, lineHeight: 30, marginTop: 3 },
-  cellTop: { color: C.cream70, fontFamily: FONTS.ui, fontSize: 12, marginTop: 1 },
+  cellTop: { color: C.cream70, fontFamily: FONTS.ui, fontSize: 13, marginTop: 1 },
   nightsWrap: { flex: 1, flexDirection: 'row', alignItems: 'center' },
   nightsLine: { flex: 1, height: StyleSheet.hairlineWidth * 2, backgroundColor: 'rgba(200, 164, 106, 0.55)' },
   nights: { paddingHorizontal: 10, height: 24, borderRadius: 12, backgroundColor: C.gold, justifyContent: 'center', marginHorizontal: 6 },
-  nightsText: { color: C.pine, fontFamily: FONTS.uiBold, fontSize: 11 },
+  nightsText: { color: C.pine, fontFamily: FONTS.uiBold, fontSize: 12.5 },
   summaryFoot: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 16, paddingTop: 14, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(236, 238, 237, 0.2)' },
   guests: { flex: 1, color: C.cream, fontFamily: FONTS.uiSemi, fontSize: 13.5 },
-  change: { flexDirection: 'row', alignItems: 'center', gap: 2, paddingLeft: 12, paddingRight: 8, height: 30, borderRadius: 15, backgroundColor: C.cream },
-  changeText: { color: C.pine, fontFamily: FONTS.uiBold, fontSize: 12 },
+  change: { flexDirection: 'row', alignItems: 'center', gap: 2, paddingLeft: 16, paddingRight: 12, height: 44, borderRadius: 22, backgroundColor: C.cream },
+  changeText: { color: C.pine, fontFamily: FONTS.uiBold, fontSize: 13 },
   notice: { marginTop: 24, padding: 18, borderRadius: S.card, backgroundColor: C.pureWhite, ...glassCard },
-  rate: { padding: 16, marginBottom: 12, borderRadius: S.card, backgroundColor: C.pureWhite, ...glassCard },
-  rateOff: { borderWidth: 1, borderColor: C.line },
+  rate: { padding: 20, marginBottom: 12, marginHorizontal: -8, borderRadius: 30, backgroundColor: C.pureWhite, ...glassCard },
+  rateOff: { borderWidth: 2, borderColor: 'transparent' },
   rateOn: { borderWidth: 2, borderColor: C.pine, ...shadow.card, shadowOpacity: 0.1, shadowRadius: 12, elevation: 3, ...glassFlat },
   rateTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 1.5, borderColor: C.lineStrong, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
   radioOn: { backgroundColor: C.pine, borderColor: C.pine },
-  rateName: { color: C.ink, fontFamily: FONTS.display, fontSize: 21, lineHeight: 24 },
+  rateName: { color: C.ink, fontFamily: FONTS.display, fontSize: 25, lineHeight: 28 },
   save: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', marginTop: 6, paddingHorizontal: 8, height: 20, borderRadius: 10, backgroundColor: C.pine },
-  saveText: { color: C.cream, fontFamily: FONTS.uiBold, fontSize: 9.5, letterSpacing: 0.8 },
-  strike: { color: C.danger, fontFamily: FONTS.ui, fontSize: 12, textDecorationLine: 'line-through', opacity: 0.85, fontVariant: ['tabular-nums'] },
+  saveText: { color: C.cream, fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0 },
+  strike: { color: C.ink55, fontFamily: FONTS.ui, fontSize: 13, textDecorationLine: 'line-through', opacity: 0.85, fontVariant: ['tabular-nums'] },
   total: { color: C.ink, fontFamily: FONTS.uiBold, fontSize: 19, letterSpacing: -0.2, fontVariant: ['tabular-nums'] },
-  perNight: { color: C.ink55, fontFamily: FONTS.ui, fontSize: 11.5, marginTop: 1, fontVariant: ['tabular-nums'] },
+  perNight: { color: C.ink55, fontFamily: FONTS.ui, fontSize: 13, marginTop: 1, fontVariant: ['tabular-nums'] },
   perks: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 14, paddingLeft: S.well },
-  perk: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 9, height: 26, borderRadius: 13, backgroundColor: 'rgba(29, 115, 72, 0.09)' },
+  perk: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 9, height: 32, borderRadius: 16, backgroundColor: 'rgba(29, 115, 72, 0.09)' },
   perkPlain: { backgroundColor: C.snow },
-  perkText: { color: C.positive, fontFamily: FONTS.uiSemi, fontSize: 11.5 },
+  perkText: { color: C.positive, fontFamily: FONTS.uiSemi, fontSize: 13 },
   footer: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: S.gutter, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line, backgroundColor: C.sand },
-  footLabel: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 9.5, letterSpacing: 1.3 },
+  footLabel: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0 },
   footTotal: { color: C.ink, fontFamily: FONTS.uiBold, fontSize: 20, letterSpacing: -0.2, marginTop: 1, fontVariant: ['tabular-nums'] },
-  footNote: { color: C.ink55, fontFamily: FONTS.ui, fontSize: 11.5 },
+  footNote: { color: C.ink55, fontFamily: FONTS.ui, fontSize: 13 },
   cta: { flexDirection: 'row', alignItems: 'center', gap: 16, height: 58, paddingLeft: 24, paddingRight: 8, borderRadius: 29, backgroundColor: C.pine, ...shadow.card, shadowOpacity: 0.18, shadowRadius: 12, elevation: 4 },
   ctaText: { color: C.cream, fontFamily: FONTS.uiBold, fontSize: 16 },
   badge: { width: 42, height: 42, borderRadius: 21, backgroundColor: C.gold, alignItems: 'center', justifyContent: 'center' },

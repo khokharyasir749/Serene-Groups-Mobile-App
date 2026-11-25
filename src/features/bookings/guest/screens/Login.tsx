@@ -14,7 +14,7 @@ import { Text } from '@/features/bookings/guest/components/Text';
 import { Photo } from '@/features/bookings/guest/components/ui';
 import { useBooking } from '@/features/bookings/guest/state/booking';
 import { C, FONTS, S, shadow, LOGO_TOP } from '@/features/bookings/guest/theme';
-import { ambient, canvas, glassCard } from '@/features/bookings/guest/theme/glass';
+import { canvas, glassCard } from '@/features/bookings/guest/theme/glass';
 
 type Method = 'phone' | 'email';
 type Step = 'id' | 'code' | 'name';
@@ -39,13 +39,13 @@ export default function Login() {
   const { signIn } = useBooking();
   const [method, setMethod] = useState<Method>('phone');
   const [step, setStep] = useState<Step>('id');
-  const [phone, setPhone] = useState('3001234567'); // TESTING default — clear before production
-  const [email, setEmail] = useState('guest@example.com');
-  const [password, setPassword] = useState('12345678');
+  const [phone, setPhone] = useState(__DEV__ ? '3001234567' : ''); // sample values only while developing
+  const [email, setEmail] = useState(__DEV__ ? 'guest@example.com' : '');
+  const [password, setPassword] = useState(__DEV__ ? '12345678' : '');
   const [showPw, setShowPw] = useState(false);
-  const [code, setCode] = useState('123456');
-  const [first, setFirst] = useState('Yasir');
-  const [last, setLast] = useState('Shahzad');
+  const [code, setCode] = useState(__DEV__ ? '123456' : '');
+  const [first, setFirst] = useState(__DEV__ ? 'Ali' : '');
+  const [last, setLast] = useState(__DEV__ ? 'Raza' : '');
   const [error, setError] = useState('');
   const codeRef = useRef<TextInputInstance>(null);
 
@@ -87,7 +87,7 @@ export default function Login() {
   const lede =
     step === 'id'
       ? checkout
-        ? 'Sign in to confirm your booking.'
+        ? 'Sign in and we’ll fill in your details.'
         : 'Sign in to keep every stay in one place.'
       : step === 'code'
         ? `Code sent to ${shownPhone} · demo: any 6 digits`
@@ -118,7 +118,7 @@ export default function Login() {
                 <Ionicons name="location-outline" size={15} style={glassInk} />
                 <Text style={styles.glassText}>Serene Heights · Nathia Gali</Text>
               </View>
-              <Text style={styles.altitude}>7,906 FT</Text>
+              <Text style={styles.altitude}>7,906 ft</Text>
             </View>
           </View>
 
@@ -135,7 +135,7 @@ export default function Login() {
                   ) : (
                     <View style={styles.eyebrowWrap}>
                       <View style={styles.rule} />
-                      <Text style={styles.eyebrow}>SERENE BOOKINGS</Text>
+                      <Text style={styles.eyebrow}>Serene Bookings</Text>
                     </View>
                   )}
                 </View>
@@ -147,7 +147,7 @@ export default function Login() {
                 {step === 'id' && (
                   <>
                     <View style={styles.modes}>
-                      <ModePill icon="call-outline" label="Phone · OTP" on={method === 'phone'} onPress={() => { setMethod('phone'); setError(''); }} />
+                      <ModePill icon="call-outline" label="Phone" on={method === 'phone'} onPress={() => { setMethod('phone'); setError(''); }} />
                       <ModePill icon="mail-outline" label="Email" on={method === 'email'} onPress={() => { setMethod('email'); setError(''); }} />
                     </View>
                     {method === 'phone' ? (
@@ -263,7 +263,7 @@ function Field({ icon, label, prefix, right, ...rest }: TextInputProps & { icon:
     <View style={[styles.field, focus && styles.fieldFocus]}>
       <Ionicons name={icon} size={20} color={focus ? C.pine : C.ink55} />
       <View style={{ flex: 1 }}>
-        <Text style={styles.fieldLabel}>{label.toUpperCase()}</Text>
+        <Text style={styles.fieldLabel}>{label}</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           {prefix && <Text style={styles.prefix}>{prefix}</Text>}
           <TextInput {...rest} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} placeholderTextColor={C.ink40} style={styles.inputText} />
@@ -279,15 +279,15 @@ const styles = StyleSheet.create({
   close: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', ...glassEdge },
   place: { position: 'absolute', left: S.gutter, right: S.gutter, bottom: 54, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   glass: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 14, height: S.well, borderRadius: 18, ...glassEdge },
-  glassText: { ...glassInk, fontFamily: FONTS.uiSemi, fontSize: 12.5 },
-  altitude: { color: 'rgba(255,255,255,0.9)', fontFamily: FONTS.uiBold, fontSize: 10, letterSpacing: 2 },
-  sheet: { flexGrow: 1, marginTop: -S.well, paddingTop: 26, paddingHorizontal: S.gutter + 2, borderTopLeftRadius: 34, borderTopRightRadius: 34, backgroundColor: C.sand, ...ambient },
+  glassText: { ...glassInk, fontFamily: FONTS.uiSemi, fontSize: 14 },
+  altitude: { color: 'rgba(255,255,255,0.9)', fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0 },
+  sheet: { flexGrow: 1, marginTop: -S.well, paddingTop: 26, paddingHorizontal: S.gutter + 2, borderTopLeftRadius: 34, borderTopRightRadius: 34, backgroundColor: C.sand },
   eyebrowRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, minHeight: 24 },
   eyebrowWrap: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   rule: { width: 22, height: 2, borderRadius: 1, backgroundColor: C.gold },
-  eyebrow: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 10.5, letterSpacing: 2 },
+  eyebrow: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0 },
   backLink: { flexDirection: 'row', alignItems: 'center', gap: 2, paddingVertical: 4 },
-  backText: { fontFamily: FONTS.uiBold, fontSize: 13, color: C.pine },
+  backText: { fontFamily: FONTS.uiBold, fontSize: 14, color: C.pine },
   heading: { color: C.ink, fontFamily: FONTS.display, fontSize: 39, lineHeight: 43 },
   lede: { color: C.ink55, fontFamily: FONTS.ui, fontSize: 14.5, lineHeight: 21, marginTop: 6 },
   modes: { flexDirection: 'row', gap: 10 },
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   checkOn: { backgroundColor: C.pine, borderColor: C.pine },
   field: { flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 64, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 16, backgroundColor: C.pureWhite, borderWidth: 1, borderColor: C.line, ...shadow.card },
   fieldFocus: { borderColor: C.pine, borderWidth: 1.5 },
-  fieldLabel: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 9.5, letterSpacing: 1.3 },
+  fieldLabel: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0 },
   inputText: { flex: 1, paddingVertical: 2, fontFamily: FONTS.uiSemi, fontSize: 17, color: C.ink },
   prefix: { fontFamily: FONTS.uiSemi, fontSize: 17, color: C.ink, paddingRight: 10, borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: C.lineStrong },
   otp: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
@@ -309,16 +309,16 @@ const styles = StyleSheet.create({
   hidden: { position: 'absolute', opacity: 0, height: 1, width: 1 },
   link: { fontFamily: FONTS.uiBold, fontSize: 14, color: C.pine },
   error: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: 14, backgroundColor: 'rgba(180, 35, 24, 0.07)' },
-  errorText: { flex: 1, color: C.danger, fontFamily: FONTS.uiMedium, fontSize: 13 },
+  errorText: { flex: 1, color: C.danger, fontFamily: FONTS.uiMedium, fontSize: 14 },
   cta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', height: 62, marginTop: 6, paddingLeft: 26, paddingRight: 9, borderRadius: 31, backgroundColor: C.pine, ...shadow.card, shadowOpacity: 0.2, shadowRadius: 14, elevation: 4 },
   ctaText: { color: C.cream, fontFamily: FONTS.uiBold, fontSize: 17 },
   badge: { width: 44, height: 44, borderRadius: 22, backgroundColor: C.gold, alignItems: 'center', justifyContent: 'center' },
   perks: { flexDirection: 'row', marginTop: 18, paddingVertical: 14, borderRadius: 18, backgroundColor: C.snow, ...glassCard },
   perk: { flex: 1, alignItems: 'center', gap: 6, paddingHorizontal: 6 },
   perkLine: { borderLeftWidth: StyleSheet.hairlineWidth, borderLeftColor: C.lineStrong },
-  perkText: { fontFamily: FONTS.uiSemi, fontSize: 11.5, color: C.ink, textAlign: 'center' },
+  perkText: { fontFamily: FONTS.uiSemi, fontSize: 13, color: C.ink, textAlign: 'center' },
   footer: { alignItems: 'center', gap: 14, marginTop: 20, paddingTop: 2 },
   guest: { fontFamily: FONTS.uiSemi, fontSize: 14.5, color: C.ink, textDecorationLine: 'underline' },
   trust: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
-  trustText: { fontFamily: FONTS.ui, fontSize: 12, color: C.ink55 },
+  trustText: { fontFamily: FONTS.ui, fontSize: 13, color: C.ink55 },
 });

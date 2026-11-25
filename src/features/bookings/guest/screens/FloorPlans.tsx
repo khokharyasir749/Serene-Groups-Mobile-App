@@ -52,7 +52,7 @@ export default function FloorPlans() {
             {FACTS.map((f, i) => (
               <View key={f.k} style={[styles.fact, i > 0 && styles.factLine]}>
                 <Text style={styles.factV}>{f.v}</Text>
-                <Text style={styles.factK}>{f.k.toUpperCase()}</Text>
+                <Text style={styles.factK}>{f.k}</Text>
               </View>
             ))}
           </View>
@@ -195,27 +195,27 @@ const styles = StyleSheet.create({
   fact: { flex: 1, alignItems: 'center' },
   factLine: { borderLeftWidth: StyleSheet.hairlineWidth, borderLeftColor: C.lineStrong },
   factV: { fontFamily: FONTS.display, fontSize: 24, color: C.ink, fontVariant: ['tabular-nums'] },
-  factK: { fontFamily: FONTS.uiBold, fontSize: 9, letterSpacing: 1.3, color: C.ink55, marginTop: 3 },
+  factK: { fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0, color: C.ink55, marginTop: 3 },
   tabs: { paddingHorizontal: S.gutter, gap: 8, marginTop: 14 },
   tab: { paddingHorizontal: 14, height: S.well, borderRadius: 999, justifyContent: 'center', backgroundColor: C.pureWhite, borderWidth: StyleSheet.hairlineWidth, borderColor: C.lineStrong },
   tabOn: { backgroundColor: C.pine, borderColor: C.pine },
-  tabText: { fontFamily: FONTS.uiSemi, fontSize: 12.5, color: C.ink },
+  tabText: { fontFamily: FONTS.uiSemi, fontSize: 14, color: C.ink },
   planCard: { borderRadius: S.card, backgroundColor: HEX.white, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, overflow: 'hidden', ...glassCard },
   plan: { width: '100%', aspectRatio: 3 / 2, backgroundColor: HEX.white },
   zoom: { position: 'absolute', right: 10, top: 10, flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, backgroundColor: pine(0.82) },
-  zoomText: { color: C.cream, fontFamily: FONTS.uiBold, fontSize: 11 },
+  zoomText: { color: C.cream, fontFamily: FONTS.uiBold, fontSize: 12.5 },
   legend: { gap: 8, marginTop: 14, padding: 14, borderRadius: 14, backgroundColor: C.snow, ...glassCard },
   swatch: { width: 11, height: 11, borderRadius: 3, marginTop: 3 },
   pager: { flexDirection: 'row', alignItems: 'center', marginTop: 16, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.lineStrong },
   pagerBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 },
-  pagerText: { flexShrink: 1, fontFamily: FONTS.uiSemi, fontSize: 13, color: C.ink },
-  pagerCount: { fontFamily: FONTS.uiBold, fontSize: 11, letterSpacing: 1.2, color: C.ink55, fontVariant: ['tabular-nums'], paddingHorizontal: 8 },
-  tileNum: { color: C.ink40, fontFamily: FONTS.uiBold, fontSize: 11, letterSpacing: 1.2, fontVariant: ['tabular-nums'] },
+  pagerText: { flexShrink: 1, fontFamily: FONTS.uiSemi, fontSize: 14, color: C.ink },
+  pagerCount: { fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0, color: C.ink55, fontVariant: ['tabular-nums'], paddingHorizontal: 8 },
+  tileNum: { color: C.ink40, fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0, fontVariant: ['tabular-nums'] },
   type: { padding: 16, marginBottom: 14, borderRadius: S.card, backgroundColor: C.pureWhite, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...glassCard },
   typePlan: { width: '100%', aspectRatio: 3 / 2, borderRadius: 14, backgroundColor: HEX.white, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line },
   typeFoot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line },
   price: { fontFamily: FONTS.uiBold, fontSize: 16, color: C.ink, fontVariant: ['tabular-nums'] },
-  per: { fontFamily: FONTS.ui, fontSize: 12.5, color: C.ink55 },
+  per: { fontFamily: FONTS.ui, fontSize: 14, color: C.ink55 },
   view: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  viewText: { fontFamily: FONTS.uiBold, fontSize: 13, color: C.pine },
+  viewText: { fontFamily: FONTS.uiBold, fontSize: 14, color: C.pine },
 });

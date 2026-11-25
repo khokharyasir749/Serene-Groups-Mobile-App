@@ -25,8 +25,8 @@ export default function BookingLookupForm({
   hideNote?: boolean;
 }) {
   const { findBooking } = useBooking();
-  const [reference, setReference] = useState('SH-4QK8TW');
-  const [email, setEmail] = useState('guest@example.com');
+  const [reference, setReference] = useState(__DEV__ ? 'SH-4QK8TW' : '');
+  const [email, setEmail] = useState(__DEV__ ? 'guest@example.com' : '');
   const [error, setError] = useState('');
   const [focus, setFocus] = useState<'ref' | 'email' | null>(null);
   const dark = tone === 'dark';
@@ -54,7 +54,7 @@ export default function BookingLookupForm({
       {/* Booking Reference Field */}
       <View style={styles.fieldGroup}>
         <View style={styles.labelRow}>
-          <Text style={[styles.label, dark && { color: C.cream70 }]}>BOOKING REFERENCE</Text>
+          <Text style={[styles.label, dark && { color: C.cream70 }]}>Booking reference</Text>
           <Text style={[styles.labelHint, dark && { color: C.cream45 }]}>Format: SH-XXXXXX</Text>
         </View>
         <View
@@ -87,7 +87,7 @@ export default function BookingLookupForm({
             returnKeyType="next"
             placeholder="e.g. SH-4QK8TW"
             placeholderTextColor={placeholder}
-            style={[styles.input, dark && styles.inputDark, { letterSpacing: 1.5 }]}
+            style={[styles.input, dark && styles.inputDark, { letterSpacing: 0 }]}
           />
           {reference.length > 0 && (
             <Pressable onPress={() => setReference('')} hitSlop={8} style={styles.clearBtn}>
@@ -100,7 +100,7 @@ export default function BookingLookupForm({
       {/* Email Address Field */}
       <View style={styles.fieldGroup}>
         <View style={styles.labelRow}>
-          <Text style={[styles.label, dark && { color: C.cream70 }]}>GUEST EMAIL ADDRESS</Text>
+          <Text style={[styles.label, dark && { color: C.cream70 }]}>Email address</Text>
           <Text style={[styles.labelHint, dark && { color: C.cream45 }]}>Used for confirmation</Text>
         </View>
         <View
@@ -164,16 +164,17 @@ export default function BookingLookupForm({
           pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
         ]}
       >
-        <Text style={[styles.btnText, dark && { color: C.pine }]}>FIND RESERVATION</Text>
+        <Text style={[styles.btnText, dark && { color: C.pine }]}>Find reservation</Text>
         <View style={[styles.btnArrowCircle, dark && styles.btnArrowCircleDark]}>
           <Ionicons name="arrow-forward" size={14} color={dark ? C.pine : C.cream} />
         </View>
       </Pressable>
 
-      {/* Demo sample bar */}
+      {/* Sample booking: development only */}
+      {__DEV__ ? (
       <View style={[styles.demoCard, dark && styles.demoCardDark]}>
         <View style={styles.demoLeft}>
-          <Text style={[styles.demoTag, dark && { color: C.gold }]}>TEST WITH DEMO BOOKING</Text>
+          <Text style={[styles.demoTag, dark && { color: C.gold }]}>Sample booking</Text>
           <Text style={[styles.demoDetails, dark && { color: C.cream70 }]} numberOfLines={1}>
             SH-4QK8TW · guest@example.com
           </Text>
@@ -196,6 +197,7 @@ export default function BookingLookupForm({
           <Text style={[styles.demoBtnText, dark && { color: C.cream }]}>Fill sample</Text>
         </Pressable>
       </View>
+      ) : null}
     </View>
   );
 }
@@ -206,7 +208,7 @@ const styles = StyleSheet.create({
   },
   note: {
     fontFamily: FONTS.ui,
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 18,
     color: C.ink55,
   },
@@ -221,13 +223,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: FONTS.uiBold,
-    fontSize: 10,
-    letterSpacing: 1.3,
+    fontSize: 12.5,
+    letterSpacing: 0,
     color: C.ink70,
   },
   labelHint: {
     fontFamily: FONTS.ui,
-    fontSize: 11,
+    fontSize: 12.5,
     color: C.ink40,
   },
   inputBox: {
@@ -289,7 +291,7 @@ const styles = StyleSheet.create({
   errorText: {
     flex: 1,
     fontFamily: FONTS.uiMedium,
-    fontSize: 12.5,
+    fontSize: 14,
     color: HEX.danger,
     lineHeight: 17,
   },
@@ -314,8 +316,8 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontFamily: FONTS.uiBold,
-    fontSize: 12.5,
-    letterSpacing: 1.5,
+    fontSize: 14,
+    letterSpacing: 0,
     color: C.cream,
   },
   btnArrowCircle: {
@@ -351,13 +353,13 @@ const styles = StyleSheet.create({
   },
   demoTag: {
     fontFamily: FONTS.uiBold,
-    fontSize: 9.5,
-    letterSpacing: 1.1,
+    fontSize: 12,
+    letterSpacing: 0,
     color: HEX.bronze,
   },
   demoDetails: {
     fontFamily: FONTS.uiMedium,
-    fontSize: 11.5,
+    fontSize: 13,
     color: C.ink70,
     marginTop: 2,
   },
@@ -378,7 +380,7 @@ const styles = StyleSheet.create({
   },
   demoBtnText: {
     fontFamily: FONTS.uiBold,
-    fontSize: 11,
+    fontSize: 12.5,
     color: C.pine,
   },
 });

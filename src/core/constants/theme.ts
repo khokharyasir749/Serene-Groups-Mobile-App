@@ -309,23 +309,6 @@ export const iconInk = {
   seam: "#BFB39C", steelEdge: "#7C878C", coffee: "#4A2E1E", dark: "#1B2421", white: WHITE, led: "#3FB57A",
 } as const;
 
-// ── Serene Bookings module (src/features/bookings/guest) ────────────────────────────────────────
-// Its palette shares Pine, Gold, Stone and Snow with the Groups app; only the canvas and card ivories differ slightly.
-export const bookingPine = (a: number) => pine(a);
-/** Small round wells, avatars and chips in the module. */
-export const bookingWell = 36;
-export const bookingHex = {
-  pine: PINE, white: WHITE, black: BLACK, gold: GOLD, snow: SNOW, slate: CREST_SLATE, forest: PINE_FOREST, stone: STONE, stoneLine: STONE_DIVIDER,
-  alabaster: "#FAF8F4", ivory: "#FFFDF9", parchment: "#FBF8F1", bronze: "#9D7638", goldDeep: "#BE9559", goldLight: "#D8B882", goldPale: "#E6CFAB",
-  star: "#F2C94C", danger: "#B42318", blush: "#FFB4A8", positive: "#1D7348", night: "#121416", shade: "#0B1F15", deepPine: "#0F2A1E", fg: "#14261C", brandPine: "#143D29",
-} as const;
-export const bookingColors = {
-  sand: bookingHex.alabaster, pine: PINE, pineDeep: PINE, forest: PINE_FOREST, snow: STONE, white: bookingHex.ivory, pureWhite: WHITE,
-  ink: PINE, ink70: pine(0.78), ink55: pine(0.6), ink40: pine(0.42), line: STONE_DIVIDER, lineStrong: pine(0.2),
-  cream: SNOW, cream70: snow(0.8), cream45: snow(0.45), gold: GOLD, goldSoft: gold(0.16), goldLine: gold(0.45),
-  positive: bookingHex.positive, danger: bookingHex.danger,
-} as const;
-
 // ── Explore page (src/features/home) ────────────────────────────────────────────────────────────
 export const explore = {
   canvas: "#F4EFE5",
@@ -357,4 +340,23 @@ export const explore = {
   contourMajor: "rgba(224, 190, 134, 0.7)",
   contourInk: pine(0.09),
   lift: "0px 18px 40px rgba(14, 35, 26, 0.22)",
+} as const;
+
+// ── Serene Bookings module (src/features/bookings/guest) ────────────────────────────────────────
+// Its palette shares Pine, Gold, Stone and Snow with the Groups app; only the canvas and card ivories differ slightly.
+export const bookingPine = (a: number) => pine(a);
+/** Small round wells, avatars and chips in the module. */
+export const bookingWell = 36;
+export const bookingHex = {
+  pine: PINE, white: WHITE, black: BLACK, gold: GOLD, snow: SNOW, slate: CREST_SLATE, forest: PINE_FOREST, stone: STONE, stoneLine: STONE_DIVIDER,
+  alabaster: "#FAF8F4", ivory: "#FFFDF9", parchment: "#FBF8F1", bronze: "#9D7638", goldDeep: "#BE9559", goldLight: "#D8B882", goldPale: "#E6CFAB",
+  star: "#F2C94C", danger: "#B42318", blush: "#FFB4A8", positive: "#1D7348", night: "#121416", shade: "#0B1F15", deepPine: "#0F2A1E", fg: "#14261C", brandPine: "#143D29",
+} as const;
+export const bookingColors = {
+  sand: explore.canvas, pine: PINE, pineDeep: PINE, forest: PINE_FOREST, snow: STONE, white: explore.sheet, pureWhite: explore.sheet,
+  ink: PINE, ink70: pine(0.78), ink55: pine(0.68), ink40: pine(0.52), line: pine(0.12), lineStrong: pine(0.2),
+  cream: SNOW, cream70: snow(0.8), cream45: snow(0.45), gold: GOLD, goldSoft: gold(0.16), goldLine: gold(0.45),
+  positive: bookingHex.positive, danger: bookingHex.danger,
+  goldInk: explore.goldDeep, goldBright: explore.gold, deep: explore.deep, cardFade: explore.cardFade, cardStops: explore.cardStops, tileFade: explore.tileFade,
+  heroFade: explore.heroFade, heroStops: explore.heroStops, lift: explore.lift, glass: explore.glass, glassDark: explore.glassDark, glassEdge: explore.glassEdge,
 } as const;
