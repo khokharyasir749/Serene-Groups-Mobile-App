@@ -309,6 +309,20 @@ export const iconInk = {
   seam: "#BFB39C", steelEdge: "#7C878C", coffee: "#4A2E1E", dark: "#1B2421", white: WHITE, led: "#3FB57A",
 } as const;
 
+// ── Glass navigation bars (src/core/components/NavGlass) ─────────────────────────────────────────
+export const navGlass = {
+  /** Light wash inside Apple's Liquid Glass, so dark labels stay readable over photos. */
+  tint: white(0.3),
+  sheen: [white(0.62), white(0.34), white(0.46)] as const,
+  rim: white(0.85),
+  solid: "#F6F3EB",
+  /** The selected tab: a brighter droplet in the bar. */
+  pill: white(0.62),
+  pillRim: white(0.9),
+  ink: "#16382A",
+  shadow: "0px 10px 30px rgba(10, 24, 17, 0.2)",
+} as const;
+
 // ── Explore page (src/features/home) ────────────────────────────────────────────────────────────
 export const explore = {
   canvas: "#F4EFE5",

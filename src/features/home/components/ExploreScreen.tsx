@@ -19,16 +19,20 @@ type Props = {
   /** Pull to refresh, when there is something to refresh. */
   onRefresh?: () => void;
   refreshing?: boolean;
+  /** A tab page's own opening; Explore's stay search without one. */
+  hero?: (height: number) => ReactNode;
+  /** Height of that opening, as a share of the screen. */
+  share?: number;
   children: ReactNode;
 };
 
-/** Explore's page shell: an edge-to-edge hero that runs under the status bar, with the header pinned over it. */
-export function ExploreScreen({ scrollRef, refreshing = false, onRefresh, children }: Props) {
+/** The shell of every Groups tab: an edge-to-edge hero that runs under the status bar, with the header pinned over it. */
+export function ExploreScreen({ scrollRef, refreshing = false, onRefresh, hero: ownHero, share = 0.7, children }: Props) {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
   const still = useReduceMotion();
   // The whole first view, with a sliver of the page below it to say there is more.
-  const hero = Math.round(Math.max(560, height - PEEK));
+  const hero = ownHero ? Math.round(Math.max(380, height * share)) : Math.round(Math.max(560, height - PEEK));
   const top = insets.top + HEADER_HEIGHT;
   const solidAt = hero - top;
   const y = useRef(new Animated.Value(0)).current;
@@ -70,7 +74,7 @@ export function ExploreScreen({ scrollRef, refreshing = false, onRefresh, childr
             })}
             refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={top} tintColor={colors.white} colors={[groups.pine]} /> : undefined}
           >
-            <HeroStage height={hero} dock={insets.bottom + DOCK - PEEK} passed={solid} />
+            {ownHero ? ownHero(hero) : <HeroStage height={hero} dock={insets.bottom + DOCK - PEEK} passed={solid} />}
             {children}
           </Animated.ScrollView>
           <ExploreHeader y={y} solidAt={solidAt} solid={solid} />

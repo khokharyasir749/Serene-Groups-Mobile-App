@@ -1,12 +1,16 @@
+import { useRef, type ComponentRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { Tabs } from "expo-router";
+import { BlurTargetView } from "expo-blur";
 import { DockBridge, FloatingDock } from "@/features/bookings/guest/components/GlassTabBar";
 import { C } from "@/features/bookings/guest/theme";
 
-// Discover · Stay · Trips, with Serene Booking's own liquid-notch dock (the Groups dock is untouched).
+// Discover · Stay · Trips, with Serene Booking's own glass dock.
 export default function BookingsTabs() {
+  const blurTarget = useRef<ComponentRef<typeof View>>(null);
   return (
     <View style={styles.root}>
+      <BlurTargetView ref={blurTarget} style={styles.root}>
       <Tabs
         detachInactiveScreens={false}
         tabBar={(props) => <DockBridge {...props} />}
@@ -17,7 +21,8 @@ export default function BookingsTabs() {
         <Tabs.Screen name="apartments" options={{ title: "Stay" }} />
         <Tabs.Screen name="trips" options={{ title: "Trips" }} />
       </Tabs>
-      <FloatingDock />
+      </BlurTargetView>
+      <FloatingDock blurTarget={blurTarget} />
     </View>
   );
 }

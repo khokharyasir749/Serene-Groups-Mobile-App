@@ -13,7 +13,8 @@ import { Contours } from "./AltitudeStory";
 import { ChapterTitle } from "./ChapterTitle";
 
 /** Serene Investors in one card: pick a published plan and read it like a share certificate. */
-export function SharePlanner() {
+/** `onInvest`: already on the Invest page, so no link to it. */
+export function SharePlanner({ onInvest }: { onInvest?: boolean }) {
   const c = useInvestorCalculator();
   const [width, setWidth] = useState(0);
   return (
@@ -95,10 +96,12 @@ export function SharePlanner() {
             {WEB.investors.cta}
           </Text>
         </PressScale>
+        {onInvest ? null : (
         <PressScale style={styles.link} onPress={() => router.navigate("/payments")} accessibilityLabel="Open Serene Investors">
           <Text style={styles.linkText}>Open Serene Investors</Text>
           <Ionicons name="arrow-forward" size={18} color={groups.pine} />
         </PressScale>
+        )}
       </View>
       <Text style={styles.small}>{WEB.investors.note}</Text>
     </View>

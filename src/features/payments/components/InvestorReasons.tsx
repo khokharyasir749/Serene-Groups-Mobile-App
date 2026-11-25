@@ -1,54 +1,38 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { SectionHeader } from "@/core/components/SectionHeader";
 import { Text } from "@/core/components/Text";
 import { WEB } from "@/core/constants/serene";
-import { colors, fonts, groups, spacing } from "@/core/constants/theme";
+import { explore, font, fonts, spacing } from "@/core/constants/theme";
+import { ChapterTitle } from "@/features/home/components/ChapterTitle";
 
-// One short category and glyph per reason, in the web's order.
-const FACE = [
-  ["In-house operations", "office-building-cog"],
-  ["Quarterly yield", "chart-donut"],
-  ["Accessible entry", "key-variant"],
-  ["Owner privileges", "weather-night"],
-  ["LDA approved", "check-decagram"],
-  ["Halal structure", "scale-balance"],
-] as const satisfies readonly (readonly [string, keyof typeof MaterialCommunityIcons.glyphMap])[];
+// One glyph per reason, in the web's order.
+const ICON = ["office-building-cog", "chart-donut", "key-variant", "weather-night", "check-decagram", "scale-balance"] as const satisfies readonly (keyof typeof MaterialCommunityIcons.glyphMap)[];
 
-/** The six investor reasons as numbered plates in one row. */
+/** The six investor reasons on a full-bleed dark chapter. */
 export function InvestorReasons() {
   return (
     <View style={styles.wrap}>
-      <SectionHeader eyebrow="Why Serene" title="Six reasons" soft="to own." />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} snapToInterval={CARD + 12} decelerationRate="fast" style={styles.bleed} contentContainerStyle={styles.track}>
+      <ChapterTitle dark title="Six reasons" soft="to own." />
+      <View>
         {WEB.investors.reasons.map((r, i) => (
-          <View key={r.t} style={styles.card}>
-            <View style={styles.head}>
-              <View style={styles.well}>
-                <MaterialCommunityIcons name={FACE[i]?.[1] ?? "star-four-points"} size={24} color={colors.white} />
-              </View>
-              <Text style={styles.num}>{`0${i + 1}`}</Text>
+          <View key={r.t} style={styles.row}>
+            <MaterialCommunityIcons name={ICON[i] ?? "star-four-points"} size={28} color={explore.gold} style={styles.icon} />
+            <View style={styles.body}>
+              <Text style={styles.title}>{r.t}</Text>
+              <Text style={styles.text}>{r.d}</Text>
             </View>
-            <Text style={styles.tag}>{(FACE[i]?.[0] ?? "").toUpperCase()}</Text>
-            <Text style={styles.title}>{r.t}</Text>
-            <Text style={styles.text}>{r.d}</Text>
           </View>
         ))}
-      </ScrollView>
+      </View>
     </View>
   );
 }
 
-const CARD = 256;
 const styles = StyleSheet.create({
-  wrap: { gap: spacing.lg },
-  bleed: { marginHorizontal: -spacing.lg, flexGrow: 0 },
-  track: { paddingHorizontal: spacing.lg, paddingBottom: 8, gap: 12 },
-  card: { width: CARD, gap: 6, backgroundColor: groups.plate, borderWidth: 1.2, borderColor: groups.plateEdge, borderRadius: 26, padding: 18, boxShadow: groups.plateShadow },
-  head: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 },
-  well: { width: 48, height: 48, borderRadius: 17, backgroundColor: groups.pine, alignItems: "center", justifyContent: "center" },
-  num: { color: groups.champagne, fontFamily: fonts.displayBold, fontSize: 34, lineHeight: 40 },
-  tag: { color: groups.goldInk, fontSize: 10, letterSpacing: 1.2, fontFamily: fonts.uiBold },
-  title: { color: groups.pine, fontFamily: fonts.display, fontSize: 28, lineHeight: 33 },
-  text: { color: colors.ink2, fontSize: 14, lineHeight: 21 },
+  wrap: { marginHorizontal: -spacing.lg, paddingHorizontal: spacing.lg, paddingTop: spacing.hero, paddingBottom: spacing.xl, gap: spacing.lg, backgroundColor: explore.deep, borderRadius: 38 },
+  row: { flexDirection: "row", gap: spacing.lg, paddingVertical: spacing.lg, borderTopWidth: 1, borderTopColor: explore.lineDark },
+  icon: { marginTop: 2 },
+  body: { flex: 1, gap: 4 },
+  title: { color: explore.onDark, fontFamily: fonts.display, fontSize: 28, lineHeight: 30 },
+  text: { color: explore.onDarkSoft, fontSize: font.md, lineHeight: 23 },
 });

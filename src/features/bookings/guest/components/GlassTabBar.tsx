@@ -7,6 +7,8 @@ import { AccessibilityInfo, Animated, Platform, Pressable, StyleSheet, useWindow
 import { GestureDetector, usePanGesture } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { NavGlass, type BlurTarget } from '@/core/components/NavGlass';
+import { navGlass } from '@/core/constants/theme';
 import { scrollActiveToTop, useScrollTopVisible } from '@/features/bookings/guest/components/ScrollTop';
 import { Text } from '@/features/bookings/guest/components/Text';
 import { BASE, useRouter } from '@/features/bookings/guest/lib/nav';
@@ -32,12 +34,7 @@ const MENU = N - 1;
 const TRIPS = 2;
 const NATIVE = Platform.OS !== 'web';
 
-// Dock tint: 'black' or 'pine'.
-const LOOK: 'black' | 'pine' = 'pine';
-const TINT = {
-  black: { bar: ['rgba(46, 47, 49, 0.88)', 'rgba(22, 23, 24, 0.94)'] as const, lens: 'rgba(12, 12, 13, 0.55)', ball: 'rgba(20, 21, 22, 0.9)' },
-  pine: { bar: ['rgba(27, 56, 43, 0.96)', 'rgba(14, 35, 26, 0.98)'] as const, lens: 'rgba(11, 31, 21, 0.55)', ball: 'rgba(11, 31, 21, 0.82)' },
-}[LOOK];
+const BALL = 'rgba(11, 31, 21, 0.82)';
 
 const H = S.tabBar;
 const SIDE = 20;
@@ -82,17 +79,17 @@ const Tab = memo(function Tab({ item, near, lift, cell, count }: { item: Item; n
       tab: { transform: [{ scale: raised.interpolate({ inputRange: [0, 1], outputRange: [1, 1.17] }) }] },
       outline: { opacity: near.interpolate({ inputRange: [0.15, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }) },
       filled: { opacity: near.interpolate({ inputRange: [0.15, 0.6], outputRange: [0, 1], extrapolate: 'clamp' }) },
-      label: { opacity: near.interpolate({ inputRange: [0, 1], outputRange: [0.74, 1], extrapolate: 'clamp' }) },
+      label: { opacity: near.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1], extrapolate: 'clamp' }) },
     };
   }, [near, lift]);
   return (
     <Animated.View style={[styles.cell, { width: cell }, s.tab]}>
       <View style={styles.glyph}>
         <Animated.View style={[styles.layer, s.outline]}>
-          <Ionicons name={item.icon} size={23} color={HEX.snow} />
+          <Ionicons name={item.icon} size={23} color={navGlass.ink} />
         </Animated.View>
         <Animated.View style={[styles.layer, s.filled]}>
-          <Ionicons name={item.filled} size={23} color={HEX.goldPale} />
+          <Ionicons name={item.filled} size={23} color={HEX.brandPine} />
         </Animated.View>
         {count > 0 ? (
           <View style={styles.count}>
@@ -109,7 +106,7 @@ const Tab = memo(function Tab({ item, near, lift, cell, count }: { item: Item; n
   );
 });
 
-export function FloatingDock() {
+export function FloatingDock({ blurTarget }: { blurTarget?: BlurTarget }) {
   const insets = useSafeAreaInsets();
   const { width: screenW } = useWindowDimensions();
   const guarded = useRouter(); // 450 ms guard, for Menu
@@ -238,13 +235,13 @@ export function FloatingDock() {
       <GestureDetector gesture={pan}>
         <View style={{ width: barW, height: H }} collapsable={false}>
           <Animated.View pointerEvents="none" style={[styles.bar, { width: barW }, m.bar]}>
-            <View style={[StyleSheet.absoluteFill, styles.body]} renderToHardwareTextureAndroid>
-              <LinearGradient colors={TINT.bar} style={[StyleSheet.absoluteFill, styles.fill]} />
+            <View style={[StyleSheet.absoluteFill, styles.body]}>
+              <NavGlass radius={H / 2} blurTarget={blurTarget} />
             </View>
 
             <Animated.View style={[styles.lens, { width: cell }, m.lens]}>
               <Animated.View style={[styles.cap, styles.rest, m.rest]} />
-              <Animated.View style={[styles.cap, { backgroundColor: TINT.lens }, m.glass]}>
+              <Animated.View style={[styles.cap, { backgroundColor: navGlass.tint }, m.glass]}>
                 <LinearGradient colors={['rgba(255,255,255,0.24)', 'rgba(255,255,255,0.02)', 'rgba(255,255,255,0.02)', 'rgba(255,255,255,0.14)']} locations={[0, 0.28, 0.75, 1]} style={[StyleSheet.absoluteFill, styles.round]} />
                 {/* The rim, with the colour split a thick lens gives its edges. */}
                 <View style={[styles.cap, styles.cyan]} />
@@ -294,24 +291,23 @@ export function FloatingDock() {
 const styles = StyleSheet.create({
   wrap: { position: 'absolute', left: SIDE, right: SIDE, alignItems: 'center' },
   bar: { height: H },
-  body: { borderRadius: H / 2, boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.26)' },
-  fill: { borderRadius: H / 2, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.16)' },
+  body: { borderRadius: H / 2, boxShadow: navGlass.shadow },
   row: { position: 'absolute', left: 0, right: 0, top: 0, height: H, flexDirection: 'row', paddingHorizontal: PAD },
   cell: { height: H, alignItems: 'center', justifyContent: 'center', gap: 2 },
   glyph: { width: 26, height: 25 },
   layer: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
-  label: { color: HEX.white, fontSize: 12.5, lineHeight: 14, fontFamily: FONTS.uiSemi },
+  label: { color: navGlass.ink, fontSize: 11.5, lineHeight: 15, fontFamily: FONTS.uiBold },
   count: { position: 'absolute', top: -4, left: 15, minWidth: 16, height: 16, borderRadius: 8, paddingHorizontal: 4, backgroundColor: HEX.gold, alignItems: 'center', justifyContent: 'center' },
   countText: { color: HEX.pine, fontSize: 12, lineHeight: 12, fontFamily: FONTS.uiBold },
   lens: { position: 'absolute', left: 0, top: PAD, height: LENS_H },
   cap: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderRadius: LENS_H / 2 },
   round: { borderRadius: LENS_H / 2 },
-  rest: { backgroundColor: 'rgba(255, 255, 255, 0.16)' },
+  rest: { backgroundColor: navGlass.pill, borderWidth: 1, borderColor: navGlass.pillRim },
   cyan: { left: -1, right: 1, borderWidth: 1.3, borderColor: 'rgba(120, 225, 255, 0.38)' },
   amber: { left: 1, right: -1, borderWidth: 1.3, borderColor: 'rgba(255, 196, 110, 0.42)' },
   white: { borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.75)' },
   hit: { flex: 1, height: H },
   topShadow: { position: 'absolute', right: 0, top: -54, borderRadius: 19, borderWidth: 1, borderColor: 'rgba(0, 0, 0, 0.08)' },
-  top: { width: S.well, height: S.well, borderRadius: 18, overflow: 'hidden', backgroundColor: TINT.ball, borderWidth: 1.25, borderColor: 'rgba(255, 255, 255, 0.4)' },
+  top: { width: S.well, height: S.well, borderRadius: 18, overflow: 'hidden', backgroundColor: BALL, borderWidth: 1.25, borderColor: 'rgba(255, 255, 255, 0.4)' },
   topHit: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });

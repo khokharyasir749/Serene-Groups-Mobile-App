@@ -1,12 +1,11 @@
 import { useEffect, useRef, type ComponentRef, type RefObject } from "react";
 import { Animated, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { NavGlass } from "@/core/components/NavGlass";
 import { PlateButton } from "@/core/components/PlateButton";
 import { Text } from "@/core/components/Text";
-import { fonts, groups } from "@/core/constants/theme";
+import { fonts, groups, navGlass } from "@/core/constants/theme";
 import { scrollActiveToTop, useScrollTopStore } from "@/core/lib/scrollTop";
 
 // The slice of the tab-bar props this dock uses (kept structural so it needs no navigation package import).
@@ -42,7 +41,7 @@ export function FloatingDock({ state, emitter, navigateToTab, blurTarget, onServ
   const { width } = useWindowDimensions();
   const showTop = useScrollTopStore((st) => st.visible);
   const barW = Math.min(width - 32, 460);
-  const cell = (barW - PAD * 2 - 2) / SLOTS.length;
+  const cell = (barW - PAD * 2) / SLOTS.length;
   const active = Math.max(0, SLOTS.findIndex((s) => s.name === state.routes[state.index]?.name));
   const pos = useRef(new Animated.Value(active)).current;
 
@@ -63,8 +62,7 @@ export function FloatingDock({ state, emitter, navigateToTab, blurTarget, onServ
     <View pointerEvents="box-none" style={[styles.wrap, { bottom: insets.bottom + 10 }]}>
       <View style={[styles.shadow, { width: barW }]}>
         <View style={styles.bar}>
-          <BlurView blurTarget={blurTarget} blurMethod="dimezisBlurView" tint="light" intensity={34} style={StyleSheet.absoluteFill} />
-          <LinearGradient colors={groups.dock} style={[StyleSheet.absoluteFill, styles.edge]} />
+          <NavGlass radius={H / 2} blurTarget={blurTarget} />
           <Animated.View pointerEvents="none" style={[styles.pill, { width: cell, transform: [{ translateX: pos.interpolate({ inputRange: [0, last], outputRange: [0, cell * last], extrapolate: "clamp" }) }] }]} />
           {SLOTS.map((s, i) => {
             const on = pos.interpolate({ inputRange: [i - 1, i, i + 1], outputRange: [0, 1, 0], extrapolate: "clamp" });
@@ -73,14 +71,14 @@ export function FloatingDock({ state, emitter, navigateToTab, blurTarget, onServ
               <>
                 {s.icon(color)}
                 <Text style={[styles.label, { color }]} numberOfLines={1} maxFontSizeMultiplier={1}>
-                  {s.label.toUpperCase()}
+                  {s.label}
                 </Text>
               </>
             );
             return (
               <Pressable key={s.name} onPress={() => press(s)} style={styles.slot} accessibilityRole={s.name === SERVICES ? "button" : "tab"} accessibilityState={{ selected: i === active }} accessibilityLabel={s.label}>
-                <Animated.View style={[styles.face, { opacity: off }]}>{face(groups.dockInk)}</Animated.View>
-                <Animated.View style={[styles.face, { opacity: on }]}>{face(groups.meshLight)}</Animated.View>
+                <Animated.View style={[styles.face, { opacity: off }]}>{face(navGlass.ink)}</Animated.View>
+                <Animated.View style={[styles.face, { opacity: on }]}>{face(groups.pine)}</Animated.View>
                 {s.name === SERVICES && services > 0 ? <View style={styles.dot} /> : null}
               </Pressable>
             );
@@ -98,13 +96,12 @@ export function FloatingDock({ state, emitter, navigateToTab, blurTarget, onServ
 
 const styles = StyleSheet.create({
   wrap: { position: "absolute", left: 16, right: 16, alignItems: "center" },
-  shadow: { borderRadius: H / 2, boxShadow: "0px 10px 26px rgba(24, 48, 38, 0.2)" },
-  bar: { height: H, borderRadius: H / 2, overflow: "hidden", flexDirection: "row", padding: PAD, borderWidth: 1, borderColor: groups.dockEdge },
-  edge: { borderRadius: H / 2 },
-  pill: { position: "absolute", left: PAD, top: PAD, bottom: PAD, borderRadius: (H - PAD * 2) / 2, backgroundColor: groups.pine, borderWidth: 1, borderColor: groups.pineEdge },
+  shadow: { borderRadius: H / 2, boxShadow: navGlass.shadow },
+  bar: { height: H, borderRadius: H / 2, flexDirection: "row", padding: PAD },
+  pill: { position: "absolute", left: PAD, top: PAD, bottom: PAD, borderRadius: (H - PAD * 2) / 2, backgroundColor: navGlass.pill, borderWidth: 1, borderColor: navGlass.pillRim },
   slot: { flex: 1 },
   face: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0, alignItems: "center", justifyContent: "center", gap: 1 },
-  label: { fontSize: 9, lineHeight: 12, fontFamily: fonts.uiBold, letterSpacing: 0.5 },
+  label: { fontSize: 11, lineHeight: 14, fontFamily: fonts.uiBold },
   dot: { position: "absolute", top: 8, right: "28%", width: 10, height: 10, borderRadius: 5, backgroundColor: groups.champagne, borderWidth: 1.5, borderColor: groups.plate },
   top: { position: "absolute", right: 0, top: -52 },
 });

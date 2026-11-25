@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useLogoutMutation } from "@/core/api/endpoints/authApi";
 import { P } from "@/core/constants/api";
-import { colors, font, fonts, radius, spacing, groups } from "@/core/constants/theme";
+import { colors, explore, font, fonts, radius, spacing, groups } from "@/core/constants/theme";
 import { usePermissions } from "@/core/hooks/usePermissions";
 import { useAuthStore } from "@/core/stores/authStore";
 import { useBiometric } from "../hooks/useBiometric";
@@ -32,7 +32,7 @@ export function AccountPanel({ onDone }: { onDone?: () => void }) {
             router.navigate(r.path);
           }} style={({ pressed }) => [styles.card, pressed && styles.pressed]} accessibilityRole="button">
           <View style={styles.icon}>
-            <Ionicons name={r.icon} size={20} color={colors.white} />
+            <Ionicons name={r.icon} size={22} color={explore.gold} />
           </View>
           <View style={styles.flex}>
             <Text style={styles.rowTitle}>{r.label}</Text>
@@ -45,7 +45,7 @@ export function AccountPanel({ onDone }: { onDone?: () => void }) {
       {bio.available ? (
         <View style={styles.card}>
           <View style={styles.icon}>
-            <Ionicons name="finger-print-outline" size={22} color={colors.white} />
+            <Ionicons name="finger-print-outline" size={22} color={explore.gold} />
           </View>
           <View style={styles.flex}>
             <Text style={styles.rowTitle}>Fingerprint sign-in</Text>
@@ -72,14 +72,14 @@ export function AccountPanel({ onDone }: { onDone?: () => void }) {
 
 const styles = StyleSheet.create({
   wrap: { gap: spacing.md },
-  card: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: groups.plate, borderRadius: 22, borderWidth: 1.2, borderColor: groups.plateEdge, padding: 14 },
+  card: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 86, marginHorizontal: -spacing.sm, backgroundColor: explore.sheet, borderRadius: 30, padding: 16, boxShadow: explore.lift },
   pressed: { opacity: 0.92, transform: [{ scale: 0.99 }] },
-  icon: { width: 44, height: 44, borderRadius: 15, backgroundColor: groups.pine, alignItems: "center", justifyContent: "center" },
+  icon: { width: 54, height: 54, borderRadius: 19, backgroundColor: groups.pine, alignItems: "center", justifyContent: "center" },
   flex: { flex: 1, gap: 2 },
   rowTitle: { color: colors.ink, fontSize: font.md + 1, fontFamily: fonts.uiBold },
   rowHint: { color: colors.muted, fontSize: font.sm },
-  off: { borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill, paddingHorizontal: 12, paddingVertical: 6 },
+  off: { borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill, paddingHorizontal: 12, minHeight: 44, justifyContent: "center" },
   offText: { color: colors.pineBrand, fontSize: font.xs + 1, fontFamily: fonts.uiBold },
-  signout: { marginTop: spacing.md, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, height: 54, borderRadius: radius.pill, borderWidth: 1.5, borderColor: colors.danger, backgroundColor: groups.plate },
+  signout: { marginTop: spacing.md, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, height: 58, borderRadius: radius.pill, backgroundColor: colors.dangerSoft },
   signoutText: { color: colors.danger, fontSize: font.md, fontFamily: fonts.uiBold },
 });
