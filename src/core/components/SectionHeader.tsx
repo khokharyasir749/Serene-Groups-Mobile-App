@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { colors, font, fonts, letter, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, groups, letter, spacing } from "@/core/constants/theme";
 
 type Props = { eyebrow?: string; title?: string; soft?: string; dark?: boolean };
 
@@ -10,13 +10,14 @@ export function SectionHeader({ eyebrow, title, soft, dark }: Props) {
     <View style={styles.wrap}>
       {eyebrow ? (
         <View style={styles.eyebrowRow}>
+          <View style={styles.rule} />
           <Text style={[styles.eyebrow, { color: dark ? colors.gold : colors.goldText }]}>{eyebrow.toUpperCase()}</Text>
         </View>
       ) : null}
       {title ? (
         <Text style={[styles.title, { color: dark ? colors.onNight : colors.ink }]}>
           {title}
-          {soft ? <Text style={{ color: dark ? colors.sage : colors.softSage }}>{`\n${soft}`}</Text> : null}
+          {soft ? <Text style={[styles.soft, { color: dark ? groups.champagne : groups.goldInk }]}>{`\n${soft}`}</Text> : null}
         </Text>
       ) : null}
     </View>
@@ -26,7 +27,8 @@ export function SectionHeader({ eyebrow, title, soft, dark }: Props) {
 const styles = StyleSheet.create({
   wrap: { gap: spacing.xs },
   eyebrowRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.gold },
+  rule: { width: 22, height: 1.5, backgroundColor: groups.champagne },
+  soft: { fontFamily: fonts.displayItalic },
   eyebrow: { fontSize: font.xs, fontFamily: fonts.uiBold, letterSpacing: 2 },
-  title: { fontSize: font.display, fontFamily: fonts.display, letterSpacing: letter.display, lineHeight: 44, includeFontPadding: false },
+  title: { fontSize: font.display, fontFamily: fonts.display, letterSpacing: letter.display, lineHeight: 46, includeFontPadding: false },
 });

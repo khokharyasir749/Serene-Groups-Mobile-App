@@ -2,7 +2,7 @@ import { useState } from "react";
 import { StyleSheet, TextInput, View, Pressable, type TextInputProps } from "react-native";
 import { Text } from "@/core/components/Text";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 
 type Props = TextInputProps & {
   label?: string;
@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
   wrap: { gap: spacing.xs },
   card: {
     minHeight: 64,
-    backgroundColor: colors.surface,
-    borderColor: colors.line,
+    backgroundColor: groups.plate,
+    borderColor: groups.plateEdge,
     borderWidth: 1,
     borderRadius: radius.lg,
     paddingHorizontal: spacing.lg,

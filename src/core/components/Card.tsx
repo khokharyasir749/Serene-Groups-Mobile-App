@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { colors, gradients, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, gradients, groups, radius, spacing } from "@/core/constants/theme";
 
 type Props = {
   children: ReactNode;
@@ -30,9 +30,9 @@ export function Card({ children, onPress, style, variant = "paper" }: Props) {
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: radius.lg, padding: spacing.lg, gap: spacing.sm, overflow: "hidden", borderWidth: 1 },
-  paper: { backgroundColor: colors.surface, borderColor: colors.line, ...shadows.card },
-  emerald: { backgroundColor: colors.pineBrand, borderColor: colors.lineNight, ...shadows.cardElevated },
+  card: { borderRadius: 26, padding: spacing.lg, gap: spacing.sm, overflow: "hidden", borderWidth: 1 },
+  paper: { backgroundColor: groups.plate, borderColor: groups.plateEdge, boxShadow: groups.plateShadow },
+  emerald: { backgroundColor: groups.pine, borderColor: groups.pineEdge, boxShadow: groups.plateShadow },
   night: { backgroundColor: colors.glassNight, borderColor: colors.lineNight, borderRadius: radius.md },
   pressed: { opacity: 0.94, transform: [{ scale: 0.98 }] },
 });

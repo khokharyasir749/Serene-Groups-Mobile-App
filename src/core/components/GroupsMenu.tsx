@@ -6,9 +6,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { LAHORE_URL, NATHIA_GALI_URL } from "@/core/constants/serene";
-import { colors, dark, font, fonts, letter, spacing } from "@/core/constants/theme";
+import { colors, dark, font, fonts, groups, letter, spacing } from "@/core/constants/theme";
 import { openSite } from "@/core/lib/openSite";
 import { switchTo } from "@/core/stores/switchStore";
+import { PlateButton } from "./PlateButton";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 
 type Item = { label: string; go: () => void; badge?: string; quiet?: boolean; external?: boolean };
@@ -19,6 +20,7 @@ const ITEMS: Item[] = [
   { label: "Explore", go: () => router.navigate("/") },
   { label: "Stay", go: () => router.navigate("/bookings") },
   { label: "Invest", go: () => router.navigate("/payments") },
+  { label: "Profile", go: () => router.navigate("/profile") },
   { label: "Nathia Gali", external: true, go: () => void openSite(NATHIA_GALI_URL) },
   { label: "Lahore", external: true, go: () => void openSite(LAHORE_URL) },
   { label: "Concierge", external: true, go: () => void openWhatsApp() },
@@ -43,14 +45,12 @@ export function GroupsMenu() {
 
   return (
     <>
-      <Pressable onPress={() => setOpen(true)} style={({ pressed }) => [styles.button, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Open menu">
-        <Ionicons name="menu-outline" size={21} color={colors.goldAccent} />
-      </Pressable>
+      <PlateButton icon="menu-outline" label="Open menu" onPress={() => setOpen(true)} />
       <Modal visible={open} animationType="fade" onRequestClose={() => setOpen(false)} statusBarTranslucent presentationStyle="fullScreen">
         <View style={[styles.page, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom + spacing.lg }]}>
           <View style={styles.top}>
             <View style={styles.crest}>
-              <SereneLogoMark width={26} fill={colors.snow} snow={colors.pineBrand} />
+              <SereneLogoMark width={26} fill={colors.snow} snow={groups.pine} />
             </View>
             <Text style={styles.brand} numberOfLines={1}>
               SERENE GROUP
@@ -88,9 +88,7 @@ export function GroupsMenu() {
 }
 
 const styles = StyleSheet.create({
-  button: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.pineBrand, borderWidth: 1, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
-  pressed: { opacity: 0.88, transform: [{ scale: 0.97 }] },
-  page: { flex: 1, backgroundColor: colors.pineBrand, paddingHorizontal: spacing.lg },
+  page: { flex: 1, backgroundColor: groups.pine, paddingHorizontal: spacing.lg },
   top: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingBottom: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.lineNight },
   crest: { width: 46, height: 46, borderRadius: 23, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
   brand: { flex: 1, color: dark.text, fontFamily: fonts.display, fontSize: 20, letterSpacing: 2.4 },

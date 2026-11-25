@@ -230,6 +230,33 @@ export const toneColors: Record<Tone, { fg: string; bg: string }> = {
   info: { fg: colors.info, bg: colors.infoSoft },
 };
 
+// ── Serene Groups look: a soft pine-and-champagne mesh under ivory plates ────────────────────────
+export const groups = {
+  base: "#F3EEE3",
+  meshPine: "#2F5546",
+  meshGold: "#D9B67E",
+  meshLight: "#FFFDF6",
+  plate: "#F6F3EB",
+  plateEdge: "rgba(47, 74, 62, 0.26)",
+  plateShadow: "0px 6px 18px rgba(24, 48, 38, 0.12)",
+  pine: "#27483B",
+  pineEdge: "rgba(216, 193, 150, 0.4)",
+  champagne: "#C2A47B",
+  /** Overdue figures on Pine. */
+  alert: "#FFB4A8",
+  goldInk: "#9A7746",
+  dock: [white(0.72), "rgba(233, 231, 222, 0.6)"] as const,
+  dockEdge: white(0.7),
+  dockInk: "#2B4338",
+  badge: "rgba(39, 72, 59, 0.82)",
+  badgeEdge: "rgba(222, 202, 165, 0.35)",
+  heroEdge: "#CDB084",
+  heroFade: [black(0.22), black(0), black(0), black(0.74)] as const,
+  art: gold(0.5),
+  artSoft: gold(0.18),
+  artLine: "rgba(47, 74, 62, 0.34)",
+} as const;
+
 // ── Serene Services module (src/features/services) ──────────────────────────────────────────────
 export const svc = {
   /** Warm light at the top, plain alabaster below. */

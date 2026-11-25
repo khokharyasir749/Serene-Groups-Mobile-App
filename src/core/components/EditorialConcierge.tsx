@@ -3,7 +3,7 @@ import { Text } from "@/core/components/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { CONTACT } from "@/core/constants/serene";
-import { colors, font, fonts, letter, radius, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, spacing, groups } from "@/core/constants/theme";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 
 type Props = { eyebrow: string; title: string; subtitle: string };
@@ -16,7 +16,7 @@ export function EditorialConcierge({ eyebrow, title, subtitle }: Props) {
       <View style={styles.mark}>
         <View style={styles.rule} />
         <View style={styles.crest}>
-          <SereneLogoMark width={22} fill={colors.snow} snow={colors.pineBrand} />
+          <SereneLogoMark width={22} fill={colors.snow} snow={groups.pine} />
         </View>
         <View style={styles.rule} />
       </View>
@@ -42,14 +42,14 @@ const styles = StyleSheet.create({
   hairline: { alignSelf: "stretch", height: 1, backgroundColor: colors.line, marginBottom: spacing.md },
   mark: { flexDirection: "row", alignItems: "center", gap: spacing.md, alignSelf: "stretch" },
   rule: { flex: 1, height: 1.5, backgroundColor: colors.goldAccent },
-  crest: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.pineBrand, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
+  crest: { width: 46, height: 46, borderRadius: 23, backgroundColor: groups.pine, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
   eyebrow: { color: colors.goldText, fontSize: font.xs, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow + 0.6, marginTop: spacing.sm },
   title: { color: colors.ink, fontFamily: fonts.display, fontSize: 38, lineHeight: 42, textAlign: "center" },
   sub: { color: colors.ink2, fontSize: font.md - 1, lineHeight: 22, textAlign: "center", maxWidth: 320 },
   row: { flexDirection: "row", gap: spacing.sm, alignSelf: "stretch", marginTop: spacing.md },
   pill: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, height: 52, borderRadius: radius.pill },
-  pine: { backgroundColor: colors.pineBrand },
-  gold: { backgroundColor: colors.white, borderWidth: 1.5, borderColor: colors.goldAccent },
+  pine: { backgroundColor: groups.pine },
+  gold: { backgroundColor: groups.plate, borderWidth: 1.5, borderColor: colors.goldAccent },
   pressed: { opacity: 0.9, transform: [{ scale: 0.98 }] },
   pineText: { color: colors.white, fontSize: font.md, fontFamily: fonts.uiBold },
   goldText: { color: colors.pineBrand, fontSize: font.md, fontFamily: fonts.uiBold },

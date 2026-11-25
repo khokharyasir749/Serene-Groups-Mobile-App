@@ -3,7 +3,7 @@ import { Text } from "@/core/components/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { Button } from "@/core/components/Button";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
-import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 import type { Stay } from "../types";
@@ -28,7 +28,7 @@ export function ReservationPass({ stay, onClose }: { stay: Stay; onClose: () => 
       <View style={styles.bar} />
       <View style={styles.head}>
         <View style={styles.crest}>
-          <SereneLogoMark width={22} fill={colors.snow} snow={colors.pineBrand} />
+          <SereneLogoMark width={22} fill={colors.snow} snow={groups.pine} />
         </View>
         <View style={styles.headText}>
           <Text style={styles.org}>SERENE HEIGHTS · NATHIA GALI</Text>
@@ -70,10 +70,10 @@ export function ReservationPass({ stay, onClose }: { stay: Stay; onClose: () => 
 }
 
 const styles = StyleSheet.create({
-  pass: { backgroundColor: colors.white, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.line, padding: spacing.xl, paddingTop: spacing.xl + 6, gap: spacing.md, ...shadows.cardElevated },
+  pass: { backgroundColor: groups.plate, borderRadius: radius.xl, borderWidth: 1, borderColor: groups.plateEdge, padding: spacing.xl, paddingTop: spacing.xl + 6, gap: spacing.md, ...shadows.cardElevated },
   bar: { position: "absolute", top: -1, left: -1, right: -1, height: 6, backgroundColor: colors.goldAccent, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl },
   head: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  crest: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.pineBrand, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
+  crest: { width: 46, height: 46, borderRadius: 23, backgroundColor: groups.pine, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
   headText: { flex: 1, gap: 2 },
   org: { color: colors.pineBrand, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: 1.4 },
   kind: { color: colors.ink, fontFamily: fonts.display, fontSize: 24, lineHeight: 28 },
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   code: { color: colors.ink, fontFamily: fonts.display, fontSize: 40, lineHeight: 44, fontVariant: ["tabular-nums"] },
   perf: { height: NOTCH, marginHorizontal: -spacing.xl, justifyContent: "center" },
   dash: { marginHorizontal: NOTCH, borderTopWidth: 1.5, borderStyle: "dashed", borderColor: colors.lineStrong },
-  notch: { position: "absolute", top: 0, width: NOTCH, height: NOTCH, borderRadius: NOTCH / 2, backgroundColor: colors.paper, borderWidth: 1, borderColor: colors.line },
+  notch: { position: "absolute", top: 0, width: NOTCH, height: NOTCH, borderRadius: NOTCH / 2, backgroundColor: groups.base, borderWidth: 1, borderColor: groups.plateEdge },
   notchL: { left: -NOTCH / 2 - 1 },
   notchR: { right: -NOTCH / 2 - 1 },
   grid: { flexDirection: "row", flexWrap: "wrap", rowGap: spacing.md, columnGap: spacing.md },

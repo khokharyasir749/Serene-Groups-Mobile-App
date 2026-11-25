@@ -1,34 +1,35 @@
-import { useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
-import { Text } from "@/core/components/Text";
+import { useRef, useState } from "react";
+import { Animated, StyleSheet, View, useWindowDimensions } from "react-native";
 import { router } from "expo-router";
 import { Image, type ImageSource } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import { Button } from "@/core/components/Button";
-import { GlassPill } from "@/core/components/GlassPill";
-import { PerspectiveCarousel3D } from "@/core/components/PerspectiveCarousel3D";
+import { ActionTray } from "@/core/components/ActionTray";
+import { BannerFace } from "@/core/components/PhotoBanner";
+import { PressScale } from "@/core/components/PressScale";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { MEDIA, WEB_MEDIA } from "@/core/constants/media";
 import { LAHORE_URL, NATHIA_GALI_URL } from "@/core/constants/serene";
-import { colors, dark, fonts, gradients, radius, SCRIM_STOPS, shadows, spacing } from "@/core/constants/theme";
+import { groups, spacing } from "@/core/constants/theme";
 import { openSite } from "@/core/lib/openSite";
+import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { useScrollTo } from "./scrollTarget";
 import { useShowcaseStore } from "./showcaseStore";
 
 type Go = "site-ng" | "site-lhr" | "stay" | "invest" | "upcoming" | "story";
-type Card = { tag: string; top: string; bottom: string; image?: ImageSource; go: Go; cta: string };
+type Card = { tag: string; place: string; badge: string; top: string; bottom: string; kind: string; where: string; image?: ImageSource; go: Go; cta: string };
 
 // The web intro's showcase cards, in the same order and wording; each card's button says where it goes.
 const CARDS: Card[] = [
-  { tag: "Lahore", top: "Own the", bottom: "address", image: MEDIA.lahoreTower, go: "site-lhr", cta: "Visit Lahore" },
-  { tag: "Serene Booking", top: "Stay at", bottom: "7,906 ft", image: WEB_MEDIA.pool, go: "stay", cta: "Reserve Your Stay" },
-  { tag: "Upcoming", top: "Beyond", bottom: "the mountains", image: WEB_MEDIA.upClouds, go: "upcoming", cta: "View Upcoming Projects" },
-  { tag: "Hotels & Resorts", top: "Managed as", bottom: "one hotel", image: MEDIA.nathiaGaliNight, go: "story", cta: "Discover Our Story" },
-  { tag: "Nathia Gali", top: "A haven in", bottom: "the highlands", image: MEDIA.nathiaGaliSky, go: "site-ng", cta: "Visit Nathia Gali" },
-  { tag: "Serene Investors", top: "Own a share", bottom: "from PKR 2M", go: "invest", cta: "Explore Investments" },
+  { tag: "Lahore", place: "Serene Heights", badge: "Flagship", top: "Own the", bottom: "address", kind: "Serviced hotel apartments", where: "Gulberg, Lahore", image: MEDIA.lahoreTower, go: "site-lhr", cta: "Visit Lahore" },
+  { tag: "Nathia Gali", place: "Serene Booking", badge: "Stay", top: "Stay at", bottom: "7,906 ft", kind: "Hotel apartments", where: "Nathia Gali", image: WEB_MEDIA.pool, go: "stay", cta: "Reserve Your Stay" },
+  { tag: "Serene Farms", place: "Upcoming", badge: "Soon", top: "Beyond", bottom: "the mountains", kind: "Upcoming projects", where: "Register interest", image: MEDIA.farms, go: "upcoming", cta: "View Upcoming" },
+  { tag: "Serene", place: "Hotels & Resorts", badge: "Our story", top: "Managed as", bottom: "one hotel", kind: "In-house management", where: "DM Consortium", image: MEDIA.nathiaGaliNight, go: "story", cta: "Discover Our Story" },
+  { tag: "Nathia Gali", place: "Serene Heights", badge: "Resort", top: "A haven in", bottom: "the highlands", kind: "Winter resort", where: "Galiyat", image: MEDIA.nathiaGaliSky, go: "site-ng", cta: "Visit Nathia Gali" },
+  { tag: "Serene", place: "Investors", badge: "Invest", top: "Own a share", bottom: "from PKR 2M", kind: "Smart Property Units", where: "Nathia Gali", go: "invest", cta: "Explore Investments" },
 ];
+const HEIGHT = 224;
+const GAP = 12;
 
-/** Explore hero: a drag-around 3D card ring with the web's own cards, and one button that always matches the centred card. */
+/** Explore hero: wide photo cards that drift as they pass, and one button that always matches the card in view. */
 export function HeroShowcase() {
   const [active, setActive] = useState(0);
   const setTab = useShowcaseStore((s) => s.setTab);
@@ -47,52 +48,67 @@ export function HeroShowcase() {
     else if (go === "upcoming") toUpcoming();
     else toStory();
   };
+  const { width } = useWindowDimensions();
+  const card = Math.min(width, 560) - spacing.lg * 2;
+  const step = card + GAP;
+  const x = useRef(new Animated.Value(0)).current;
   const current = CARDS[active];
   return (
     <View style={styles.wrap}>
-      <PerspectiveCarousel3D
-        data={CARDS}
-        keyExtractor={(c) => c.tag}
-        onIndexChange={setActive}
-        renderItem={(c, _i, ctx) => (
-          <Pressable onPress={() => (ctx.active ? act(c.go) : ctx.focus())} style={[styles.card, !c.image && styles.pine]} accessibilityRole="button" accessibilityLabel={`${c.tag}. ${c.top} ${c.bottom}`}>
-            {c.image ? (
-              <>
-                <Image source={c.image} style={styles.fill} contentFit="cover" transition={300} />
-                <LinearGradient colors={gradients.heroScrim} locations={[...SCRIM_STOPS]} style={styles.fill} />
-              </>
-            ) : (
-              <>
-                <LinearGradient colors={gradients.forest} style={styles.fill} />
+      <Animated.ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={step}
+        decelerationRate="fast"
+        style={styles.bleed}
+        contentContainerStyle={styles.track}
+        scrollEventThrottle={16}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x } } }], {
+          useNativeDriver: true,
+          listener: (e: { nativeEvent: { contentOffset: { x: number } } }) => setActive(Math.max(0, Math.min(CARDS.length - 1, Math.round(e.nativeEvent.contentOffset.x / step)))),
+        })}
+      >
+        {CARDS.map((c, i) => {
+          const range = [(i - 1) * step, i * step, (i + 1) * step];
+          return (
+            <PressScale key={`${c.tag}-${c.bottom}`} onPress={() => act(c.go)} accessibilityLabel={`${c.tag}. ${c.top} ${c.bottom}`} style={[styles.card, { width: card }]}>
+              {c.image ? (
+                <Animated.View style={[styles.photo, { transform: [{ translateX: x.interpolate({ inputRange: range, outputRange: [-26, 0, 26], extrapolate: "clamp" }) }] }]}>
+                  <Image source={c.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
+                </Animated.View>
+              ) : (
                 <View style={styles.watermark}>
-                  <SereneLogoMark width={190} fill={colors.goldAccent} snow={colors.pineBrand} />
+                  <SereneLogoMark width={170} fill={groups.champagne} snow={groups.pine} />
                 </View>
-              </>
-            )}
-            <GlassPill label={c.tag} gold style={styles.tag} />
-            <View style={styles.body}>
-              <Text style={styles.top}>{c.top}</Text>
-              <Text style={styles.bottom}>{c.bottom}</Text>
-            </View>
-          </Pressable>
-        )}
-      />
-      <View style={styles.cta}>
-        <Button label={current.cta} showBadge onPress={() => act(current.go)} />
+              )}
+              <BannerFace tag={c.tag} place={c.place} badge={c.badge} title={`${c.top} ${c.bottom}`} kind={c.kind} where={c.where} />
+            </PressScale>
+          );
+        })}
+      </Animated.ScrollView>
+      <View style={styles.dots}>
+        {CARDS.map((c, i) => (
+          <View key={`${c.tag}-${c.bottom}`} style={[styles.dot, i === active && styles.dotOn]} />
+        ))}
       </View>
+      <ActionTray
+        primary={current.cta}
+        onPrimary={() => act(current.go)}
+        secondary="Inquire Now"
+        onSecondary={() => void openWhatsApp(`Hello Serene Heights, I'd like to know more about ${current.top} ${current.bottom} (${current.tag}).`)}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: { gap: spacing.md },
-  card: { height: 380, borderRadius: radius.xl, overflow: "hidden", justifyContent: "flex-end", backgroundColor: colors.stone, borderWidth: 1, borderColor: colors.line, ...shadows.cardElevated },
-  pine: { backgroundColor: colors.pineBrand, borderColor: colors.goldAccent },
-  fill: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%" },
-  watermark: { position: "absolute", right: -spacing.xl, top: spacing.xxl * 2, opacity: 0.14 },
-  tag: { position: "absolute", top: spacing.md, left: spacing.md },
-  body: { padding: spacing.lg, gap: 0 },
-  top: { color: dark.text, fontFamily: fonts.displayMedium, fontSize: 30, lineHeight: 32 },
-  bottom: { color: colors.white, fontFamily: fonts.displayBold, fontSize: 34, lineHeight: 38 },
-  cta: { alignItems: "center", paddingHorizontal: spacing.xl },
+  bleed: { marginHorizontal: -spacing.lg },
+  track: { paddingHorizontal: spacing.lg, gap: GAP },
+  card: { height: HEIGHT, borderRadius: 26, overflow: "hidden", justifyContent: "space-between", backgroundColor: groups.pine, borderWidth: 1.4, borderColor: groups.heroEdge },
+  photo: { position: "absolute", top: 0, bottom: 0, left: -28, right: -28 },
+  watermark: { position: "absolute", right: -14, top: 10, opacity: 0.2 },
+  dots: { flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 8 },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: groups.plateEdge },
+  dotOn: { width: 26, backgroundColor: groups.champagne },
 });

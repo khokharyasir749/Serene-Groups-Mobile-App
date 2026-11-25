@@ -1,6 +1,6 @@
 import { pine } from '@/features/bookings/guest/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StatusBar } from 'expo-status-bar';
+import FocusedStatusBar from '@/features/bookings/guest/components/FocusedStatusBar';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -133,7 +133,7 @@ export default function Apartments() {
 
   return (
     <View style={canvas}>
-      <StatusBar style="dark" />
+      <FocusedStatusBar style="dark" />
       <View style={{ paddingTop: insets.top + LOGO_TOP }}>
         <BrandHeader />
       </View>

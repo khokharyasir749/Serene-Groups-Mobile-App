@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { colors, font, fonts, radius } from "@/core/constants/theme";
+import { colors, font, fonts, groups, radius } from "@/core/constants/theme";
 
 type Tab<T extends string> = { id: T; label: string };
 type Props<T extends string> = { tabs: readonly Tab<T>[]; value: T; onChange: (id: T) => void };
@@ -25,9 +25,9 @@ export function SegmentedTabs<T extends string>({ tabs, value, onChange }: Props
 }
 
 const styles = StyleSheet.create({
-  track: { flexDirection: "row", backgroundColor: colors.cardUnselected, borderRadius: radius.pill, padding: 4, borderWidth: 1, borderColor: colors.line },
+  track: { flexDirection: "row", backgroundColor: groups.plate, borderRadius: radius.pill, padding: 5, borderWidth: 1, borderColor: groups.plateEdge, boxShadow: groups.plateShadow },
   seg: { flex: 1, minHeight: 40, borderRadius: radius.pill, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingHorizontal: 6 },
-  segOn: { backgroundColor: colors.pineBrand },
+  segOn: { backgroundColor: groups.pine },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.goldAccent },
   label: { color: colors.muted, fontSize: font.sm - 1, fontFamily: fonts.uiSemi },
   labelOn: { color: colors.white, fontFamily: fonts.uiBold },

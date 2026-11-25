@@ -40,7 +40,7 @@ function StaffLedger() {
   return (
     <Screen
       scroll={false}
-      title="Staff · Ledger"
+      title="Ledger"
       onBack={back}
       right={
         <PermissionGate permission={P.PAYMENTS_RECORD}>

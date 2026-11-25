@@ -2,14 +2,16 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
 import { router } from "expo-router";
 import { useGetMyPortfolioQuery } from "@/core/api/endpoints/portfolioApi";
-import { AnimatedBar } from "@/core/components/AnimatedBar";
-import { Button } from "@/core/components/Button";
 import { Card } from "@/core/components/Card";
 import { EmptyState } from "@/core/components/EmptyState";
+import { ProgressRing } from "@/core/components/ProgressRing";
 import { SectionHeader } from "@/core/components/SectionHeader";
-import { colors, dark, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { StatGrid } from "@/core/components/StatGrid";
+import { TileRail } from "@/core/components/TileRail";
+import { colors, dark, font, fonts, groups, letter, spacing } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";
-import { formatPKR } from "@/core/lib/formatPKR";
+import { formatPKR, formatPKRCompact } from "@/core/lib/formatPKR";
+import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { parseError } from "@/core/lib/errorParser";
 import { BookingCard } from "@/features/bookings/components/BookingCard";
 import { PaymentRow } from "@/features/payments/components/PaymentRow";
@@ -20,25 +22,35 @@ export function PortfolioView() {
   if (error) return <EmptyState icon="cloud-offline-outline" title="Couldn't load your portfolio" message={parseError(error)} actionLabel="Retry" onAction={refetch} />;
   if (isLoading || !data) return <EmptyState title="Loading your portfolio…" />;
   const t = data.totals;
+  const paid = t.invested ? Math.min(1, t.paid / t.invested) : 0;
 
   return (
     <View style={styles.stack}>
       <SectionHeader eyebrow="Serene Investors" title="Your" soft="portfolio." />
+      <TileRail
+        tiles={[
+          { label: "Calculator", icon: "calculator", go: () => router.push("/calculator") },
+          { label: "Reserve", icon: "bed", go: () => router.navigate("/bookings") },
+          { label: "Advisor", icon: "whatsapp", go: () => void openWhatsApp("Hello Serene Heights, I have a question about my investment.") },
+        ]}
+      />
       <Card variant="emerald" style={styles.card}>
-        <Text style={styles.eyebrow}>TOTAL INVESTED</Text>
-        <Text style={styles.big} numberOfLines={1} adjustsFontSizeToFit>
-          {formatPKR(t.invested)}
-        </Text>
-        <AnimatedBar onDark height={8} value={t.invested ? t.paid / t.invested : 0} />
-        <View style={styles.row}>
-          <Stat label="Paid" value={formatPKR(t.paid)} />
-          <Stat label="Outstanding" value={formatPKR(t.outstanding)} />
+        <View style={styles.top}>
+          <ProgressRing size={112} stroke={11} segments={[{ fraction: paid, color: groups.champagne }, { fraction: 1 - paid, color: colors.white16 }]}>
+            <Text style={styles.pct}>{`${Math.round(paid * 100)}%`}</Text>
+            <Text style={styles.pctLabel}>PAID</Text>
+          </ProgressRing>
+          <View style={styles.fill}>
+            <Text style={styles.eyebrow}>TOTAL INVESTED</Text>
+            <Text style={styles.big} numberOfLines={1} adjustsFontSizeToFit>
+              {formatPKRCompact(t.invested)}
+            </Text>
+            <Text style={styles.muted}>{t.nextDue ? `Next ${formatPKR(t.nextDue.amount)}\n${formatDate(t.nextDue.dueDate)}` : "All instalments cleared"}</Text>
+          </View>
         </View>
-        <Text style={styles.muted}>
-          {t.overdueCount > 0 ? `${t.overdueCount} instalment${t.overdueCount > 1 ? "s" : ""} overdue · ` : ""}
-          {t.nextDue ? `Next: ${formatPKR(t.nextDue.amount)} on ${formatDate(t.nextDue.dueDate)}` : "All instalments cleared"}
-        </Text>
+        {t.overdueCount > 0 ? <Text style={styles.alert}>{`${t.overdueCount} instalment${t.overdueCount > 1 ? "s" : ""} overdue`}</Text> : null}
       </Card>
+      <StatGrid short stats={[{ value: formatPKRCompact(t.paid), label: "Paid" }, { value: formatPKRCompact(t.outstanding), label: "Outstanding" }]} />
 
       <SectionHeader eyebrow="Holdings" title="Your" soft="units." />
       {data.holdings.length === 0 ? <EmptyState title="No holdings yet" /> : null}
@@ -50,30 +62,19 @@ export function PortfolioView() {
       {data.payments.map((p) => (
         <PaymentRow key={p.id} payment={p} onPress={() => router.push({ pathname: "/booking/[id]", params: { id: p.bookingId } })} />
       ))}
-      <Button variant="secondary" label="Plan calculator" onPress={() => router.push("/calculator")} />
-    </View>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.stat}>
-      <Text style={styles.statLabel}>{label.toUpperCase()}</Text>
-      <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
-        {value}
-      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  stack: { gap: spacing.xl },
-  card: { padding: spacing.xl, gap: spacing.md, borderWidth: 1, borderColor: colors.lineNight, ...shadows.cardElevated },
-  eyebrow: { color: dark.muted, fontSize: font.xs, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
-  big: { color: dark.text, fontFamily: fonts.display, fontSize: 44, lineHeight: 46, letterSpacing: letter.tight },
-  row: { flexDirection: "row", gap: spacing.lg },
-  stat: { flex: 1, gap: 2 },
-  statLabel: { color: dark.dim, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: 1 },
-  statValue: { color: colors.snow, fontSize: font.lg, fontFamily: fonts.uiBold },
-  muted: { color: dark.muted, fontSize: font.sm },
+  stack: { gap: spacing.lg },
+  fill: { flex: 1, gap: 2 },
+  card: { padding: spacing.lg, gap: spacing.md },
+  top: { flexDirection: "row", alignItems: "center", gap: spacing.lg },
+  pct: { color: colors.white, fontFamily: fonts.displayBold, fontSize: 28, lineHeight: 32 },
+  pctLabel: { color: dark.muted, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: 1.4 },
+  eyebrow: { color: groups.champagne, fontSize: font.xs, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
+  big: { color: dark.text, fontFamily: fonts.display, fontSize: 38, lineHeight: 46 },
+  muted: { color: dark.muted, fontSize: font.sm, lineHeight: 19 },
+  alert: { color: groups.alert, fontSize: font.sm, fontFamily: fonts.uiSemi },
 });

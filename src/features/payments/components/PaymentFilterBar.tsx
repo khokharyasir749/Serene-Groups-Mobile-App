@@ -4,12 +4,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { FilterChip } from "@/core/components/FilterChip";
 import { Input } from "@/core/components/Input";
 import { PROJECTS } from "@/core/constants/serene";
-import { colors, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import type { PaymentFilterState } from "../hooks/usePaymentFilters";
 import { PAYMENT_METHODS, PAYMENT_METHOD_LABEL } from "../schemas/payment.schema";
 
 // Recessed search field: tinted canvas, hairline border, no shadow.
-const flatField = { backgroundColor: colors.paper, borderColor: colors.line, shadowOpacity: 0, elevation: 0, minHeight: 56 } as const;
+const flatField = { backgroundColor: colors.paper, borderColor: groups.plateEdge, shadowOpacity: 0, elevation: 0, minHeight: 56 } as const;
 
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -72,7 +72,7 @@ export function PaymentFilterBar({ f }: { f: PaymentFilterState }) {
 }
 
 const styles = StyleSheet.create({
-  panel: { backgroundColor: colors.white, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.line, borderTopWidth: 2, borderTopColor: colors.goldAccent, padding: spacing.md + 2, gap: spacing.md, ...shadows.card },
+  panel: { backgroundColor: groups.plate, borderRadius: 24, borderWidth: 1.2, borderColor: groups.plateEdge, padding: spacing.md + 2, gap: spacing.md, ...shadows.card },
   head: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 22 },
   titleRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   title: { color: colors.pineBrand, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },

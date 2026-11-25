@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form";
 import { Ionicons } from "@expo/vector-icons";
 import { Button } from "@/core/components/Button";
 import { Input } from "@/core/components/Input";
-import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import { formatPKR } from "@/core/lib/formatPKR";
 import { useRecordPaymentForm } from "../hooks/useRecordPaymentForm";
 import { PAYMENT_METHODS, PAYMENT_METHOD_LABEL } from "../schemas/payment.schema";
@@ -159,30 +159,30 @@ const styles = StyleSheet.create({
   eyebrow: { color: colors.goldText, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
   lede: { color: colors.ink2, fontSize: font.sm + 1, lineHeight: 21 },
   step: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginTop: spacing.md },
-  stepNo: { width: 24, height: 24, borderRadius: 12, backgroundColor: colors.pineBrand, alignItems: "center", justifyContent: "center" },
+  stepNo: { width: 24, height: 24, borderRadius: 12, backgroundColor: groups.pine, alignItems: "center", justifyContent: "center" },
   stepTitle: { color: colors.pineBrand, fontSize: 11, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
   stepRule: { flex: 1, height: 1, backgroundColor: colors.line },
-  card: { backgroundColor: colors.white, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.line, padding: spacing.md + 2, gap: spacing.md, ...shadows.card },
+  card: { backgroundColor: groups.plate, borderRadius: radius.lg, borderWidth: 1, borderColor: groups.plateEdge, padding: spacing.md + 2, gap: spacing.md, ...shadows.card },
   pressed: { opacity: 0.92, transform: [{ scale: 0.99 }] },
   client: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  mono: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.pineBrand, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
+  mono: { width: 42, height: 42, borderRadius: 21, backgroundColor: groups.pine, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
   monoText: { color: colors.white, fontSize: font.sm, fontFamily: fonts.uiBold },
   name: { color: colors.ink, fontSize: font.md + 1, fontFamily: fonts.uiBold },
   muted: { color: colors.muted, fontSize: font.sm },
   actions: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   gold: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: colors.goldSoft, borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill, paddingHorizontal: 12, height: 34 },
   goldText: { color: colors.pineBrand, fontSize: font.xs + 1, fontFamily: fonts.uiBold },
-  ghost: { height: 34, flexDirection: "row", gap: 6, paddingHorizontal: 14, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.lineStrong, backgroundColor: colors.white, alignItems: "center", justifyContent: "center" },
+  ghost: { height: 34, flexDirection: "row", gap: 6, paddingHorizontal: 14, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.lineStrong, backgroundColor: groups.plate, alignItems: "center", justifyContent: "center" },
   ghostText: { color: colors.ink, fontSize: font.xs + 1, fontFamily: fonts.uiSemi },
   quick: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
   remaining: { flex: 1, textAlign: "right", color: colors.ink2, fontSize: font.xs + 1, fontFamily: fonts.uiMedium },
   over: { color: colors.danger },
   methods: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
-  method: { width: "48.5%", flexDirection: "row", alignItems: "center", gap: spacing.sm, height: 54, paddingHorizontal: spacing.md, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.white, ...shadows.card },
-  methodOn: { backgroundColor: colors.pineBrand, borderColor: colors.pineBrand },
+  method: { width: "48.5%", flexDirection: "row", alignItems: "center", gap: spacing.sm, height: 54, paddingHorizontal: spacing.md, borderRadius: radius.lg, borderWidth: 1, borderColor: groups.plateEdge, backgroundColor: groups.plate, ...shadows.card },
+  methodOn: { backgroundColor: groups.pine, borderColor: colors.pineBrand },
   methodText: { flex: 1, color: colors.ink, fontSize: font.sm + 1, fontFamily: fonts.uiSemi },
   methodTextOn: { color: colors.white },
-  summary: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.pineBrand, borderRadius: radius.lg, padding: spacing.md + 4, marginTop: spacing.sm, borderWidth: 1, borderColor: colors.goldAccent },
+  summary: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: groups.pine, borderRadius: radius.lg, padding: spacing.md + 4, marginTop: spacing.sm, borderWidth: 1, borderColor: colors.goldAccent },
   summaryLabel: { color: colors.goldAccent, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
   summaryValue: { color: colors.white, fontFamily: fonts.display, fontSize: 30, lineHeight: 34 },
   summaryMethod: { color: colors.goldAccent, fontSize: font.xs + 1, fontFamily: fonts.uiBold, borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 4 },

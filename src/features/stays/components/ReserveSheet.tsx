@@ -7,7 +7,7 @@ import { Button } from "@/core/components/Button";
 import { Input } from "@/core/components/Input";
 import { Ionicons } from "@expo/vector-icons";
 import { ROOMS } from "@/core/constants/serene";
-import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";
 import { parseError } from "@/core/lib/errorParser";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
@@ -170,20 +170,20 @@ export function ReserveSheet() {
 }
 
 const styles = StyleSheet.create({
-  sheet: { flex: 1, backgroundColor: colors.paper },
+  sheet: { flex: 1, backgroundColor: groups.base },
   topRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.lg, paddingBottom: spacing.sm },
   topSpacer: { width: 40 },
-  closeBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, alignItems: "center", justifyContent: "center", ...shadows.card },
+  closeBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, alignItems: "center", justifyContent: "center", ...shadows.card },
   stepBar: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, marginVertical: spacing.xs },
-  stepDot: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, alignItems: "center", justifyContent: "center" },
-  stepDotActive: { backgroundColor: colors.pineBrand, borderColor: colors.pineBrand },
+  stepDot: { width: 22, height: 22, borderRadius: 11, backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, alignItems: "center", justifyContent: "center" },
+  stepDotActive: { backgroundColor: groups.pine, borderColor: colors.pineBrand },
   stepNum: { color: colors.muted, fontSize: 10, fontFamily: fonts.uiBold },
   stepNumActive: { color: colors.snow },
   stepLine: { width: 32, height: 1, backgroundColor: colors.line },
-  stepLineActive: { backgroundColor: colors.pineBrand },
+  stepLineActive: { backgroundColor: groups.pine },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl * 2 },
   box: { gap: spacing.md },
-  passCard: { gap: spacing.md, backgroundColor: colors.card, borderColor: colors.line, borderWidth: 1, borderRadius: radius.xl, padding: spacing.xl, ...shadows.cardElevated },
+  passCard: { gap: spacing.md, backgroundColor: groups.plate, borderColor: groups.plateEdge, borderWidth: 1, borderRadius: radius.xl, padding: spacing.xl, ...shadows.cardElevated },
   passHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   statusPill: { backgroundColor: colors.warningSoft, borderWidth: 1, borderColor: colors.warning, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 3 },
   statusText: { color: colors.warning, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: 0.8 },
@@ -195,18 +195,18 @@ const styles = StyleSheet.create({
   p: { color: colors.ink2, fontSize: font.md, lineHeight: 22 },
   label: { color: colors.muted, fontSize: font.xs, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
   rooms: { gap: spacing.sm },
-  roomCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.md + 2, ...shadows.card },
+  roomCard: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.md + 2, ...shadows.card },
   roomOn: { borderColor: colors.pineBrand, borderWidth: 1.5 },
   roomIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.cardUnselected, alignItems: "center", justifyContent: "center" },
-  roomIconOn: { backgroundColor: colors.pineBrand },
+  roomIconOn: { backgroundColor: groups.pine },
   roomName: { color: colors.ink, fontSize: font.md, fontFamily: fonts.uiBold },
   roomCue: { color: colors.muted, fontSize: font.xs + 1, marginTop: 1 },
   check: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: colors.lineStrong, alignItems: "center", justifyContent: "center" },
-  checkOn: { backgroundColor: colors.pineBrand, borderColor: colors.pineBrand },
+  checkOn: { backgroundColor: groups.pine, borderColor: colors.pineBrand },
   pressed: { opacity: 0.92, transform: [{ scale: 0.98 }] },
   guests: { flexDirection: "row", gap: spacing.sm },
-  guest: { flex: 1, alignItems: "center", paddingVertical: spacing.md, backgroundColor: colors.cardUnselected, borderWidth: 1, borderColor: colors.line, borderRadius: radius.lg },
-  guestOn: { backgroundColor: colors.white, borderColor: colors.pineBrand, borderWidth: 1.5, ...shadows.card },
+  guest: { flex: 1, alignItems: "center", paddingVertical: spacing.md, backgroundColor: colors.cardUnselected, borderWidth: 1, borderColor: groups.plateEdge, borderRadius: radius.lg },
+  guestOn: { backgroundColor: groups.plate, borderColor: colors.pineBrand, borderWidth: 1.5, ...shadows.card },
   guestNum: { color: colors.muted, fontFamily: fonts.display, fontSize: 26, lineHeight: 28 },
   guestNumOn: { color: colors.ink },
   guestLabel: { color: colors.muted, fontSize: 10, fontFamily: fonts.uiSemi, letterSpacing: 0.6, textTransform: "uppercase" },

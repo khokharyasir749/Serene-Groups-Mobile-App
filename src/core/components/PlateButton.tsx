@@ -1,0 +1,21 @@
+import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, View } from "react-native";
+import { groups } from "@/core/constants/theme";
+import { PressScale } from "./PressScale";
+
+type Props = { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void; size?: number; dot?: boolean };
+
+/** Rounded-square ivory button used in every Groups header. */
+export function PlateButton({ icon, label, onPress, size = 46, dot }: Props) {
+  return (
+    <PressScale onPress={onPress} accessibilityLabel={label} hitSlop={6} style={[styles.plate, { width: size, height: size, borderRadius: size * 0.32 }]}>
+      <Ionicons name={icon} size={22} color={groups.goldInk} />
+      {dot ? <View style={styles.dot} /> : null}
+    </PressScale>
+  );
+}
+
+const styles = StyleSheet.create({
+  plate: { backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, alignItems: "center", justifyContent: "center", boxShadow: groups.plateShadow },
+  dot: { position: "absolute", top: 8, right: 8, width: 8, height: 8, borderRadius: 4, backgroundColor: groups.champagne },
+});

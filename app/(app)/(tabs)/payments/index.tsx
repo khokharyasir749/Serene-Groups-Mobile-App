@@ -1,18 +1,17 @@
 import { useRef } from "react";
-import { StyleSheet, View, type ScrollViewInstance } from "react-native";
-import { router } from "expo-router";
+import type { ScrollViewInstance } from "react-native";
 import { useGetPaymentSummaryQuery } from "@/core/api/endpoints/paymentsApi";
-import { Button } from "@/core/components/Button";
-import { AccountButton } from "@/core/components/AccountButton";
-import { GroupsMenu } from "@/core/components/GroupsMenu";
 import { Screen } from "@/core/components/Screen";
+import { SectionHeader } from "@/core/components/SectionHeader";
 import { P } from "@/core/constants/api";
-import { spacing } from "@/core/constants/theme";
 import { usePermissions } from "@/core/hooks/usePermissions";
 import { useAuthStore } from "@/core/stores/authStore";
 import { InvestorGate } from "@/features/portfolio/components/InvestorGate";
 import { PortfolioView } from "@/features/portfolio/components/PortfolioView";
 import { WealthCalculator } from "@/features/payments/components/WealthCalculator";
+import { InvestorReasons } from "@/features/payments/components/InvestorReasons";
+import { StaffTiles } from "@/features/payments/components/StaffTiles";
+import { Anchor, ScrollTargets } from "@/features/home/components/scrollTarget";
 import { LedgerSummary } from "@/features/payments/components/LedgerSummary";
 
 // Serene Investors: sign-in is required up front. Investors see their own portfolio; staff get the ledger console.
@@ -22,33 +21,35 @@ export default function InvestorsScreen() {
   const staff = has(P.PAYMENTS_READ);
   const investor = has(P.PORTFOLIO_READ);
   const scrollRef = useRef<ScrollViewInstance>(null);
-  const calcY = useRef(0);
   const { data: summary } = useGetPaymentSummaryQuery(undefined, { skip: !staff });
 
+  const body =
+    !authed || (!staff && !investor) ? (
+      <InvestorGate signedInAsOther={authed} />
+    ) : staff ? (
+      <>
+        <SectionHeader eyebrow="Serene Investors" title="The ledger," soft="at a glance." />
+        <StaffTiles />
+        <LedgerSummary summary={summary} />
+      </>
+    ) : (
+      <PortfolioView />
+    );
   return (
-    <Screen scrollRef={scrollRef} title="Serene Investors" right={<><AccountButton compact /><GroupsMenu /></>}>
-      {!authed || (!staff && !investor) ? (
-        <InvestorGate signedInAsOther={authed} />
-      ) : staff ? (
-        <View style={{ gap: spacing.lg }}>
-          <LedgerSummary summary={summary} />
-          <View style={styles.actions}>
-            <View style={styles.flex}>
-              <Button compact height={52} showBadge={false} icon="receipt-outline" label="Staff Ledger" onPress={() => router.push("/staff/ledger")} />
-            </View>
-            <View style={styles.flex}>
-              <Button compact height={52} variant="secondary" icon="calculator-outline" label="Plan Calculator" onPress={() => scrollRef.current?.scrollTo({ y: calcY.current + spacing.lg - 8, animated: true })} />
-            </View>
-          </View>
-          <View onLayout={(e) => (calcY.current = e.nativeEvent.layout.y)}>
+    <ScrollTargets scrollRef={scrollRef}>
+      <Screen brand scrollRef={scrollRef}>
+        {body}
+        {staff ? (
+          <Anchor id="calculator">
             <WealthCalculator />
-          </View>
-        </View>
-      ) : (
-        <PortfolioView />
-      )}
-    </Screen>
+          </Anchor>
+        ) : null}
+        {!authed || (!staff && !investor) ? (
+          <Anchor id="reasons">
+            <InvestorReasons />
+          </Anchor>
+        ) : null}
+      </Screen>
+    </ScrollTargets>
   );
 }
-
-const styles = StyleSheet.create({ actions: { flexDirection: "row", gap: spacing.sm }, flex: { flex: 1 } });

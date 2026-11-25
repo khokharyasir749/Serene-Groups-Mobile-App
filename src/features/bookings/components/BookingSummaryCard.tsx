@@ -5,7 +5,7 @@ import { HeroImage } from "@/core/components/HeroImage";
 import { Pill } from "@/core/components/Pill";
 import { unitImage } from "@/core/constants/media";
 import { projectName } from "@/core/constants/serene";
-import { colors, dark, font, letter, radius, spacing } from "@/core/constants/theme";
+import { colors, dark, font, letter, radius, spacing, groups } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";
 import { formatPKR } from "@/core/lib/formatPKR";
 import type { Booking } from "../types";
@@ -85,14 +85,14 @@ export function BookingSummaryCard({ booking: b }: { booking: Booking }) {
 const NOTCH = 22;
 
 const styles = StyleSheet.create({
-  pass: { backgroundColor: colors.night, borderRadius: radius.xl, overflow: "hidden", borderWidth: 1, borderColor: colors.goldLine },
+  pass: { backgroundColor: groups.pine, borderRadius: 26, overflow: "hidden", borderWidth: 1, borderColor: colors.goldLine },
   head: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  ref: { color: colors.gold, fontSize: font.sm, fontWeight: "800", letterSpacing: letter.eyebrow },
+  ref: { color: colors.white, fontSize: 11, fontWeight: "800", letterSpacing: 1, backgroundColor: groups.badge, paddingHorizontal: 11, paddingVertical: 5, borderRadius: 999, overflow: "hidden" },
   name: { color: dark.text, fontSize: font.xxl, fontWeight: "500", letterSpacing: letter.display },
   sub: { color: colors.sage, fontSize: font.sm },
   tear: { height: NOTCH, justifyContent: "center" },
   dash: { borderTopWidth: 1, borderStyle: "dashed", borderColor: colors.goldLine, marginHorizontal: NOTCH },
-  notch: { position: "absolute", top: 0, width: NOTCH, height: NOTCH, borderRadius: NOTCH / 2, backgroundColor: colors.paper },
+  notch: { position: "absolute", top: 0, width: NOTCH, height: NOTCH, borderRadius: NOTCH / 2, backgroundColor: groups.base },
   notchL: { left: -NOTCH / 2 },
   notchR: { right: -NOTCH / 2 },
   body: { padding: spacing.xl - 4, paddingTop: spacing.md, gap: spacing.md },

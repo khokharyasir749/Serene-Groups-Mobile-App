@@ -11,7 +11,7 @@ export const MEDIA = {
   nathiaGaliNight: require("../../../assets/media/ng-night.webp") as ImageSource,
   lahore: require("../../../assets/media/lhr-hero.jpg") as ImageSource,
   lahoreTower: require("../../../assets/media/lhr-tower.jpg") as ImageSource,
-  farms: require("../../../assets/media/farms.webp") as ImageSource,
+  farms: require("../../../assets/media/serene-farms.jpg") as ImageSource,
 };
 
 export const WEB_MEDIA = {

@@ -7,7 +7,7 @@ import { SectionHeader } from "@/core/components/SectionHeader";
 import { SegmentedBar } from "@/core/components/SegmentedBar";
 import { P } from "@/core/constants/api";
 import { ROOMS } from "@/core/constants/serene";
-import { colors, font, fonts, letter, radius, roomColorsLight, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, roomColorsLight, shadows, spacing, groups } from "@/core/constants/theme";
 import { formatPKRCompact } from "@/core/lib/formatPKR";
 import type { BookingStats } from "@/features/bookings/types";
 import type { PaymentSummary } from "@/features/payments/types";
@@ -93,10 +93,10 @@ const styles = StyleSheet.create({
   wrap: { gap: spacing.md },
   bento: { gap: spacing.sm },
   pair: { flexDirection: "row", gap: spacing.sm },
-  kpi: { flex: 1, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: radius.lg, padding: spacing.md + 2, gap: 4, ...shadows.card },
+  kpi: { flex: 1, backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, borderRadius: radius.lg, padding: spacing.md + 2, gap: 4, ...shadows.card },
   kpiHero: { ...shadows.cardElevated, padding: spacing.lg },
   kpiCompact: { padding: spacing.md },
-  kpiDanger: { backgroundColor: colors.white, borderColor: colors.danger, borderWidth: 1.5, elevation: 0, shadowOpacity: 0 },
+  kpiDanger: { backgroundColor: groups.plate, borderColor: colors.danger, borderWidth: 1.5, elevation: 0, shadowOpacity: 0 },
   kpiHead: { flexDirection: "row", alignItems: "center", gap: 6 },
   goldDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.goldAccent },
   kpiLabel: { color: colors.muted, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   kpiValueHero: { fontSize: 28, lineHeight: 32 },
   kpiValueCompact: { fontSize: 20, lineHeight: 24 },
   kpiValueDanger: { color: colors.danger },
-  inv: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.md, ...shadows.card },
+  inv: { backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.md, ...shadows.card },
   invHead: { flexDirection: "row", alignItems: "baseline", gap: spacing.md },
   invTitle: { color: colors.ink, fontFamily: fonts.display, fontSize: 30, lineHeight: 34 },
   invSub: { flex: 1, color: colors.muted, fontSize: font.sm },

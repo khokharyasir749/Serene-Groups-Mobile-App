@@ -1,19 +1,23 @@
 import { HEX } from '@/features/bookings/guest/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import ClearGlass from '@/features/bookings/guest/components/ClearGlass';
+import { LinearGradient } from 'expo-linear-gradient';
 import { usePathname, useRouter as useRawRouter } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ComponentProps } from 'react';
-import { AccessibilityInfo, Animated, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { AccessibilityInfo, Animated, Platform, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { GestureDetector, usePanGesture } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Defs, Path, Stop, LinearGradient as SvgGradient } from 'react-native-svg';
 
 import { scrollActiveToTop, useScrollTopVisible } from '@/features/bookings/guest/components/ScrollTop';
+import { Text } from '@/features/bookings/guest/components/Text';
 import { BASE, useRouter } from '@/features/bookings/guest/lib/nav';
-import { C, S, shadow } from '@/features/bookings/guest/theme';
+import { tabOf, useBooking } from '@/features/bookings/guest/state/booking';
+import { FONTS, S } from '@/features/bookings/guest/theme';
 
-// Liquid-notch dock: four equal slots in one clear glass pill. The active icon rises into a clear glass ball that sits in
-// a smooth notch in the bar's top edge. The notch is one static SVG strip, two bars wide, that
-// slides inside the clipped pill, so nothing is redrawn while it moves: only transform and opacity, on the native driver.
+// Liquid-lens dock: a smoked capsule of icons and labels. The active tab sits in a soft pill; touch or drag the bar and the
+// pill lifts into a clear lens, larger than the bar, under which icons fill in and grow. Let go and it settles.
+//
+// Built to never stutter: the finger drives `drag` through a native Animated.event, so no JavaScript runs while dragging, and
+// everything else is a native spring. Only transforms and opacity move; nothing is clipped, masked or laid out.
 
 type Glyph = ComponentProps<typeof Ionicons>['name'];
 type Item = { name: string; path: string; label: string; icon: Glyph; filled: Glyph };
@@ -23,30 +27,25 @@ const ITEMS: Item[] = [
   { name: 'trips', path: `${BASE}/trips`, label: 'Trips', icon: 'calendar-outline', filled: 'calendar' },
   { name: 'menu', path: `${BASE}/menu`, label: 'Menu', icon: 'menu-outline', filled: 'menu' },
 ];
-const MENU = ITEMS.length - 1;
+const N = ITEMS.length;
+const MENU = N - 1;
+const TRIPS = 2;
+const NATIVE = Platform.OS !== 'web';
 
-const PINE = HEX.deepPine; // a deeper Pine than the brand's, to read through clear glass
+// Dock tint: 'black' or 'pine'.
+const LOOK: 'black' | 'pine' = 'black';
+const TINT = {
+  black: { bar: ['rgba(46, 47, 49, 0.88)', 'rgba(22, 23, 24, 0.94)'] as const, lens: 'rgba(12, 12, 13, 0.55)', ball: 'rgba(20, 21, 22, 0.9)' },
+  pine: { bar: ['rgba(24, 50, 38, 0.82)', 'rgba(11, 31, 21, 0.92)'] as const, lens: 'rgba(11, 31, 21, 0.55)', ball: 'rgba(11, 31, 21, 0.82)' },
+}[LOOK];
 
 const H = S.tabBar;
 const SIDE = 20;
-const ICON = 22;
-const ICON_Y = 30; // resting icon centre
-const RISE = -16;
-const BADGE = 44;
-const BADGE_Y = ICON_Y + RISE; // badge centre
-const RIM = [3, 5, 7, 9, 11, 13, 15]; // soft light along the inside of the glass edge
-const LINE = 1.25;
-const GLOW = 18; // margin for the painted shadow
-const SPRING = { damping: 21, stiffness: 250, mass: 0.8 };
-
-const E = 0.75; // the outline runs this far inside the bar's box, so its full width shows
-const HALF = 40; // half the notch's width, shoulder to shoulder
-const R = H / 2; // the capsule ends; the top edge is straight between R and barW - R
-const END = R + HALF + 1; // centre of the first and last slot: the whole notch stays on the straight part
-
-/** The bar's top edge with its notch centred on `c`: a soft shoulder, an arc 4.5 px outside the badge, a soft shoulder. */
-const topEdge = (c: number, width: number) =>
-  `M0 ${E}H${c - HALF}C${c - 32.5} ${E} ${c - 28} 7.3 ${c - 26.1} 18.1A26.5 26.5 0 0 0 ${c + 26.1} 18.1C${c + 28} 7.3 ${c + 32.5} ${E} ${c + HALF} ${E}H${width}`;
+const PAD = 5;
+const LENS_H = H - PAD * 2;
+const OVER = 7; // how far past the first and last tab it may be pulled
+const LIFT = { damping: 18, stiffness: 300, mass: 0.6, useNativeDriver: NATIVE };
+const SETTLE = { damping: 20, stiffness: 240, mass: 0.75, useNativeDriver: NATIVE };
 
 // ── Active tab, synced from the navigator ────────────────────────────────
 let activeName = 'index';
@@ -73,76 +72,38 @@ export function DockBridge({ state }: { state: { index: number; routes: readonly
   return null;
 }
 
-/**
- * The glass. Its outline is one line in two parts that meet on the straight top edge: the capsule ends and bottom never
- * move, and the top edge with the notch slides between them. Both parts are static drawings; only translateX changes.
- */
-const Glass = memo(function Glass({ barW, x }: { barW: number; x: Animated.AnimatedInterpolation<number> }) {
-  const stripW = barW * 2;
-  const c = stripW / 2;
-  const edge = topEdge(c, stripW);
-  const r = R - E;
-  const ends = `M${R} ${E}A${r} ${r} 0 0 0 ${R} ${H - E}H${barW - R}A${r} ${r} 0 0 0 ${barW - R} ${E}`;
-  const slideFill = { transform: [{ translateX: Animated.subtract(x, c) }] };
-  const slideLine = { transform: [{ translateX: Animated.subtract(x, c + R) }] };
-  return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-      {/* Soft static shadow along the sides and bottom only, so the notch itself stays clear. */}
-      <Svg width={barW + GLOW * 2} height={H + GLOW * 2} style={styles.glow}>
-        {[2, 5, 8, 11].map((w) => (
-          <Path key={w} d={ends} transform={`translate(${GLOW} ${GLOW + 3})`} fill="none" stroke={HEX.shade} strokeOpacity={0.013} strokeWidth={w} />
-        ))}
-      </Svg>
-      <View style={styles.clip}>
-        <Animated.View renderToHardwareTextureAndroid style={[styles.strip, { width: stripW }, slideFill]}>
-          <Svg width={stripW} height={H}>
-            <Defs>
-              {/* Clear glass: almost no body, a little light at the top and bottom. */}
-              <SvgGradient id="dock-glass" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor={HEX.white} stopOpacity={0.24} />
-                <Stop offset="0.45" stopColor={HEX.white} stopOpacity={0.07} />
-                <Stop offset="1" stopColor={HEX.white} stopOpacity={0.16} />
-              </SvgGradient>
-            </Defs>
-            <Path d={`${edge}V${H}H0Z`} fill="url(#dock-glass)" />
-          </Svg>
-        </Animated.View>
-        <Svg width={barW} height={H} style={StyleSheet.absoluteFill}>
-          {RIM.map((w) => (
-            <Path key={w} d={ends} fill="none" stroke={HEX.white} strokeOpacity={0.045} strokeWidth={w} />
-          ))}
-        </Svg>
-      </View>
-      <Svg width={barW} height={H} style={StyleSheet.absoluteFill}>
-        <Path d={ends} fill="none" stroke={HEX.white} strokeWidth={LINE} />
-      </Svg>
-      <View style={[styles.topClip, { width: barW - R * 2 }]}>
-        <Animated.View renderToHardwareTextureAndroid style={[styles.strip, { width: stripW }, slideLine]}>
-          <Svg width={stripW} height={H}>
-            {RIM.map((w) => (
-              <Path key={w} d={edge} fill="none" stroke={HEX.white} strokeOpacity={0.045} strokeWidth={w} />
-            ))}
-            <Path d={edge} fill="none" stroke={HEX.white} strokeWidth={LINE} />
-          </Svg>
-        </Animated.View>
-      </View>
-    </View>
-  );
-});
+type Node = Animated.AnimatedInterpolation<number>;
 
-const Slot = memo(function Slot({ i, g, left }: { i: number; g: Animated.Value; left: number }) {
-  const t = ITEMS[i];
-  const lift = { transform: [{ translateY: g.interpolate({ inputRange: [0, 1], outputRange: [0, RISE] }) }] };
-  const outline = { opacity: g.interpolate({ inputRange: [0, 0.625], outputRange: [1, 0], extrapolate: 'clamp' }) };
-  // The badge glides empty; the icon appears as it lands.
-  const filled = { opacity: g.interpolate({ inputRange: [0.55, 0.95], outputRange: [0, 1], extrapolate: 'clamp' }) };
+/** One tab. `near` is 1 under the lens and 0 a tab away: the outline gives way to the filled icon, which grows as the lens lifts. */
+const Tab = memo(function Tab({ item, near, lift, cell, count }: { item: Item; near: Node; lift: Animated.Value; cell: number; count: number }) {
+  const s = useMemo(() => {
+    const raised = Animated.multiply(near, lift);
+    return {
+      tab: { transform: [{ scale: raised.interpolate({ inputRange: [0, 1], outputRange: [1, 1.17] }) }] },
+      outline: { opacity: near.interpolate({ inputRange: [0.15, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }) },
+      filled: { opacity: near.interpolate({ inputRange: [0.15, 0.6], outputRange: [0, 1], extrapolate: 'clamp' }) },
+      label: { opacity: near.interpolate({ inputRange: [0, 1], outputRange: [0.74, 1], extrapolate: 'clamp' }) },
+    };
+  }, [near, lift]);
   return (
-    <Animated.View pointerEvents="none" style={[styles.icon, { left }, lift]}>
-      <Animated.View style={[StyleSheet.absoluteFill, outline]}>
-        <Ionicons name={t.icon} size={ICON} color={PINE} style={styles.halo} />
-      </Animated.View>
-      <Animated.View style={[StyleSheet.absoluteFill, filled]}>
-        <Ionicons name={t.filled} size={ICON} color={PINE} style={styles.halo} />
+    <Animated.View style={[styles.cell, { width: cell }, s.tab]}>
+      <View style={styles.glyph}>
+        <Animated.View style={[styles.layer, s.outline]}>
+          <Ionicons name={item.icon} size={23} color={HEX.snow} />
+        </Animated.View>
+        <Animated.View style={[styles.layer, s.filled]}>
+          <Ionicons name={item.filled} size={23} color={HEX.goldPale} />
+        </Animated.View>
+        {count > 0 ? (
+          <View style={styles.count}>
+            <Text style={styles.countText}>{String(count)}</Text>
+          </View>
+        ) : null}
+      </View>
+      <Animated.View style={s.label}>
+        <Text numberOfLines={1} maxFontSizeMultiplier={1.1} style={styles.label}>
+          {item.label}
+        </Text>
       </Animated.View>
     </Animated.View>
   );
@@ -161,90 +122,167 @@ export function FloatingDock() {
   const menuOpen = usePathname() === `${BASE}/menu`;
   const index = menuOpen ? MENU : Math.max(0, ITEMS.findIndex((t) => t.name === active));
   const showTop = useScrollTopVisible();
+  const trips = useBooking((s) => s.bookings.filter((b) => tabOf(b) === 'upcoming').length);
 
   const barW = Math.round(Math.min(screenW - SIDE * 2, 440));
-  const step = (barW - END * 2) / (ITEMS.length - 1);
+  const cell = (barW - PAD * 2) / N;
+  const centre = useCallback((i: number) => PAD + cell * (i + 0.5), [cell]);
 
-  const grow = useRef(ITEMS.map((_, i) => new Animated.Value(i === index ? 1 : 0))).current;
-  const x = useRef(new Animated.Value(END + step * index)).current; // centre of the active slot
-  // The spring may overshoot; at the end slots it must not carry the notch into the rounded ends.
-  const pos = useMemo(() => x.interpolate({ inputRange: [END, barW - END], outputRange: [END, barW - END], extrapolate: 'clamp' }), [barW, x]);
-  const follow = { transform: [{ translateX: pos }] };
-  const shown = useRef(index);
-  const menuAt = useRef(0);
+  // The lens centre is base + drag. `base` springs between tabs; `drag` is the finger's travel, written natively.
+  const base = useRef(new Animated.Value(centre(index))).current;
+  const drag = useRef(new Animated.Value(0)).current;
+  const speed = useRef(new Animated.Value(0)).current;
+  const lift = useRef(new Animated.Value(0)).current;
+  const at = useRef({ i: index, down: false, moved: false, from: 0 });
+  const live = useRef(index);
+  live.current = index;
 
-  const moveTo = useCallback(
+  const settle = useCallback(
     (i: number) => {
-      shown.current = i;
-      const target = END + step * i;
-      if (reduced) x.setValue(target);
-      else Animated.spring(x, { toValue: target, ...SPRING, useNativeDriver: true }).start();
-      grow.forEach((g, j) => {
-        const to = j === i ? 1 : 0;
-        if (reduced) g.setValue(to);
-        else Animated.spring(g, { toValue: to, ...SPRING, useNativeDriver: true }).start();
-      });
+      at.current.i = i;
+      if (reduced) {
+        base.setValue(centre(i));
+        drag.setValue(0);
+      } else {
+        // The same spring on both, so their sum moves as one.
+        Animated.spring(base, { toValue: centre(i), ...SETTLE }).start();
+        Animated.spring(drag, { toValue: 0, ...SETTLE }).start();
+      }
+      Animated.spring(speed, { toValue: 0, damping: 14, stiffness: 220, mass: 0.6, useNativeDriver: NATIVE }).start();
     },
-    [grow, reduced, step, x],
+    [base, centre, drag, reduced, speed],
+  );
+  const raise = useCallback(
+    (up: boolean) => {
+      if (!reduced) Animated.spring(lift, { toValue: up ? 1 : 0, ...LIFT }).start();
+    },
+    [lift, reduced],
   );
 
   // Follows the page: the menu opening and closing, a "See all" link, the back button.
   useEffect(() => {
-    if (shown.current !== index) moveTo(index);
-    // Only the page drives this; a resize re-seats the badge below.
+    if (at.current.i !== index && !at.current.down) settle(index);
+    // Only the page drives this; a resize re-seats the lens below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
-
-  // A new window size: re-seat the badge without animating.
   useEffect(() => {
-    x.setValue(END + step * shown.current);
-  }, [step, x]);
+    base.setValue(centre(at.current.i));
+  }, [base, centre]);
 
-  const select = useCallback(
+  const go = useCallback(
     (i: number) => {
-      if (Date.now() - menuAt.current < 450) return; // the menu is opening
       if (i === MENU) {
-        menuAt.current = Date.now();
-        guarded.navigate('/menu'); // the badge follows once the menu is really open
-        return;
-      }
-      if (i === shown.current) return;
-      moveTo(i);
-      tabs.navigate(ITEMS[i].path);
+        guarded.navigate('/menu');
+        // If the menu did not open (a page was already opening), return to the real tab.
+        setTimeout(() => {
+          if (live.current !== MENU && at.current.i === MENU && !at.current.down) settle(live.current);
+        }, 900);
+      } else if (i !== live.current) tabs.navigate(ITEMS[i].path);
     },
-    [guarded, moveTo, tabs],
+    [guarded, settle, tabs],
   );
+
+  const tabAt = (px: number) => Math.max(0, Math.min(MENU, Math.floor((px - PAD) / cell)));
+  const track = useMemo(() => Animated.event([{ nativeEvent: { handlerData: { translationX: drag, velocityX: speed } } }], { useNativeDriver: NATIVE }), [drag, speed]);
+  const pan = usePanGesture({
+    useAnimated: true,
+    minDistance: 4,
+    hitSlop: { top: 8, bottom: 8 },
+    onBegin: (e) => {
+      const a = at.current;
+      a.down = true;
+      a.moved = false;
+      a.from = e.x;
+      raise(true);
+      const i = tabAt(e.x);
+      if (i !== a.i) settle(i); // the lens comes to the finger; dragging carries on from there
+    },
+    onActivate: () => {
+      at.current.moved = true;
+    },
+    onUpdate: track as never,
+    onFinalize: (e) => {
+      const a = at.current;
+      if (!a.down) return;
+      a.down = false;
+      raise(false);
+      const i = a.moved ? Math.max(0, Math.min(MENU, Math.round((centre(a.i) + e.x - a.from - centre(0)) / cell))) : a.i;
+      settle(i);
+      go(i);
+    },
+  });
+
+  const m = useMemo(() => {
+    const lo = centre(0) - OVER;
+    const hi = centre(MENU) + OVER;
+    const x = Animated.add(base, drag).interpolate({ inputRange: [lo, hi], outputRange: [lo, hi], extrapolate: 'clamp' });
+    const stretch = speed.interpolate({ inputRange: [-1600, 0, 1600], outputRange: [1.16, 1, 1.16], extrapolate: 'clamp' });
+    const squeeze = speed.interpolate({ inputRange: [-1600, 0, 1600], outputRange: [0.9, 1, 0.9], extrapolate: 'clamp' });
+    return {
+      near: ITEMS.map((_, i) => x.interpolate({ inputRange: [centre(i) - cell * 0.8, centre(i), centre(i) + cell * 0.8], outputRange: [0, 1, 0], extrapolate: 'clamp' })),
+      lens: {
+        transform: [
+          { translateX: Animated.subtract(x, cell / 2) },
+          { scaleX: Animated.multiply(lift.interpolate({ inputRange: [0, 1], outputRange: [1, 1.18] }), stretch) },
+          { scaleY: Animated.multiply(lift.interpolate({ inputRange: [0, 1], outputRange: [1, 1.36] }), squeeze) },
+        ],
+      },
+      bar: { transform: [{ scale: lift.interpolate({ inputRange: [0, 1], outputRange: [1, 1.02] }) }] },
+      rest: { opacity: lift.interpolate({ inputRange: [0, 0.7], outputRange: [1, 0], extrapolate: 'clamp' }) },
+      glass: { opacity: lift.interpolate({ inputRange: [0, 0.8], outputRange: [0, 1], extrapolate: 'clamp' }) },
+    };
+  }, [base, cell, centre, drag, lift, speed]);
 
   return (
     <View pointerEvents="box-none" style={[styles.wrap, { bottom: insets.bottom + 10 }]}>
-      <View style={[styles.bar, { width: barW }]} accessibilityRole="tablist">
-        <Glass barW={barW} x={pos} />
-        <Animated.View pointerEvents="none" style={[styles.follow, follow]}>
-          <View style={styles.badge}>
-            <ClearGlass />
+      <GestureDetector gesture={pan}>
+        <View style={{ width: barW, height: H }} collapsable={false}>
+          <Animated.View pointerEvents="none" style={[styles.bar, { width: barW }, m.bar]}>
+            <View style={[StyleSheet.absoluteFill, styles.body]} renderToHardwareTextureAndroid>
+              <LinearGradient colors={TINT.bar} style={[StyleSheet.absoluteFill, styles.fill]} />
+            </View>
+
+            <Animated.View style={[styles.lens, { width: cell }, m.lens]}>
+              <Animated.View style={[styles.cap, styles.rest, m.rest]} />
+              <Animated.View style={[styles.cap, { backgroundColor: TINT.lens }, m.glass]}>
+                <LinearGradient colors={['rgba(255,255,255,0.24)', 'rgba(255,255,255,0.02)', 'rgba(255,255,255,0.02)', 'rgba(255,255,255,0.14)']} locations={[0, 0.28, 0.75, 1]} style={[StyleSheet.absoluteFill, styles.round]} />
+                {/* The rim, with the colour split a thick lens gives its edges. */}
+                <View style={[styles.cap, styles.cyan]} />
+                <View style={[styles.cap, styles.amber]} />
+                <View style={[styles.cap, styles.white]} />
+              </Animated.View>
+            </Animated.View>
+
+            <View style={styles.row}>
+              {ITEMS.map((t, i) => (
+                <Tab key={t.name} item={t} near={m.near[i]} lift={lift} cell={cell} count={i === TRIPS ? trips : 0} />
+              ))}
+            </View>
+          </Animated.View>
+
+          {/* For screen readers; touches are handled by the gesture. */}
+          <View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.row]}>
+            {ITEMS.map((t, i) => (
+              <Pressable
+                key={t.name}
+                onPress={() => {
+                  settle(i);
+                  go(i);
+                }}
+                style={styles.hit}
+                accessibilityRole={i === MENU ? 'button' : 'tab'}
+                accessibilityState={i === MENU ? undefined : { selected: i === index }}
+                accessibilityLabel={i === TRIPS && trips > 0 ? `${t.label}, ${trips} upcoming` : t.label}
+              />
+            ))}
           </View>
-        </Animated.View>
-        {ITEMS.map((t, i) => (
-          <Slot key={t.name} i={i} g={grow[i]} left={END + step * i - ICON / 2} />
-        ))}
-        {ITEMS.map((t, i) => (
-          <Pressable
-            key={t.name}
-            onPress={() => select(i)}
-            hitSlop={{ top: 10 }}
-            style={[styles.hit, { width: i === 0 || i === MENU ? END + step / 2 : step }]}
-            accessibilityRole={i === MENU ? 'button' : 'tab'}
-            accessibilityState={i === MENU ? undefined : { selected: i === index }}
-            accessibilityLabel={t.label}
-          />
-        ))}
-      </View>
+        </View>
+      </GestureDetector>
       {showTop && (
         <View pointerEvents="box-none" style={styles.topShadow}>
           <View style={styles.top}>
-            <ClearGlass />
             <Pressable onPress={scrollActiveToTop} hitSlop={8} style={styles.topHit} accessibilityRole="button" accessibilityLabel="Scroll to top">
-              <Ionicons name="chevron-up-outline" size={16} color={PINE} style={styles.haloSmall} />
+              <Ionicons name="chevron-up-outline" size={16} color={HEX.snow} />
             </Pressable>
           </View>
         </View>
@@ -255,30 +293,25 @@ export function FloatingDock() {
 
 const styles = StyleSheet.create({
   wrap: { position: 'absolute', left: SIDE, right: SIDE, alignItems: 'center' },
-  bar: { height: H, flexDirection: 'row' },
-  glow: { position: 'absolute', left: -GLOW, top: -GLOW },
-  clip: { ...StyleSheet.absoluteFill, borderRadius: H / 2, overflow: 'hidden' },
-  topClip: { position: 'absolute', left: R, top: 0, height: H, overflow: 'hidden' },
-  strip: { position: 'absolute', left: 0, top: 0, height: H },
-  follow: { position: 'absolute', left: 0, top: 0, width: 0, height: H },
-  badge: {
-    position: 'absolute',
-    left: -BADGE / 2,
-    top: BADGE_Y - BADGE / 2,
-    width: BADGE,
-    height: BADGE,
-    borderRadius: BADGE / 2,
-    overflow: 'hidden',
-    borderWidth: 1.25,
-    borderColor: 'rgba(255, 255, 255, 0.95)',
-  },
-  icon: { position: 'absolute', top: ICON_Y - ICON / 2, width: ICON, height: ICON },
-  // A soft light behind each icon, so Pine stays readable through clear glass on dark photos.
-  halo: { padding: 14, margin: -14, textShadowColor: HEX.white, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 3 },
-  hit: { height: H },
-  // Same clear glass as the ball; the faint outer line keeps it visible on light pages.
-  topShadow: { position: 'absolute', right: 0, top: -54, borderRadius: 19, borderWidth: 1, borderColor: 'rgba(15, 42, 30, 0.08)' },
-  top: { width: S.well, height: S.well, borderRadius: 18, overflow: 'hidden', borderWidth: 1.25, borderColor: 'rgba(255, 255, 255, 0.95)' },
-  haloSmall: { padding: 10, margin: -10, textShadowColor: HEX.white, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 3 },
+  bar: { height: H },
+  body: { borderRadius: H / 2, boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.26)' },
+  fill: { borderRadius: H / 2, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.16)' },
+  row: { position: 'absolute', left: 0, right: 0, top: 0, height: H, flexDirection: 'row', paddingHorizontal: PAD },
+  cell: { height: H, alignItems: 'center', justifyContent: 'center', gap: 2 },
+  glyph: { width: 26, height: 25 },
+  layer: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
+  label: { color: HEX.white, fontSize: 10.5, lineHeight: 14, fontFamily: FONTS.uiSemi },
+  count: { position: 'absolute', top: -4, left: 15, minWidth: 16, height: 16, borderRadius: 8, paddingHorizontal: 4, backgroundColor: HEX.gold, alignItems: 'center', justifyContent: 'center' },
+  countText: { color: HEX.pine, fontSize: 9.5, lineHeight: 12, fontFamily: FONTS.uiBold },
+  lens: { position: 'absolute', left: 0, top: PAD, height: LENS_H },
+  cap: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderRadius: LENS_H / 2 },
+  round: { borderRadius: LENS_H / 2 },
+  rest: { backgroundColor: 'rgba(255, 255, 255, 0.16)' },
+  cyan: { left: -1, right: 1, borderWidth: 1.3, borderColor: 'rgba(120, 225, 255, 0.38)' },
+  amber: { left: 1, right: -1, borderWidth: 1.3, borderColor: 'rgba(255, 196, 110, 0.42)' },
+  white: { borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.75)' },
+  hit: { flex: 1, height: H },
+  topShadow: { position: 'absolute', right: 0, top: -54, borderRadius: 19, borderWidth: 1, borderColor: 'rgba(0, 0, 0, 0.08)' },
+  top: { width: S.well, height: S.well, borderRadius: 18, overflow: 'hidden', backgroundColor: TINT.ball, borderWidth: 1.25, borderColor: 'rgba(255, 255, 255, 0.4)' },
   topHit: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });

@@ -2,7 +2,7 @@ import { HEX, pine } from '@/features/bookings/guest/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ClearGlass, { glassEdge, glassInk } from '@/features/bookings/guest/components/ClearGlass';
 import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
+import FocusedStatusBar from '@/features/bookings/guest/components/FocusedStatusBar';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import { ChevronRight } from '@/features/bookings/guest/components/icons';
 import { memo, useRef, useState } from 'react';
@@ -105,7 +105,7 @@ export default function Discover() {
 
   return (
     <View style={canvas}>
-      <StatusBar style={overHero ? 'light' : 'dark'} />
+      <FocusedStatusBar style={overHero ? 'light' : 'dark'} />
       <ScrollView
         ref={ref}
         style={{ flex: 1 }}

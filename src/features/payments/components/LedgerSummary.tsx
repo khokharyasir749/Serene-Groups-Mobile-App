@@ -3,7 +3,7 @@ import { Text } from "@/core/components/Text";
 import { AnimatedBar } from "@/core/components/AnimatedBar";
 import { Card } from "@/core/components/Card";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
-import { colors, dark, font, fonts, letter, spacing } from "@/core/constants/theme";
+import { colors, dark, font, fonts, letter, spacing, groups } from "@/core/constants/theme";
 import { formatPKRCompact } from "@/core/lib/formatPKR";
 import type { PaymentSummary } from "../types";
 
@@ -36,7 +36,7 @@ export function LedgerSummary({ summary }: { summary: PaymentSummary | undefined
   return (
     <Card variant="emerald" style={styles.card}>
       <View style={styles.watermark} pointerEvents="none">
-        <SereneLogoMark width={150} fill={colors.goldAccent} snow={colors.pineBrand} />
+        <SereneLogoMark width={150} fill={colors.goldAccent} snow={groups.pine} />
       </View>
 
       <View style={styles.top}>
@@ -63,8 +63,8 @@ export function LedgerSummary({ summary }: { summary: PaymentSummary | undefined
           label="OVERDUE"
           value={formatPKRCompact(summary?.overdueAmount)}
           note={summary ? `${summary.overdueCount} instalment${summary.overdueCount === 1 ? "" : "s"}` : undefined}
-          dot={colors.danger}
-          color={colors.danger}
+          dot={groups.alert}
+          color={groups.alert}
         />
         <Tile label="THIS WEEK" value={formatPKRCompact(summary?.dueThisWeekAmount)} note="Due in 7 days" dot={colors.goldAccent} color={colors.goldAccent} last />
       </View>

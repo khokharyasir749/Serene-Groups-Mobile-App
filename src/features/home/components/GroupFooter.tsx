@@ -3,7 +3,7 @@ import { Text } from "@/core/components/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { EditorialConcierge } from "@/core/components/EditorialConcierge";
 import { CONTACT, GROUP, PROJECTS, WEB } from "@/core/constants/serene";
-import { colors, dark, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { useScrollTo } from "./scrollTarget";
 
@@ -72,7 +72,7 @@ export function GroupFooter() {
 const styles = StyleSheet.create({
   wrap: { gap: spacing.lg },
   groupEyebrow: { marginTop: spacing.md, marginBottom: 0 },
-  contact: { gap: 2 },
+  contact: { gap: 2, backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, borderRadius: 26, padding: spacing.lg, boxShadow: groups.plateShadow },
   contactEyebrow: { color: colors.muted, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow, marginBottom: spacing.xs },
   followEyebrow: { marginTop: spacing.lg },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingVertical: spacing.md - 2, borderTopWidth: 1, borderTopColor: colors.line },
@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
   rowLabel: { color: colors.muted, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: 1, textTransform: "uppercase" },
   rowValue: { color: colors.ink, fontSize: font.sm + 1, fontFamily: fonts.uiSemi, lineHeight: 19 },
   social: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
-  pill: { width: "48.6%", flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.cardUnselected, borderWidth: 1, borderColor: colors.line, borderRadius: radius.pill, paddingVertical: spacing.sm + 2, paddingHorizontal: spacing.md + 2 },
+  pill: { width: "48.6%", flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.cardUnselected, borderWidth: 1, borderColor: groups.plateEdge, borderRadius: radius.pill, paddingVertical: spacing.sm + 2, paddingHorizontal: spacing.md + 2 },
   pillText: { color: colors.ink, fontSize: font.sm, fontFamily: fonts.uiBold },
   small: { color: colors.muted, fontSize: font.xs, lineHeight: 16, textAlign: "center" },
-  top: { alignSelf: "center", flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm + 2, ...shadows.card },
+  top: { alignSelf: "center", flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm + 2, ...shadows.card },
   topText: { color: colors.ink, fontSize: font.sm, fontFamily: fonts.uiBold },
 });

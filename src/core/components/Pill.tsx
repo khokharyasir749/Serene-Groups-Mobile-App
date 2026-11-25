@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, font, fonts, radius, shadows, spacing, toneColors, type Tone } from "@/core/constants/theme";
+import { colors, font, fonts, radius, shadows, spacing, toneColors, type Tone, groups } from "@/core/constants/theme";
 
 type Props = {
   label: string;
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   chipOn: {
-    backgroundColor: colors.surface,
+    backgroundColor: groups.plate,
     borderWidth: 1.5,
     borderColor: colors.pineBrand,
     ...shadows.card,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   chipOff: {
     backgroundColor: colors.cardUnselected,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: groups.plateEdge,
   },
   chipText: {
     fontSize: font.sm,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: colors.pineBrand,
+    backgroundColor: groups.pine,
     alignItems: "center",
     justifyContent: "center",
   },

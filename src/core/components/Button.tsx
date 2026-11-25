@@ -1,7 +1,7 @@
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "@/core/components/Text";
-import { colors, font, fonts, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, groups, radius, shadows, spacing } from "@/core/constants/theme";
 
 type Props = {
   label: string;
@@ -68,7 +68,7 @@ export function Button({ label, onPress, variant = "primary", loading, disabled,
           {loading ? (
             <ActivityIndicator size="small" color={colors.pineBrand} />
           ) : (
-            <Text style={styles.arrowText}>{arrow}</Text>
+            (arrow === "→" ? <Ionicons name="arrow-forward" size={18} color={groups.pine} /> : <Text style={styles.arrowText}>{arrow}</Text>)
           )}
         </View>
       ) : null}
@@ -89,7 +89,8 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   primaryCta: {
-    backgroundColor: colors.pineBrand,
+    backgroundColor: groups.pine,
+    borderColor: groups.pineEdge,
     paddingLeft: spacing.xl,
     paddingRight: spacing.sm,
     justifyContent: "space-between",
@@ -99,13 +100,13 @@ const styles = StyleSheet.create({
   compactLabel: { fontSize: 14 },
   compactBadge: { width: 34, height: 34, borderRadius: 17, marginLeft: spacing.sm },
   secondary: {
-    backgroundColor: colors.card,
-    borderColor: colors.line,
+    backgroundColor: groups.plate,
+    borderColor: groups.plateEdge,
     ...shadows.card,
   },
   light: {
-    backgroundColor: colors.white,
-    borderColor: colors.line,
+    backgroundColor: groups.plate,
+    borderColor: groups.plateEdge,
   },
   ghost: {
     backgroundColor: colors.white16,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: colors.goldAccent,
+    backgroundColor: groups.champagne,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: spacing.md,

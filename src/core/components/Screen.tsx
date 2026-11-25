@@ -2,13 +2,17 @@ import { useCallback, useRef, type ReactNode, type RefObject } from "react";
 import { useFocusEffect } from "expo-router";
 import { RefreshControl, ScrollView, StyleSheet, View, type ScrollViewInstance } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CLEARANCE, colors, spacing } from "@/core/constants/theme";
+import { CLEARANCE, colors, groups, spacing } from "@/core/constants/theme";
 import { SCROLL_TOP_THRESHOLD, useScrollTopStore } from "@/core/lib/scrollTop";
+import { BrandBar } from "./BrandBar";
 import { FloatingHeader } from "./FloatingHeader";
+import { MeshBackground } from "./MeshBackground";
 
 type Props = {
   /** Shown centred in the floating header pill. */
   title?: string;
+  /** Main tabs: the brand header instead of a title. */
+  brand?: boolean;
   onBack?: () => void;
   /** Right-hand CTA inside the pill (use <HeaderAction/>). */
   right?: ReactNode;
@@ -23,7 +27,7 @@ type Props = {
   onRefresh?: () => void;
 };
 
-export function Screen({ title, onBack, right, children, scroll = true, flush = false, scrollRef, refreshing = false, onRefresh }: Props) {
+export function Screen({ title, brand, onBack, right, children, scroll = true, flush = false, scrollRef, refreshing = false, onRefresh }: Props) {
   const own = useRef<ScrollViewInstance>(null);
   const ref = scrollRef ?? own;
   const y = useRef(0);
@@ -42,33 +46,42 @@ export function Screen({ title, onBack, right, children, scroll = true, flush = 
     }, [scroll, ref]),
   );
   return (
-    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
-      {title ? <FloatingHeader title={title} onBack={onBack} action={right} /> : null}
-      {scroll ? (
-        <ScrollView
-          ref={ref}
-          onScroll={(e) => {
-            y.current = e.nativeEvent.contentOffset.y;
-            useScrollTopStore.getState().setVisible(y.current > SCROLL_TOP_THRESHOLD);
-          }}
-          scrollEventThrottle={32}
-          contentContainerStyle={[styles.content, flush && styles.flush]}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.ink} /> : undefined}
-        >
-          {children}
-        </ScrollView>
-      ) : (
-        <View style={styles.fill}>{children}</View>
-      )}
-    </SafeAreaView>
+    <View style={styles.root}>
+      <MeshBackground />
+      <SafeAreaView style={styles.fill} edges={["top", "left", "right"]}>
+        {brand ? (
+          <View style={styles.brand}>
+            <BrandBar />
+          </View>
+        ) : null}
+        {title ? <FloatingHeader title={title} onBack={onBack} action={right} /> : null}
+        {scroll ? (
+          <ScrollView
+            ref={ref}
+            onScroll={(e) => {
+              y.current = e.nativeEvent.contentOffset.y;
+              useScrollTopStore.getState().setVisible(y.current > SCROLL_TOP_THRESHOLD);
+            }}
+            scrollEventThrottle={32}
+            contentContainerStyle={[styles.content, flush && styles.flush]}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.ink} /> : undefined}
+          >
+            {children}
+          </ScrollView>
+        ) : (
+          <View style={styles.fill}>{children}</View>
+        )}
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.paper },
+  root: { flex: 1, backgroundColor: groups.base },
   fill: { flex: 1 },
-  content: { padding: spacing.lg, paddingTop: spacing.lg, gap: spacing.xl, paddingBottom: CLEARANCE },
+  brand: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md },
+  content: { padding: spacing.lg, paddingTop: spacing.sm, gap: spacing.xl, paddingBottom: CLEARANCE },
   flush: { paddingBottom: 0 },
 });

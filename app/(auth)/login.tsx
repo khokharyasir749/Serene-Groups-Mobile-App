@@ -4,7 +4,8 @@ import { Text } from "@/core/components/Text";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, font, fonts, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, groups, spacing } from "@/core/constants/theme";
+import { MeshBackground } from "@/core/components/MeshBackground";
 import { LoginHero } from "@/features/auth/components/LoginHero";
 import { SignInPanel } from "@/features/auth/components/SignInPanel";
 
@@ -20,6 +21,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.root}>
+      <MeshBackground />
       <StatusBar style="light" />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
         <ScrollView ref={scrollRef} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
@@ -38,7 +40,7 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.paper },
+  root: { flex: 1, backgroundColor: groups.base },
   flex: { flex: 1 },
   content: { paddingBottom: spacing.xxl },
   form: { paddingHorizontal: spacing.lg, gap: spacing.lg, marginTop: -spacing.lg },

@@ -1,6 +1,6 @@
 import { HEX, pine } from '@/features/bookings/guest/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StatusBar } from 'expo-status-bar';
+import FocusedStatusBar from '@/features/bookings/guest/components/FocusedStatusBar';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import { useState } from 'react';
@@ -33,7 +33,7 @@ export default function Trips() {
 
   return (
     <View style={canvas}>
-      <StatusBar style="dark" />
+      <FocusedStatusBar style="dark" />
       <View style={{ paddingTop: insets.top + LOGO_TOP }}>
         <BrandHeader />
       </View>

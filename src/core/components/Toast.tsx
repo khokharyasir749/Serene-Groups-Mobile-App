@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, font, radius, spacing, toneColors } from "@/core/constants/theme";
+import { colors, font, radius, spacing, toneColors, groups } from "@/core/constants/theme";
 import { useUiStore, type Toast as ToastItem } from "@/core/stores/uiStore";
 
 const TOAST_MS = 3500;
@@ -41,7 +41,7 @@ export function ToastHost() {
 
 const styles = StyleSheet.create({
   host: { position: "absolute", left: spacing.lg, right: spacing.lg, gap: spacing.sm, zIndex: 100 },
-  toast: { backgroundColor: colors.surfaceAlt, borderWidth: 1, borderRadius: radius.md, padding: spacing.md },
+  toast: { backgroundColor: groups.plate, borderWidth: 1, borderRadius: radius.md, padding: spacing.md },
   text: { color: colors.text, fontSize: font.md },
   offline: { backgroundColor: colors.warningSoft, borderRadius: radius.md, padding: spacing.sm },
   offlineText: { color: colors.warning, fontSize: font.sm, textAlign: "center", fontWeight: "600" },

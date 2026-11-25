@@ -9,7 +9,6 @@ import { FadeIn } from "@/core/components/FadeIn";
 import { PermissionGate } from "@/core/components/PermissionGate";
 import { Screen } from "@/core/components/Screen";
 import { P } from "@/core/constants/api";
-import { GROUP } from "@/core/constants/serene";
 import { colors, font, letter, spacing } from "@/core/constants/theme";
 import { parseError } from "@/core/lib/errorParser";
 import { shareBookingOnWhatsApp } from "@/core/lib/whatsappShare";
@@ -43,7 +42,7 @@ export default function BookingDetailScreen() {
           <FadeIn style={styles.stack}>
             <BookingSummaryCard booking={b} />
             <View style={styles.actions}>
-              <Button variant="gold" label={`Share on WhatsApp · ${GROUP.whatsapp}`} onPress={share} />
+              <Button variant="gold" label="Share on WhatsApp" onPress={share} />
               <PermissionGate permission={P.PAYMENTS_RECORD}>
                 {b.status !== "cancelled" && b.outstanding > 0 ? (
                   <Button label="Record payment" variant="secondary" onPress={() => router.push({ pathname: "/record-payment", params: { bookingId: b.id } })} />

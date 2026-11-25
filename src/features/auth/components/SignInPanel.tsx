@@ -2,13 +2,13 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
 import { Button } from "@/core/components/Button";
 import { Input } from "@/core/components/Input";
-import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import { useAuthStore } from "@/core/stores/authStore";
 import { BIOMETRIC_BUTTON_SIZE, BiometricButton } from "./BiometricButton";
 import { useLoginFlow } from "../hooks/useLoginFlow";
 
 // Flat, recessed fields: tinted canvas, hairline border, no shadow.
-const flatField = { backgroundColor: colors.paper, borderColor: colors.line, shadowOpacity: 0, elevation: 0 } as const;
+const flatField = { backgroundColor: colors.paper, borderColor: groups.plateEdge, shadowOpacity: 0, elevation: 0 } as const;
 
 /** Management & investor sign-in card: Sign in + fingerprint row on flat recessed fields. Rendered under the hero on /login. */
 export function SignInPanel() {
@@ -41,7 +41,7 @@ export function SignInPanel() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  card: { backgroundColor: colors.white, borderRadius: 24, borderWidth: 1, borderColor: colors.line, padding: spacing.lg + 4, paddingTop: spacing.xl, gap: spacing.md, overflow: "hidden", ...shadows.card },
+  card: { backgroundColor: groups.plate, borderRadius: 24, borderWidth: 1, borderColor: groups.plateEdge, padding: spacing.lg + 4, paddingTop: spacing.xl, gap: spacing.md, overflow: "hidden", ...shadows.card },
   topBar: { position: "absolute", top: 0, left: 0, right: 0, height: 2, backgroundColor: colors.goldAccent },
   eyebrowRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
   rule: { width: 22, height: 1.5, backgroundColor: colors.goldAccent },

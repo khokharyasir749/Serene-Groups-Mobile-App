@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet } from "react-native";
 import { Text } from "@/core/components/Text";
-import { colors, font, fonts, radius, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, radius, spacing, groups } from "@/core/constants/theme";
 
 type Props = { label: string; selected?: boolean; onPress: () => void };
 
@@ -16,8 +16,8 @@ export function FilterChip({ label, selected, onPress }: Props) {
 }
 
 const styles = StyleSheet.create({
-  chip: { height: 34, paddingHorizontal: spacing.md + 2, borderRadius: radius.pill, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, alignItems: "center", justifyContent: "center" },
-  on: { backgroundColor: colors.pineBrand, borderColor: colors.pineBrand },
+  chip: { height: 34, paddingHorizontal: spacing.md + 2, borderRadius: radius.pill, backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, alignItems: "center", justifyContent: "center" },
+  on: { backgroundColor: groups.pine, borderColor: colors.pineBrand },
   pressed: { opacity: 0.9 },
   text: { color: colors.ink2, fontSize: font.sm, fontFamily: fonts.uiSemi },
   textOn: { color: colors.white },

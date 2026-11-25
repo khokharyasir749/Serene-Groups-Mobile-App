@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@/core/components/Button";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { projectName } from "@/core/constants/serene";
-import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";
 import { formatPKR } from "@/core/lib/formatPKR";
 import { PAYMENT_METHOD_LABEL } from "../schemas/payment.schema";
@@ -40,7 +40,7 @@ export function ReceiptSheet({ payment: p, onClose, onOpenBooking }: Props) {
             <View style={styles.voucher}>
               <View style={styles.head}>
                 <View style={styles.crest}>
-                  <SereneLogoMark width={22} fill={colors.snow} snow={colors.pineBrand} />
+                  <SereneLogoMark width={22} fill={colors.snow} snow={groups.pine} />
                 </View>
                 <View style={styles.headText}>
                   <Text style={styles.org}>SERENE HEIGHTS · DM CONSORTIUM</Text>
@@ -87,14 +87,14 @@ export function ReceiptSheet({ payment: p, onClose, onOpenBooking }: Props) {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: colors.paper },
+  page: { flex: 1, backgroundColor: groups.base },
   top: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: spacing.lg, paddingBottom: spacing.sm },
   topTitle: { color: colors.ink, fontFamily: fonts.display, fontSize: 22 },
-  close: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, alignItems: "center", justifyContent: "center", ...shadows.card },
+  close: { width: 40, height: 40, borderRadius: 20, backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.plateEdge, alignItems: "center", justifyContent: "center", ...shadows.card },
   content: { padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xxl },
-  voucher: { backgroundColor: colors.white, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.line, borderTopWidth: 4, borderTopColor: colors.goldAccent, padding: spacing.lg, gap: spacing.sm, ...shadows.cardElevated },
+  voucher: { backgroundColor: groups.plate, borderRadius: radius.xl, borderWidth: 1, borderColor: groups.plateEdge, borderTopWidth: 4, borderTopColor: colors.goldAccent, padding: spacing.lg, gap: spacing.sm, ...shadows.cardElevated },
   head: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  crest: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.pineBrand, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
+  crest: { width: 46, height: 46, borderRadius: 23, backgroundColor: groups.pine, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
   headText: { flex: 1, gap: 2 },
   org: { color: colors.muted, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: 1.6 },
   official: { color: colors.ink, fontSize: font.sm, fontFamily: fonts.uiBold, letterSpacing: 1 },
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   amountLabel: { color: colors.muted, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
   amount: { color: colors.ink, fontFamily: fonts.display, fontSize: 44, lineHeight: 48, fontVariant: ["tabular-nums"] },
   kind: { alignSelf: "flex-start", color: colors.pineBrand, backgroundColor: colors.cardUnselected, fontSize: font.xs + 1, fontFamily: fonts.uiBold, paddingHorizontal: 12, paddingVertical: 5, borderRadius: radius.pill, overflow: "hidden" },
-  lines: { backgroundColor: colors.white, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.line, paddingHorizontal: spacing.lg, ...shadows.card },
+  lines: { backgroundColor: groups.plate, borderRadius: radius.lg, borderWidth: 1, borderColor: groups.plateEdge, paddingHorizontal: spacing.lg, ...shadows.card },
   line: { flexDirection: "row", justifyContent: "space-between", gap: spacing.md, paddingVertical: spacing.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.line },
   lineLast: { borderBottomWidth: 0 },
   lineLabel: { color: colors.muted, fontSize: font.sm },

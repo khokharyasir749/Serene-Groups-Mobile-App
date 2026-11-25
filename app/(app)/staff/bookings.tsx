@@ -1,6 +1,6 @@
 import { ScrollView } from "react-native";
 import { Redirect, router } from "expo-router";
-import { useListBookingsQuery } from "@/core/api/endpoints/bookingsApi";
+import { useGetBookingStatsQuery, useListBookingsQuery } from "@/core/api/endpoints/bookingsApi";
 import { DataList } from "@/core/components/DataList";
 import { HeaderAction } from "@/core/components/FloatingHeader";
 import { Input } from "@/core/components/Input";
@@ -8,6 +8,7 @@ import { Pager } from "@/core/components/Pager";
 import { PermissionGate } from "@/core/components/PermissionGate";
 import { Pill } from "@/core/components/Pill";
 import { Screen } from "@/core/components/Screen";
+import { StatGrid } from "@/core/components/StatGrid";
 import { P } from "@/core/constants/api";
 import { spacing } from "@/core/constants/theme";
 import { parseError } from "@/core/lib/errorParser";
@@ -21,12 +22,13 @@ import { useAuthStore } from "@/core/stores/authStore";
 function StaffBookings() {
   const f = useBookingFilters();
   const { data, isLoading, isFetching, error, refetch } = useListBookingsQuery(f.args);
+  const { data: stats } = useGetBookingStatsQuery();
   const back = () => (router.canGoBack() ? router.back() : router.replace("/"));
 
   return (
     <Screen
       scroll={false}
-      title="Staff · Bookings"
+      title="Bookings"
       onBack={back}
       right={<PermissionGate permission={P.BOOKINGS_CREATE}><HeaderAction icon={null} label="+ Book" onPress={() => router.push("/new-booking")} /></PermissionGate>}
     >
@@ -44,6 +46,7 @@ function StaffBookings() {
           emptyMessage="Try a different search or filter."
           header={
             <>
+              <StatGrid short stats={[{ value: String(stats?.totals.bookings ?? "—"), label: "Bookings" }, { value: String(stats?.totals.pending ?? "—"), label: "Pending" }]} />
               <Input icon="search-outline" placeholder="Search name or reference" value={f.search} onChangeText={f.setSearch} />
               <SiteFilterPills value={f.project} onChange={f.setProject} />
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm }}>

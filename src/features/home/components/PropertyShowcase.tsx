@@ -10,7 +10,7 @@ import { SectionHeader } from "@/core/components/SectionHeader";
 import { SegmentedTabs } from "@/core/components/SegmentedTabs";
 import { MEDIA, WEB_MEDIA } from "@/core/constants/media";
 import { CONTACT, FARMS, PROJECTS, PROJECT_GEO, PROJECT_URL, WEB, type ProjectSlug } from "@/core/constants/serene";
-import { colors, dark, font, fonts, gradients, letter, radius, SCRIM_STOPS, spacing } from "@/core/constants/theme";
+import { colors, dark, font, fonts, gradients, letter, radius, SCRIM_STOPS, spacing, groups } from "@/core/constants/theme";
 import { openSite } from "@/core/lib/openSite";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { useShowcaseStore, type ShowcaseTab } from "./showcaseStore";
@@ -97,7 +97,6 @@ function More() {
           <GlassPill label={FARMS.kind} />
         </View>
         <View style={styles.photoBody}>
-          <Text style={styles.title}>{FARMS.name}</Text>
           <Text style={styles.place}>{FARMS.place}</Text>
         </View>
       </View>
@@ -110,7 +109,7 @@ function More() {
             </Text>
           ))}
         </View>
-        <Button label="Register interest in Serene Farms" onPress={() => void openWhatsApp(FARMS.interest)} />
+        <Button label="Register interest" onPress={() => void openWhatsApp(FARMS.interest)} />
         <QuickActions
           actions={[
             { icon: "navigate-outline", label: "Directions", onPress: () => void Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Serene Farms, Barki Road")}`) },
@@ -118,7 +117,6 @@ function More() {
             { icon: "mail-outline", label: "Email", onPress: () => void Linking.openURL(`mailto:${PROJECTS[0].email}`) },
           ]}
         />
-        <Text style={styles.caption}>Illustrative image of the Galiyat — a Serene Farms photograph is not yet available.</Text>
 
         <View style={styles.upNext}>
           <Text style={styles.status}>UP NEXT</Text>
@@ -167,12 +165,11 @@ const styles = StyleSheet.create({
   facts: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   fact: { color: colors.ink, fontSize: font.xs + 1, fontFamily: fonts.uiMedium, backgroundColor: colors.cardUnselected, paddingHorizontal: 10, paddingVertical: 5, borderRadius: radius.pill, overflow: "hidden" },
   actions: { flexDirection: "row", gap: 8 },
-  action: { flex: 1, height: 40, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: colors.paper, borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill },
+  action: { flex: 1, height: 40, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, backgroundColor: groups.plate, borderWidth: 1, borderColor: groups.champagne, borderRadius: radius.pill },
   actionPressed: { opacity: 0.78 },
   actionText: { color: colors.pineBrand, fontSize: font.sm, fontFamily: fonts.uiSemi },
   bottomFade: { position: "absolute", left: 0, right: 0, bottom: 0, height: 150 },
   statusOnPhoto: { color: colors.white },
-  caption: { color: colors.muted, fontSize: font.xs, lineHeight: 16 },
   upNext: { gap: spacing.md, borderTopWidth: 1, borderTopColor: colors.line, paddingTop: spacing.md },
   rowKicker: { color: colors.muted, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
   row: { flexDirection: "row", gap: spacing.md, alignItems: "center" },

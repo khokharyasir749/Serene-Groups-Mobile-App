@@ -1,6 +1,6 @@
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import { Text } from "@/core/components/Text";
-import { colors, fonts, radius } from "@/core/constants/theme";
+import { colors, fonts, groups, radius } from "@/core/constants/theme";
 
 type Props = { label: string; gold?: boolean; style?: StyleProp<ViewStyle> };
 
@@ -16,7 +16,7 @@ export function GlassPill({ label, gold, style }: Props) {
 }
 
 const styles = StyleSheet.create({
-  pill: { alignSelf: "flex-start", backgroundColor: colors.photoGlass, borderWidth: 1, borderColor: colors.photoGlassBorder, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 5 },
+  pill: { alignSelf: "flex-start", backgroundColor: groups.badge, borderWidth: 1, borderColor: groups.badgeEdge, borderRadius: radius.pill, paddingHorizontal: 12, paddingVertical: 6 },
   text: { color: colors.white, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: 0.6 },
-  gold: { color: colors.goldAccent },
+  gold: { color: groups.champagne },
 });

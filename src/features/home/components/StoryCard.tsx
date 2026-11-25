@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Card } from "@/core/components/Card";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { WEB } from "@/core/constants/serene";
-import { colors, dark, font, fonts, letter, spacing } from "@/core/constants/theme";
+import { colors, dark, font, fonts, letter, spacing, groups } from "@/core/constants/theme";
 
 const PILLARS = ["Hospitality", "Real Estate", "Asset Management"] as const;
 
@@ -15,7 +15,7 @@ export function StoryCard() {
   return (
     <Card variant="emerald" style={styles.card}>
       <View style={styles.head}>
-        <SereneLogoMark width={30} fill={colors.snow} snow={colors.pineBrand} />
+        <SereneLogoMark width={30} fill={colors.snow} snow={groups.pine} />
         <Text style={styles.eyebrow}>THE GROUP · DM CONSORTIUM</Text>
       </View>
       <Text style={styles.headline}>{"Planned, built, sold\nand managed by one team."}</Text>

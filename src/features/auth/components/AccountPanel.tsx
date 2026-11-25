@@ -3,17 +3,16 @@ import { Text } from "@/core/components/Text";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useLogoutMutation } from "@/core/api/endpoints/authApi";
-import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { P } from "@/core/constants/api";
-import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, radius, spacing, groups } from "@/core/constants/theme";
 import { usePermissions } from "@/core/hooks/usePermissions";
 import { useAuthStore } from "@/core/stores/authStore";
 import { useBiometric } from "../hooks/useBiometric";
 
-type Path = "/bookings" | "/payments" | "/staff/bookings" | "/staff/ledger";
+type Path = "/bookings" | "/payments";
 type Row = { label: string; hint: string; path: Path; icon: keyof typeof Ionicons.glyphMap };
 
-/** Account & workspace, rendered inside the Portal tab: profile, role shortcuts, fingerprint status and sign-out. */
+/** Role shortcuts, fingerprint status and sign-out, under the profile card. */
 export function AccountPanel({ onDone }: { onDone?: () => void }) {
   const user = useAuthStore((s) => s.user);
   const { has } = usePermissions();
@@ -23,34 +22,17 @@ export function AccountPanel({ onDone }: { onDone?: () => void }) {
   const rows: Row[] = [];
   if (has(P.PORTFOLIO_READ) && !has(P.PAYMENTS_READ)) rows.push({ label: "My Portfolio", hint: "Holdings, instalments and receipts", path: "/payments", icon: "pie-chart-outline" });
   if (has(P.MY_STAYS) && !has(P.BOOKINGS_READ)) rows.push({ label: "My Stays", hint: "Your reservations", path: "/bookings", icon: "bed-outline" });
-  if (has(P.BOOKINGS_READ)) rows.push({ label: "Staff · Bookings", hint: "All bookings, filters, new booking", path: "/staff/bookings", icon: "calendar-number-outline" });
-  if (has(P.PAYMENTS_READ)) rows.push({ label: "Staff · Ledger", hint: "Payments, instalments, receipts", path: "/staff/ledger", icon: "receipt-outline" });
   const remembered = bio.account !== null && bio.account.email === user?.email;
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.profile}>
-        <View style={styles.bar} />
-        <View style={styles.crest}>
-          <SereneLogoMark width={24} fill={colors.snow} snow={colors.pineBrand} />
-        </View>
-        <View style={styles.role}>
-          <Text style={styles.roleText}>{(user?.role ?? "account").toUpperCase()}</Text>
-        </View>
-        <Text style={styles.name} numberOfLines={1} adjustsFontSizeToFit>
-          {user?.name ?? "Account"}
-        </Text>
-        {user?.email ? <Text style={styles.email}>{user.email}</Text> : null}
-      </View>
-
       {rows.map((r) => (
         <Pressable key={r.label} onPress={() => {
             onDone?.();
-            if (r.path.startsWith("/staff")) router.push(r.path);
-            else router.navigate(r.path);
+            router.navigate(r.path);
           }} style={({ pressed }) => [styles.card, pressed && styles.pressed]} accessibilityRole="button">
           <View style={styles.icon}>
-            <Ionicons name={r.icon} size={20} color={colors.pineBrand} />
+            <Ionicons name={r.icon} size={20} color={colors.white} />
           </View>
           <View style={styles.flex}>
             <Text style={styles.rowTitle}>{r.label}</Text>
@@ -63,7 +45,7 @@ export function AccountPanel({ onDone }: { onDone?: () => void }) {
       {bio.available ? (
         <View style={styles.card}>
           <View style={styles.icon}>
-            <Ionicons name="finger-print-outline" size={22} color={colors.pineBrand} />
+            <Ionicons name="finger-print-outline" size={22} color={colors.white} />
           </View>
           <View style={styles.flex}>
             <Text style={styles.rowTitle}>Fingerprint sign-in</Text>
@@ -90,21 +72,14 @@ export function AccountPanel({ onDone }: { onDone?: () => void }) {
 
 const styles = StyleSheet.create({
   wrap: { gap: spacing.md },
-  profile: { backgroundColor: colors.white, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.line, padding: spacing.xl, paddingTop: spacing.xl + 4, gap: spacing.sm, overflow: "hidden", ...shadows.cardElevated },
-  bar: { position: "absolute", top: 0, left: 0, right: 0, height: 4, backgroundColor: colors.goldAccent },
-  crest: { width: 52, height: 52, borderRadius: 26, backgroundColor: colors.pineBrand, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
-  role: { alignSelf: "flex-start", backgroundColor: colors.goldSoft, borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 4 },
-  roleText: { color: colors.pineBrand, fontSize: 10, fontFamily: fonts.uiBold, letterSpacing: letter.eyebrow },
-  name: { color: colors.ink, fontFamily: fonts.display, fontSize: 34, lineHeight: 38 },
-  email: { color: colors.muted, fontSize: font.sm + 1 },
-  card: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.white, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.line, padding: spacing.md + 2, ...shadows.card },
+  card: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: groups.plate, borderRadius: 22, borderWidth: 1.2, borderColor: groups.plateEdge, padding: 14 },
   pressed: { opacity: 0.92, transform: [{ scale: 0.99 }] },
-  icon: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.cardUnselected, alignItems: "center", justifyContent: "center" },
+  icon: { width: 44, height: 44, borderRadius: 15, backgroundColor: groups.pine, alignItems: "center", justifyContent: "center" },
   flex: { flex: 1, gap: 2 },
   rowTitle: { color: colors.ink, fontSize: font.md + 1, fontFamily: fonts.uiBold },
   rowHint: { color: colors.muted, fontSize: font.sm },
   off: { borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill, paddingHorizontal: 12, paddingVertical: 6 },
   offText: { color: colors.pineBrand, fontSize: font.xs + 1, fontFamily: fonts.uiBold },
-  signout: { marginTop: spacing.md, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, height: 54, borderRadius: radius.pill, borderWidth: 1.5, borderColor: colors.danger, backgroundColor: colors.white },
+  signout: { marginTop: spacing.md, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, height: 54, borderRadius: radius.pill, borderWidth: 1.5, borderColor: colors.danger, backgroundColor: groups.plate },
   signoutText: { color: colors.danger, fontSize: font.md, fontFamily: fonts.uiBold },
 });

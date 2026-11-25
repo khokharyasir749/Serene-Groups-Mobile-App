@@ -4,7 +4,7 @@ import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { Input } from "@/core/components/Input";
 import { SectionHeader } from "@/core/components/SectionHeader";
 import { COPY, CUSTOM_PLAN_ID, PLANS, SPU_PLAN_ID, WEB } from "@/core/constants/serene";
-import { colors, font, fonts, letter, radius, shadows, spacing } from "@/core/constants/theme";
+import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import { spokenPKR } from "@/core/lib/formatPKR";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { usePlanCalculator } from "../hooks/usePlanCalculator";
@@ -16,8 +16,6 @@ export function WealthCalculator() {
   return (
     <View style={styles.stack}>
       <SectionHeader eyebrow={COPY.investorsEyebrow} title="Own a share" soft="of the heights." />
-      <Text style={styles.lede}>{WEB.investors.p}</Text>
-      <Text style={styles.planHead}>{WEB.investors.planTitle}</Text>
       <Text style={styles.lede}>{WEB.investors.planP}</Text>
 
       <View style={styles.grid}>
@@ -56,7 +54,7 @@ export function WealthCalculator() {
       <PlanBreakdownCard plan={c.plan} />
       <Pressable onPress={() => void openWhatsApp(c.message)} disabled={c.total <= 0} style={({ pressed }) => [styles.banner, c.total <= 0 && styles.off, pressed && styles.pressed]} accessibilityRole="button">
         <View style={styles.crest}>
-          <SereneLogoMark width={22} fill={colors.snow} snow={colors.pineBrand} />
+          <SereneLogoMark width={22} fill={colors.snow} snow={groups.pine} />
         </View>
         <View style={styles.bannerText}>
           <Text style={styles.bannerTitle}>Send Plan on WhatsApp</Text>
@@ -72,11 +70,10 @@ export function WealthCalculator() {
 }
 
 const styles = StyleSheet.create({
-  stack: { gap: spacing.xl },
-  planHead: { color: colors.ink, fontFamily: fonts.display, fontSize: 30, lineHeight: 34 },
+  stack: { gap: spacing.lg },
   lede: { color: colors.muted, fontSize: font.md, lineHeight: 24, marginTop: -spacing.sm },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
-  tile: { width: "47.8%", backgroundColor: colors.card, borderColor: colors.line, borderWidth: 1, borderRadius: radius.lg, padding: spacing.md + 2, gap: 4, ...shadows.card },
+  tile: { width: "47.8%", backgroundColor: groups.plate, borderColor: groups.plateEdge, borderWidth: 1, borderRadius: 24, padding: 16, gap: 4, ...shadows.card },
   tileTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.xs },
   tag: { color: colors.goldText, fontSize: 9, fontFamily: fonts.uiBold, letterSpacing: 1.4 },
   tagOn: { color: colors.goldAccent },
@@ -85,26 +82,26 @@ const styles = StyleSheet.create({
   radioDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.goldAccent },
   downPill: { alignSelf: "flex-start", marginTop: spacing.sm, color: colors.pineBrand, backgroundColor: colors.cardUnselected, fontSize: 10, fontFamily: fonts.uiBold, paddingHorizontal: 9, paddingVertical: 4, borderRadius: radius.pill, overflow: "hidden" },
   downPillOn: { color: colors.white, backgroundColor: colors.white16 },
-  banner: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: colors.pineBrand, borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill, padding: 6, ...shadows.cta },
+  banner: { flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: groups.pine, borderWidth: 1, borderColor: colors.goldAccent, borderRadius: radius.pill, padding: 6, ...shadows.cta },
   crest: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.white16, alignItems: "center", justifyContent: "center" },
   bannerText: { flex: 1 },
   bannerTitle: { color: colors.white, fontFamily: fonts.uiBold, fontSize: font.md },
   bannerSub: { color: colors.onNightMuted, fontSize: font.xs },
   badge: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
   arrow: { color: colors.pineBrand, fontSize: 18, fontFamily: fonts.uiBold },
-  tileOn: { backgroundColor: colors.pineBrand, borderColor: colors.pineBrand, ...shadows.cardElevated },
+  tileOn: { backgroundColor: groups.pine, borderColor: colors.pineBrand, ...shadows.cardElevated },
   pressed: { transform: [{ scale: 0.97 }] },
   area: { color: colors.ink, fontFamily: fonts.display, fontSize: 26, letterSpacing: letter.tight },
   kind: { color: colors.muted, fontSize: font.xs, fontFamily: fonts.uiMedium },
   onText: { color: colors.onNight },
   onMuted: { color: colors.onNightMuted },
-  toggle: { borderWidth: 1, borderColor: colors.line, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: "center", backgroundColor: colors.card, ...shadows.card },
-  toggleOn: { backgroundColor: colors.pineBrand, borderColor: colors.pineBrand },
+  toggle: { borderWidth: 1, borderColor: groups.plateEdge, borderRadius: 20, paddingVertical: 15, alignItems: "center", backgroundColor: groups.plate, ...shadows.card },
+  toggleOn: { backgroundColor: groups.pine, borderColor: colors.pineBrand },
   toggleText: { color: colors.ink2, fontSize: font.sm, fontFamily: fonts.uiMedium },
   units: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
   unitsLabel: { color: colors.ink2, fontSize: font.sm, flex: 1 },
   stepper: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  step: { color: colors.ink, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.card, width: 38, height: 38, borderRadius: radius.md, textAlign: "center", lineHeight: 35, fontSize: font.xl, overflow: "hidden", ...shadows.card },
+  step: { color: colors.ink, borderWidth: 1, borderColor: groups.plateEdge, backgroundColor: groups.plate, width: 38, height: 38, borderRadius: radius.md, textAlign: "center", lineHeight: 35, fontSize: font.xl, overflow: "hidden", ...shadows.card },
   off: { opacity: 0.35 },
   n: { color: colors.ink, fontSize: font.xl, minWidth: 28, textAlign: "center", fontFamily: fonts.display },
   note: { color: colors.muted, fontSize: font.xs, lineHeight: 17 },
