@@ -27,7 +27,7 @@ const ITEMS: Item[] = [
 ];
 
 /** Hamburger button plus the full-screen Pine menu it opens: numbered destinations, Serene Bookings first. */
-export function GroupsMenu() {
+export function GroupsMenu({ glass }: { glass?: boolean }) {
   const insets = useSafeAreaInsets();
   const [open, setOpen] = useState(false);
   const p = useRef(new Animated.Value(0)).current;
@@ -45,7 +45,7 @@ export function GroupsMenu() {
 
   return (
     <>
-      <PlateButton icon="menu-outline" label="Open menu" onPress={() => setOpen(true)} />
+      <PlateButton glass={glass} icon="menu-outline" label="Open menu" onPress={() => setOpen(true)} />
       <Modal visible={open} animationType="fade" onRequestClose={() => setOpen(false)} statusBarTranslucent presentationStyle="fullScreen">
         <View style={[styles.page, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom + spacing.lg }]}>
           <View style={styles.top}>

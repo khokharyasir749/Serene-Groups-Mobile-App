@@ -325,3 +325,36 @@ export const bookingColors = {
   cream: SNOW, cream70: snow(0.8), cream45: snow(0.45), gold: GOLD, goldSoft: gold(0.16), goldLine: gold(0.45),
   positive: bookingHex.positive, danger: bookingHex.danger,
 } as const;
+
+// ── Explore page (src/features/home) ────────────────────────────────────────────────────────────
+export const explore = {
+  canvas: "#F4EFE5",
+  sheet: "#FFFDF8",
+  /** Deep Pine of the full-bleed dark chapters. */
+  deep: "#0E231A",
+  deepFade: ["rgba(14, 35, 26, 0)", "rgba(14, 35, 26, 0.72)", "#0E231A"] as const,
+  deepTop: ["#0E231A", "rgba(14, 35, 26, 0)"] as const,
+  /** Hero photo: shade under the header, clear middle, deep Pine under the headline. */
+  heroFade: [shade(0.52), shade(0), shade(0.04), shade(0.58), shade(0.94)] as const,
+  heroStops: [0, 0.22, 0.44, 0.7, 1] as const,
+  /** Photo cards that carry their own words. */
+  cardFade: [shade(0.3), shade(0), shade(0.12), shade(0.9)] as const,
+  cardStops: [0, 0.2, 0.42, 1] as const,
+  tileFade: [shade(0), shade(0.16), shade(0.88)] as const,
+  finaleFade: [shade(0.1), shade(0.1), "#0E231A"] as const,
+  header: "#F4EFE5",
+  glass: white(0.16),
+  glassDark: shade(0.28),
+  glassEdge: white(0.34),
+  tick: white(0.4),
+  gold: "#E0BE86",
+  goldDeep: "#8A6736",
+  line: pine(0.14),
+  lineDark: white(0.14),
+  onDark: "#F4EFE5",
+  onDarkSoft: "rgba(244, 239, 229, 0.76)",
+  contour: "rgba(224, 190, 134, 0.26)",
+  contourMajor: "rgba(224, 190, 134, 0.7)",
+  contourInk: pine(0.09),
+  lift: "0px 18px 40px rgba(14, 35, 26, 0.22)",
+} as const;

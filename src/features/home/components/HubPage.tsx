@@ -1,81 +1,55 @@
 import { useRef } from "react";
-import { StyleSheet, type ScrollViewInstance } from "react-native";
-import { Text } from "@/core/components/Text";
+import type { ScrollViewInstance } from "react-native";
 import { useGetBookingStatsQuery } from "@/core/api/endpoints/bookingsApi";
 import { useGetPaymentSummaryQuery } from "@/core/api/endpoints/paymentsApi";
-import { useGetAvailabilityQuery } from "@/core/api/endpoints/publicApi";
-import { FadeIn } from "@/core/components/FadeIn";
 import { PermissionGate } from "@/core/components/PermissionGate";
-import { Screen } from "@/core/components/Screen";
 import { P } from "@/core/constants/api";
-import { fonts, groups, spacing } from "@/core/constants/theme";
 import { usePermissions } from "@/core/hooks/usePermissions";
+import { AltitudeStory } from "./AltitudeStory";
 import { CommandCard } from "./CommandCard";
+import { EntryGrid } from "./EntryGrid";
+import { ExploreScreen } from "./ExploreScreen";
+import { ForYou } from "./ForYou";
 import { GroupFooter } from "./GroupFooter";
-import { HeritageStrip } from "./HeritageStrip";
-import { HeroShowcase } from "./HeroShowcase";
-import { InvestTeaser } from "./InvestTeaser";
-import { StoryCard } from "./StoryCard";
-import { PillarRail } from "./PillarRail";
-import { PropertyShowcase } from "./PropertyShowcase";
-import { RoomShowcase } from "./RoomShowcase";
-import { Anchor, ScrollTargets } from "./scrollTarget";
+import { Reveal } from "./pageScroll";
+import { ProjectStage } from "./ProjectStage";
+import { SeasonMosaic } from "./SeasonMosaic";
+import { SharePlanner } from "./SharePlanner";
+import { SuiteGallery } from "./SuiteGallery";
 
-/** Serene Group — the public front door: four pillars up top, then compact, expandable detail. */
+/** Serene Group — the public front door: a stay search over the resort, every way in, then the group told in chapters. */
 export function HubPage() {
   const { has } = usePermissions();
   const staff = has(P.BOOKINGS_READ);
+  const ledger = has(P.PAYMENTS_READ);
   const stats = useGetBookingStatsQuery(undefined, { skip: !staff });
-  const pay = useGetPaymentSummaryQuery(undefined, { skip: !has(P.PAYMENTS_READ) });
-  const rooms = useGetAvailabilityQuery();
+  const pay = useGetPaymentSummaryQuery(undefined, { skip: !ledger });
   const scrollRef = useRef<ScrollViewInstance>(null);
+  // Only staff have live figures on this page, so only they can pull to refresh.
   const refresh = () => {
-    void rooms.refetch();
     if (staff) void stats.refetch();
-    if (has(P.PAYMENTS_READ)) void pay.refetch();
+    if (ledger) void pay.refetch();
   };
 
   return (
-    <ScrollTargets scrollRef={scrollRef}>
-      <Screen brand scrollRef={scrollRef} refreshing={rooms.isFetching} onRefresh={refresh}>
-        <Anchor id="top">
-        <FadeIn style={styles.welcome}>
-          <Text style={styles.title}>
-            {"One group.\n"}
-            <Text style={styles.titleGold}>Every way in.</Text>
-          </Text>
-        </FadeIn>
-        </Anchor>
-
-        <PillarRail />
-        <HeroShowcase />
-        <HeritageStrip />
-
-        <Anchor id="story">
-          <StoryCard />
-        </Anchor>
-
-        <Anchor id="upcoming">
-          <PropertyShowcase />
-        </Anchor>
-
-        <Anchor id="investors">
-          <InvestTeaser />
-        </Anchor>
-
-        <RoomShowcase availability={rooms.data} />
-
-        <PermissionGate permission={P.BOOKINGS_READ}>
-          <CommandCard stats={stats.data} payments={pay.data} />
-        </PermissionGate>
-        <GroupFooter />
-      </Screen>
-    </ScrollTargets>
+    <ExploreScreen scrollRef={scrollRef} onRefresh={staff || ledger ? refresh : undefined} refreshing={stats.isFetching || pay.isFetching}>
+      <ForYou />
+      <EntryGrid />
+      <PermissionGate permission={P.BOOKINGS_READ}>
+        <CommandCard stats={stats.data} payments={pay.data} />
+      </PermissionGate>
+      <ProjectStage />
+      <AltitudeStory />
+      <Reveal>
+        <SuiteGallery />
+      </Reveal>
+      <Reveal>
+        <SeasonMosaic />
+      </Reveal>
+      <Reveal>
+        <SharePlanner />
+      </Reveal>
+      <GroupFooter />
+    </ExploreScreen>
   );
 }
-
-const styles = StyleSheet.create({
-  welcome: { gap: spacing.sm, marginBottom: -spacing.sm },
-  titleGold: { color: groups.goldInk, fontFamily: fonts.displayItalic },
-  title: { color: groups.pine, fontFamily: fonts.display, fontSize: 46, lineHeight: 50, letterSpacing: -0.6 },
-});
