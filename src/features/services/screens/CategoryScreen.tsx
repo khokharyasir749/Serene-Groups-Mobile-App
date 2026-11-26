@@ -1,51 +1,83 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text } from "@/core/components/Text";
-import { colors, font, fonts, spacing } from "@/core/constants/theme";
-import { CareGrid } from "@/features/services/components/CareGrid";
+import { spacing } from "@/core/constants/theme";
+import { Closing } from "@/features/services/components/Closing";
+import { Curtain, CurtainEnd } from "@/features/services/components/Curtain";
+import { FrontDesk } from "@/features/services/components/FrontDesk";
+import { HeroPage, Reveal } from "@/features/services/components/HeroPage";
 import { Enter } from "@/features/services/components/motion";
-import { ServiceRow } from "@/features/services/components/ServiceRow";
-import { Canvas, CardPhoto, ServicesHeader } from "@/features/services/components/ui";
-import { GROUP_PHOTO, groupBySlug, inGroup } from "@/features/services/data/catalog";
+import { Headline } from "@/features/services/components/scroll";
+import { ServiceRows } from "@/features/services/components/ServiceRows";
+import { Text } from "@/features/services/components/Text";
+import { tone } from "@/features/services/components/tone";
+import { type } from "@/features/services/components/type";
+import { Canvas, RoundButton, ServicesHeader } from "@/features/services/components/ui";
+import { GROUP_PHOTO, PANEL_PHOTO, groupBySlug, inGroup } from "@/features/services/data/catalog";
+import { goBack, openService } from "@/features/services/lib/nav";
 
 export default function CategoryScreen() {
   const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const category = groupBySlug(slug);
-  const services = category ? inGroup(category.slug) : [];
+
+  if (!category) {
+    return (
+      <Canvas>
+        <StatusBar style="dark" />
+        <ServicesHeader back title="Category not available" />
+      </Canvas>
+    );
+  }
+  const services = inGroup(category.slug);
 
   return (
-    <Canvas>
-      <StatusBar style="dark" />
-      <ServicesHeader back title={category?.label ?? "Services"} overline={category?.kind === "care" ? "Complimentary" : "Billed to room, on request"} />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + spacing.xxl }]}>
-        {category?.kind === "extra" ? (
-          <View style={styles.hero}>
-            {GROUP_PHOTO[category.slug] ? <CardPhoto source={GROUP_PHOTO[category.slug]} /> : null}
-            <View>
-              <Text style={styles.title}>{category.label}</Text>
-              <Text style={styles.line}>{category.line}</Text>
-            </View>
-          </View>
-        ) : (
-          <Text style={styles.empty}>{category?.line ?? "This category is not available."}</Text>
-        )}
-        {category?.kind === "care" ? <CareGrid services={services} /> : services.map((s, i) => (
-              <Enter key={s.slug} order={i + 1}>
-                <ServiceRow service={s} />
-              </Enter>
-            ))}
-      </ScrollView>
-    </Canvas>
+    <HeroPage
+      photo={GROUP_PHOTO[category.slug]}
+      title={category.short}
+      onBack={goBack}
+      height={Math.round(Math.min(Math.max(height * 0.52, 360), 500))}
+      bottom={insets.bottom + spacing.hero}
+      bar={<RoundButton finish="clear" icon="chevron-back-outline" label="Back" onPress={goBack} />}
+      foot={
+        <View>
+          <Enter order={1}>
+            <Text style={styles.over}>{category.kind === "care" ? "Complimentary" : "Billed to your room"}</Text>
+          </Enter>
+          <Headline mount text={category.label} style={styles.title} />
+        </View>
+      }
+    >
+      {category.kind === "care" ? (
+        <>
+          <Reveal>
+            <ServiceRows services={services} />
+          </Reveal>
+          <Reveal>
+            <FrontDesk />
+          </Reveal>
+          <Closing />
+        </>
+      ) : (
+        <>
+          <Text style={styles.line}>{category.line}</Text>
+          <Curtain panels={services.map((x) => ({ key: x.slug, photo: PANEL_PHOTO[x.slug] ?? x.photo, over: x.line, name: x.tile ?? x.name, cta: x.verb ?? "Request", onOpen: () => openService(x.slug) }))} />
+          <CurtainEnd>
+            <Reveal>
+              <FrontDesk />
+            </Reveal>
+            <Closing />
+          </CurtainEnd>
+        </>
+      )}
+    </HeroPage>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { paddingTop: spacing.md + 2, paddingHorizontal: spacing.lg, gap: spacing.md },
-  hero: { height: 210, borderRadius: 18, overflow: "hidden", padding: spacing.lg, justifyContent: "flex-end", backgroundColor: colors.stone, marginBottom: spacing.xs },
-  title: { color: colors.white, fontSize: 28, lineHeight: 34, fontFamily: fonts.display },
-  line: { color: colors.white, fontSize: font.sm },
-  empty: { color: colors.muted, fontSize: font.md },
+  over: { ...type.eyebrow, color: tone.plate, marginBottom: 6 },
+  title: { ...type.hero, fontSize: 38, lineHeight: 46, color: tone.plate },
+  line: { ...type.lead, color: tone.ink },
 });

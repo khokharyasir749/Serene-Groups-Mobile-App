@@ -1,48 +1,55 @@
-import { ScrollView, StyleSheet, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { StatusBar } from "expo-status-bar";
-import { Text } from "@/core/components/Text";
-import { CLEARANCE, colors, font, fonts, spacing, svc } from "@/core/constants/theme";
-import { DriftPhoto, Enter } from "@/features/services/components/motion";
-import { Canvas, ActionButton, Press, Surface, ServicesHeader } from "@/features/services/components/ui";
-import { PACKAGES } from "@/features/services/data/catalog";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { CLEARANCE, colors } from "@/core/constants/theme";
+import BrandLockup from "@/features/bookings/guest/components/BrandLockup";
+import { Closing } from "@/features/services/components/Closing";
+import { Curtain, CurtainEnd, type CurtainPanel } from "@/features/services/components/Curtain";
+import { FrontDesk } from "@/features/services/components/FrontDesk";
+import { HeroPage, Reveal } from "@/features/services/components/HeroPage";
+import { Headline } from "@/features/services/components/scroll";
+import { Text } from "@/features/services/components/Text";
+import { tone } from "@/features/services/components/tone";
+import { type } from "@/features/services/components/type";
+import { GroupsBack } from "@/features/services/components/ui";
+import { PACKAGES, STAYS_COVER } from "@/features/services/data/catalog";
 import { openBook, openService } from "@/features/services/lib/nav";
 
+const PANELS: CurtainPanel[] = PACKAGES.map((s) => ({
+  key: s.slug, photo: s.photo, over: s.line.replace(/\.$/, ""), name: s.name, lines: s.includes, cta: "Request", ctaLabel: `Request ${s.name}`, onOpen: () => openService(s.slug), onCta: () => openBook(s.slug),
+}));
+
+/** Stay packages as curtains: each photograph is drawn over the one before. */
 export default function Packages() {
+  const { height } = useWindowDimensions();
   return (
-    <Canvas>
-      <StatusBar style="dark" />
-      <ServicesHeader title="Packages" overline="Extras arranged together for your stay" />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        {PACKAGES.map((s, i) => {
-          return (
-            <Enter key={s.slug} order={i}>
-            <Press onPress={() => openService(s.slug)} style={styles.card} accessibilityLabel={`${s.name}. ${s.line}`}>
-              {s.photo ? <DriftPhoto source={s.photo} style={StyleSheet.absoluteFill} /> : null}
-              <LinearGradient colors={svc.photoFade} locations={[0, 0.45, 1]} style={StyleSheet.absoluteFill} />
-              <Surface finish="clear" radius={18} style={styles.foot}>
-                <View style={styles.fill}>
-                  <Text style={styles.name}>{s.name}</Text>
-                  <Text style={styles.line} numberOfLines={1}>
-                    {s.line}
-                  </Text>
-                </View>
-                <ActionButton small finish="frost" label="Request" accessibilityLabel={`Request ${s.name}`} onPress={() => openBook(s.slug)} />
-              </Surface>
-            </Press>
-            </Enter>
-          );
-        })}
-      </ScrollView>
-    </Canvas>
+    <HeroPage
+      photo={STAYS_COVER}
+      title="Curated stays"
+      height={Math.round(Math.min(Math.max(height * 0.56, 380), 520))}
+      bottom={CLEARANCE}
+      bar={
+        <>
+          <View style={styles.fill}>
+            <BrandLockup sub="SERVICES" onPhoto />
+          </View>
+          <GroupsBack onPhoto />
+        </>
+      }
+      foot={<Headline mount text="Curated stays" style={styles.title} />}
+    >
+      <Text style={styles.line}>Arranged by the Front Desk.</Text>
+      <Curtain panels={PANELS} />
+      <CurtainEnd>
+        <Reveal>
+          <FrontDesk />
+        </Reveal>
+        <Closing />
+      </CurtainEnd>
+    </HeroPage>
   );
 }
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  content: { paddingTop: spacing.md + 2, paddingHorizontal: spacing.lg, gap: spacing.md + 2, paddingBottom: CLEARANCE },
-  card: { height: 264, borderRadius: 24, overflow: "hidden", padding: 10, justifyContent: "flex-end", backgroundColor: colors.stone },
-  foot: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingVertical: spacing.md, paddingLeft: 16, paddingRight: spacing.md },
-  name: { color: colors.white, fontSize: 23, lineHeight: 29, fontFamily: fonts.display },
-  line: { color: colors.white, fontSize: font.sm },
+  title: { ...type.hero, fontSize: 48, lineHeight: 56, color: colors.white },
+  line: { ...type.lead, color: tone.ink },
 });
