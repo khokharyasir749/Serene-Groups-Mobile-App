@@ -13,7 +13,7 @@ import StayBar from '@/features/bookings/guest/components/StayBar';
 import { Text } from '@/features/bookings/guest/components/Text';
 import { Button, Sheet } from '@/features/bookings/guest/components/ui';
 import { apartmentsOf, ROOM_TYPES, type RoomType } from '@/features/bookings/guest/data/catalog';
-import { availability, fmtShort, guestsLabel, lowestQuote, nightsBetween, plural, type Stay } from '@/features/bookings/guest/lib/stay';
+import { availability, lowestQuote, type Stay } from '@/features/bookings/guest/lib/stay';
 import { useBooking } from '@/features/bookings/guest/state/booking';
 import { C, FONTS, S, T, tabBarSpace, LOGO_TOP } from '@/features/bookings/guest/theme';
 import { canvas, glassCard } from '@/features/bookings/guest/theme/glass';
@@ -67,7 +67,6 @@ export default function Apartments() {
   const [sortOpen, setSortOpen] = useState(false);
   const sortLabel = SORTS.find((s) => s.key === sort)!.label;
 
-  const nights = nightsBetween(stay.checkIn, stay.checkOut);
   const toggle = (k: FilterKey) => setFilters((f) => (f.includes(k) ? f.filter((x) => x !== k) : [...f, k]));
   const reset = () => {
     setFilters([]);
@@ -96,13 +95,9 @@ export default function Apartments() {
   const header = (
     <View>
       <View style={{ paddingHorizontal: S.gutter, marginTop: 16 }}>
-        <Text style={styles.eyebrowText}>
-          {`${fmtShort(stay.checkIn)} – ${fmtShort(stay.checkOut)} · ${guestsLabel(stay.adults, stay.children)}`.toUpperCase()}
-        </Text>
-        <Text style={styles.headerTitle}>Available Residences</Text>
-        <Text style={styles.headerSub}>Serene Heights, Nathia Gali · taxes included</Text>
+        <Text style={T.h1} accessibilityRole="header">Find your{'\n'}<Text style={styles.soft}>place to stay</Text></Text>
         <View style={{ marginTop: 16 }}>
-          <StayBar stay={stay} onPress={() => router.push('/stay')} />
+          <StayBar stay={stay} onDates={() => router.push({ pathname: '/stay', params: { tab: 'dates' } })} onGuests={() => router.push({ pathname: '/stay', params: { tab: 'guests' } })} />
         </View>
       </View>
 
@@ -114,7 +109,7 @@ export default function Apartments() {
       <View style={styles.summary}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <Text style={styles.count}>
-            {types.length} <Text style={styles.countOf}>of {ROOM_TYPES.length} residences</Text>
+            {types.length} <Text style={styles.countOf}>of {ROOM_TYPES.length} apartment types</Text>
           </Text>
           {changed && (
             <Pressable onPress={reset} hitSlop={8} style={styles.resetPill}>
@@ -190,7 +185,7 @@ export default function Apartments() {
   );
 }
 
-const Gap = () => <View style={{ height: 20 }} />;
+const Gap = () => <View style={{ height: 44 }} />;
 
 function Chip({ label, on, onPress }: { label: string; on: boolean; onPress: () => void }) {
   return (
@@ -202,27 +197,7 @@ function Chip({ label, on, onPress }: { label: string; on: boolean; onPress: () 
 }
 
 const styles = StyleSheet.create({
-  eyebrowText: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 9.5,
-    letterSpacing: 1.5,
-    color: C.ink55,
-  },
-  headerTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 32,
-    lineHeight: S.well,
-    letterSpacing: -0.3,
-    color: C.pine,
-    marginTop: 3,
-  },
-  headerSub: {
-    fontFamily: FONTS.ui,
-    fontSize: 13,
-    lineHeight: 18,
-    color: C.ink55,
-    marginTop: 4,
-  },
+  soft: { fontFamily: FONTS.displayItalic, fontStyle: 'italic', fontSize: 42, color: C.goldInk },
   chipRow: {
     paddingHorizontal: S.gutter,
     gap: 8,
@@ -233,7 +208,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 5,
     paddingHorizontal: 14,
-    height: 35,
+    height: 46,
     borderRadius: 999,
     backgroundColor: C.pureWhite,
     borderWidth: 1,
@@ -244,7 +219,7 @@ const styles = StyleSheet.create({
     borderColor: C.pine,
   },
   chipText: {
-    fontSize: 12.5,
+    fontSize: 14.5,
     fontFamily: FONTS.uiSemi,
     color: C.ink,
   },
@@ -255,8 +230,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    height: 34,
-    paddingHorizontal: 12,
+    height: 46,
+    paddingHorizontal: 16,
     borderRadius: 999,
     backgroundColor: C.pureWhite,
     borderWidth: 1,
@@ -265,7 +240,7 @@ const styles = StyleSheet.create({
   },
   sortPillText: {
     flexShrink: 1,
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: FONTS.uiSemi,
     color: C.pine,
   },
@@ -276,7 +251,7 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
   countOf: {
-    fontSize: 12.5,
+    fontSize: 14,
     fontFamily: FONTS.ui,
     color: C.ink55,
   },
@@ -287,7 +262,7 @@ const styles = StyleSheet.create({
     backgroundColor: pine(0.08),
   },
   reset: {
-    fontSize: 11.5,
+    fontSize: 13,
     fontFamily: FONTS.uiBold,
     color: C.pine,
   },

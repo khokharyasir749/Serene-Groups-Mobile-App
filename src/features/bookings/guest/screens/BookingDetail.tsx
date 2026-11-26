@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path } from 'react-native-svg';
 
 import StatusPill from '@/features/bookings/guest/components/StatusPill';
-import { BackBar, BookingSteps, Button, Caps, Label, Photo, Sheet } from '@/features/bookings/guest/components/ui';
+import { BackBar, BookingSteps, Button, Caps, Photo, Sheet } from '@/features/bookings/guest/components/ui';
 import { PROPERTY } from '@/features/bookings/guest/data/catalog';
 import { fmtDate, guestsLabel, money, plural } from '@/features/bookings/guest/lib/stay';
 import { freeCancelUntil, tabOf, useBooking } from '@/features/bookings/guest/state/booking';
@@ -47,7 +47,7 @@ export default function BookingScreen() {
   return (
     <View style={canvas}>
       <View style={[styles.barBg, { height: insets.top + 56 }]} />
-      <BackBar onBack={() => (router.canGoBack() ? router.back() : router.replace('/trips'))} title={`Booking ${b.reference}`} />
+      <BackBar onBack={() => (router.canGoBack() ? router.back() : router.replace('/trips'))}  />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 72, paddingBottom: insets.bottom + 40, paddingHorizontal: S.gutter }}>
         {isNew && (
           <>
@@ -63,12 +63,12 @@ export default function BookingScreen() {
         )}
 
         <Enter delay={isNew ? 1000 : 0} duration={650}>
-          <Label color={C.ink55} style={{ marginTop: isNew ? 8 : 0 }}>Your booking</Label>
+          {isNew ? null : <Text style={T.h1} accessibilityRole="header">Your stay</Text>}
 
           {/* Reference & price */}
           <View style={styles.refCard}>
-            <View style={{ backgroundColor: C.pine, padding: 20 }}>
-              <Caps color={C.gold} style={{ fontSize: 9.5 }}>Booking reference</Caps>
+            <View style={{ backgroundColor: C.deep, padding: 22 }}>
+              <Caps color={C.goldBright} style={{ fontSize: 12 }}>Booking reference</Caps>
               <Text style={styles.ref}>{b.reference}</Text>
             </View>
             <View style={{ padding: 18, gap: 9 }}>
@@ -82,7 +82,7 @@ export default function BookingScreen() {
               </View>
             </View>
             <View style={{ backgroundColor: C.sand, paddingHorizontal: 18, paddingVertical: 12 }}>
-              <Caps color={C.ink55} style={{ fontSize: 9 }}>Pay at the property · {b.status === 'CANCELLED' ? 'Cancelled' : 'Not paid yet'}</Caps>
+              <Caps color={C.ink55} style={{ fontSize: 12 }}>Pay at the property · {b.status === 'CANCELLED' ? 'Cancelled' : 'Not paid yet'}</Caps>
             </View>
           </View>
 
@@ -92,7 +92,7 @@ export default function BookingScreen() {
             <View style={{ padding: 18 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                 <StatusPill tab={tab} />
-                <Text style={[T.small, { fontSize: 12 }]}>Booked {fmtDate(b.createdAt)}</Text>
+                <Text style={[T.small, { fontSize: 13 }]}>Booked {fmtDate(b.createdAt)}</Text>
               </View>
               <Text style={styles.name} onPress={() => router.push(`/room/${b.type.slug}`)}>{b.type.name}</Text>
               <Text style={[T.small, { marginTop: 4 }]}>{b.plan.name} · {b.type.bedType} · {b.type.outdoorSpace}</Text>
@@ -181,7 +181,7 @@ export default function BookingScreen() {
                 ? 'The free cancellation window has passed. The front desk will contact you about any charge.'
                 : 'This is a non-refundable rate. The full amount remains payable.'}
           </Text>
-          <Caps color={C.ink70} style={{ marginTop: 18, marginBottom: 8, fontSize: 10 }}>Reason (optional)</Caps>
+          <Caps color={C.ink70} style={{ marginTop: 18, marginBottom: 8, fontSize: 12.5 }}>Reason (optional)</Caps>
           <TextInput value={reason} onChangeText={setReason} multiline maxLength={300} style={styles.input} placeholderTextColor={C.ink40} />
         </View>
       </Sheet>
@@ -224,9 +224,9 @@ function Item({ Icon, label, value, sub }: { Icon: typeof Users; label: string; 
     <View style={{ flexDirection: 'row', gap: 10, width: '50%', paddingVertical: 8, paddingRight: 8 }}>
       <Icon size={15} color={C.ink55} strokeWidth={1.5} style={{ marginTop: 1 }} />
       <View style={{ flex: 1 }}>
-        <Caps color={C.ink55} style={{ fontSize: 9 }}>{label}</Caps>
+        <Caps color={C.ink55} style={{ fontSize: 12 }}>{label}</Caps>
         <Text style={{ fontFamily: F.display, fontSize: 15, color: C.ink, marginTop: 5 }}>{value}</Text>
-        {sub && <Text style={[T.small, { fontSize: 11.5, marginTop: 2 }]}>{sub}</Text>}
+        {sub && <Text style={[T.small, { fontSize: 13, marginTop: 2 }]}>{sub}</Text>}
       </View>
     </View>
   );
@@ -235,23 +235,23 @@ function Item({ Icon, label, value, sub }: { Icon: typeof Users; label: string; 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={{ paddingVertical: 20, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.lineStrong }}>
-      <Caps style={{ marginBottom: 10 }}>{title}</Caps>
+      <Text style={[T.h3, { marginBottom: 10 }]}>{title}</Text>
       {children}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  barBg: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 15, backgroundColor: C.sand, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },
+  barBg: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 15, backgroundColor: C.sand },
   confirmed: { alignItems: 'center', paddingVertical: 34, marginTop: 20, marginBottom: 18, backgroundColor: C.snow, borderRadius: S.radius, paddingHorizontal: 20, ...glassCard },
-  confTitle: { fontFamily: F.display, fontSize: 25, lineHeight: 30, color: C.ink, marginTop: 18, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 1 },
-  refCard: { marginTop: 18, backgroundColor: C.white, borderRadius: S.radius, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...glassCard },
-  ref: { fontFamily: F.display, fontSize: 32, color: C.sand, marginTop: 10, letterSpacing: 3 },
+  confTitle: { fontFamily: F.display, fontSize: 35, lineHeight: 39, color: C.ink, marginTop: 18, textAlign: 'center' },
+  refCard: { marginTop: 18, backgroundColor: C.white, marginHorizontal: -8, borderRadius: 32, overflow: 'hidden', ...glassCard },
+  ref: { fontFamily: F.display, fontSize: 38, color: C.sand, marginTop: 4, letterSpacing: 0.5 },
   total: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 8, paddingTop: 14, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.lineStrong },
-  card: { marginTop: 18, backgroundColor: C.white, borderRadius: S.radius, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...glassCard },
+  card: { marginTop: 18, backgroundColor: C.white, marginHorizontal: -8, borderRadius: 32, overflow: 'hidden', ...glassCard },
   name: { fontFamily: F.display, fontSize: 24, lineHeight: 28, color: C.ink, marginTop: 12 },
   items: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 14, paddingTop: 8, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line },
   cancelled: { marginTop: 18, padding: 16, borderLeftWidth: 2, borderLeftColor: C.danger, backgroundColor: C.white },
-  requests: { marginTop: 12, fontSize: 13, color: C.ink70, borderLeftWidth: 2, borderLeftColor: C.lineStrong, paddingLeft: 12, paddingVertical: 6 },
+  requests: { marginTop: 12, fontSize: 14, color: C.ink70, borderLeftWidth: 2, borderLeftColor: C.lineStrong, paddingLeft: 12, paddingVertical: 6 },
   input: { fontFamily: FONTS.ui, borderWidth: 1, borderColor: C.lineStrong, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: C.ink, backgroundColor: C.white, borderRadius: 12, minHeight: 70, textAlignVertical: 'top' },
 });

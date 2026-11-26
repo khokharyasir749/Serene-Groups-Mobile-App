@@ -60,7 +60,7 @@ export default function StayModal() {
         {/* Live summary of the selection */}
         <View style={styles.hero}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text style={styles.heroEyebrow}>{type ? type.name.toUpperCase() : 'SERENE HEIGHTS · NATHIA GALI'}</Text>
+            <Text style={styles.heroEyebrow}>{type ? type.name : 'Serene Heights, Nathia Gali'}</Text>
             {picking === 'in' && nights >= 1 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{plural(nights, 'night')}</Text>
@@ -121,7 +121,7 @@ function DateBlock({ label, iso, active, onPress }: { label: string; iso: string
   const d = iso ? fromISO(iso) : null;
   return (
     <Pressable onPress={onPress} style={[styles.dateBlock, active && styles.dateOn]} accessibilityRole="button" accessibilityLabel={label}>
-      <Text style={styles.dateLabel}>{label.toUpperCase()}</Text>
+      <Text style={styles.dateLabel}>{label}</Text>
       {d ? (
         <>
           <Text style={styles.dateBig}>
@@ -139,6 +139,9 @@ function DateBlock({ label, iso, active, onPress }: { label: string; iso: string
   );
 }
 
+const CELL = 56;
+/** Month title: its space above, line and space below. */
+const MONTH_HEAD = 20 + 28 + 8;
 const WEEK = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 function Calendar({ checkIn, checkOut, onPick, type }: { checkIn: string; checkOut: string | null; onPick: (iso: string) => void; type?: RoomType }) {
@@ -147,6 +150,20 @@ function Calendar({ checkIn, checkOut, onPick, type }: { checkIn: string; checkO
     const start = fromISO(min);
     return Array.from({ length: 12 }, (_, i) => toISO(new Date(start.getFullYear(), start.getMonth() + i, 1)));
   }, [min]);
+
+  // Fixed row heights, so the list can open on the check-in month.
+  const layout = useMemo(() => {
+    let offset = 0;
+    return months.map((iso, index) => {
+      const m = fromISO(iso);
+      const days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+      const length = MONTH_HEAD + Math.ceil((m.getDay() + days) / 7) * CELL;
+      const item = { length, offset, index };
+      offset += length;
+      return item;
+    });
+  }, [months]);
+  const first = Math.max(0, months.findIndex((m) => m.slice(0, 7) === checkIn.slice(0, 7)));
 
   return (
     <View style={{ flex: 1 }}>
@@ -159,6 +176,8 @@ function Calendar({ checkIn, checkOut, onPick, type }: { checkIn: string; checkO
         data={months}
         keyExtractor={(m) => m}
         initialNumToRender={2}
+        initialScrollIndex={first}
+        getItemLayout={(_, i) => layout[i]}
         windowSize={5}
         contentContainerStyle={{ paddingHorizontal: S.gutter, paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
@@ -175,8 +194,8 @@ const Month = memo(function Month({ first, min, checkIn, checkOut, onPick, type 
   const cells: (string | null)[] = [...Array(lead).fill(null), ...Array.from({ length: days }, (_, i) => toISO(new Date(m.getFullYear(), m.getMonth(), i + 1)))];
   while (cells.length % 7) cells.push(null);
   return (
-    <View style={{ marginTop: 20 }}>
-      <Text style={[T.h3, { marginBottom: 8 }]}>{monthName(m.getMonth())} {m.getFullYear()}</Text>
+    <View style={{ paddingTop: 20 }}>
+      <Text numberOfLines={1} maxFontSizeMultiplier={1} style={[T.h3, { height: 28, marginBottom: 8 }]}>{monthName(m.getMonth())} {m.getFullYear()}</Text>
       <View style={styles.grid}>
         {cells.map((iso, i) => {
           if (!iso) return <View key={i} style={styles.cell} />;
@@ -187,7 +206,7 @@ const Month = memo(function Month({ first, min, checkIn, checkOut, onPick, type 
           return (
             <Pressable key={iso} disabled={past} onPress={() => onPick(iso)} style={[styles.cell, inRange && styles.inRange]}>
               <View style={[styles.day, edge && styles.dayOn]}>
-                <Text style={[styles.dayText, past && { color: C.ink40, textDecorationLine: 'line-through' }, edge && { color: C.sand }]}>{fromISO(iso).getDate()}</Text>
+                <Text style={[styles.dayText, past && { color: C.ink40, opacity: 0.55 }, edge && { color: C.sand }]}>{fromISO(iso).getDate()}</Text>
               </View>
               {price != null && <Text style={styles.price}>{Math.round(price / 1000)}k</Text>}
             </Pressable>
@@ -199,28 +218,28 @@ const Month = memo(function Month({ first, min, checkIn, checkOut, onPick, type 
 });
 
 const styles = StyleSheet.create({
-  hero: { padding: 18, borderRadius: S.card, backgroundColor: C.pine, ...glassCardDark },
-  heroEyebrow: { flex: 1, color: C.gold, fontFamily: FONTS.uiBold, fontSize: 9.5, letterSpacing: 1.6 },
+  hero: { padding: 20, marginHorizontal: -8, borderRadius: 32, ...glassCardDark },
+  heroEyebrow: { flex: 1, color: C.goldBright, fontFamily: FONTS.uiSemi, fontSize: 13.5 },
   heroTitle: { color: C.cream, fontFamily: FONTS.display, fontSize: 30, lineHeight: 34, marginTop: 6 },
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: C.gold },
-  badgeText: { color: C.pine, fontFamily: FONTS.uiBold, fontSize: 11 },
+  badgeText: { color: C.pine, fontFamily: FONTS.uiBold, fontSize: 12.5 },
   dates: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 },
   dateBlock: { flex: 1, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 14, backgroundColor: 'rgba(236, 238, 237, 0.08)', borderWidth: 1, borderColor: 'transparent' },
   dateOn: { borderColor: C.gold },
-  dateLabel: { color: C.cream45, fontFamily: FONTS.uiBold, fontSize: 9, letterSpacing: 1.3 },
+  dateLabel: { color: C.cream45, fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0 },
   dateBig: { color: C.cream, fontFamily: FONTS.display, fontSize: 24, lineHeight: 28, marginTop: 4 },
-  dateSub: { color: C.cream70, fontFamily: FONTS.ui, fontSize: 12 },
+  dateSub: { color: C.cream70, fontFamily: FONTS.ui, fontSize: 13 },
   guests: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 14, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(236, 238, 237, 0.18)' },
   guestsText: { flex: 1, color: C.cream, fontFamily: FONTS.uiSemi, fontSize: 13.5 },
-  edit: { color: C.gold, fontFamily: FONTS.uiBold, fontSize: 12.5 },
+  edit: { color: C.gold, fontFamily: FONTS.uiBold, fontSize: 14 },
   weekRow: { flexDirection: 'row', paddingHorizontal: S.gutter, marginTop: 16, paddingBottom: 8, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },
-  weekDay: { flex: 1, textAlign: 'center', fontSize: 11, color: C.ink55, fontWeight: '600' },
+  weekDay: { flex: 1, textAlign: 'center', fontSize: 12.5, color: C.ink55, fontWeight: '600' },
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
-  cell: { width: `${100 / 7}%`, height: 54, alignItems: 'center', justifyContent: 'center' },
-  inRange: { backgroundColor: C.snow },
-  day: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
+  cell: { width: `${100 / 7}%`, height: CELL, alignItems: 'center', justifyContent: 'center' },
+  inRange: { backgroundColor: C.goldSoft },
+  day: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },
   dayOn: { backgroundColor: C.pine },
-  dayText: { fontSize: 15, color: C.ink },
-  price: { fontSize: 9, color: C.ink55, marginTop: -3 },
+  dayText: { fontSize: 16, fontFamily: FONTS.uiMedium, color: C.ink },
+  price: { fontSize: 12, color: C.ink55, marginTop: -3 },
   footer: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: S.gutter, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line, backgroundColor: C.sand },
 });

@@ -166,14 +166,13 @@ export default function Menu() {
                       (on || pressed) && styles.itemHot,
                     ]}
                   >
-                    <Text style={[styles.num, on && { color: C.cream }]}>{it.n}</Text>
                     <Text
                       style={[styles.label, on && { color: C.gold }]}
                       numberOfLines={2}
                       adjustsFontSizeToFit
                       minimumFontScale={0.8}
                     >
-                      {it.label.toUpperCase()}
+                      {it.label}
                     </Text>
                     <Ionicons
                       name="arrow-forward"
@@ -202,7 +201,7 @@ export default function Menu() {
                   <Ionicons name={q.icon as never} size={15} color={C.gold} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.quickLabel}>{q.label.toUpperCase()}</Text>
+                  <Text style={styles.quickLabel}>{q.label}</Text>
                   <Text style={styles.quickValue} numberOfLines={1}>
                     {q.value}
                   </Text>
@@ -256,8 +255,8 @@ const styles = StyleSheet.create({
   place: {
     color: C.cream,
     fontFamily: FONTS.uiBold,
-    fontSize: 10.5,
-    letterSpacing: 2,
+    fontSize: 12.5,
+    letterSpacing: 0,
   },
   close: {
     flexDirection: 'row',
@@ -291,8 +290,8 @@ const styles = StyleSheet.create({
     width: 26,
     color: C.gold,
     fontFamily: FONTS.uiBold,
-    fontSize: 11,
-    letterSpacing: 1.4,
+    fontSize: 12.5,
+    letterSpacing: 0,
     fontVariant: ['tabular-nums'],
   },
   label: {
@@ -301,7 +300,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.display,
     fontSize: 34,
     lineHeight: 38,
-    letterSpacing: 0.6,
+    letterSpacing: 0,
     textShadowColor: 'rgba(0, 0, 0, 0.4)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
@@ -334,20 +333,20 @@ const styles = StyleSheet.create({
   quickLabel: {
     color: 'rgba(236, 238, 237, 0.65)',
     fontFamily: FONTS.uiBold,
-    fontSize: 8.5,
-    letterSpacing: 1.2,
+    fontSize: 12,
+    letterSpacing: 0,
   },
   quickValue: {
     color: C.cream,
     fontFamily: FONTS.uiSemi,
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 1,
     fontVariant: ['tabular-nums'],
   },
   small: {
     color: 'rgba(236, 238, 237, 0.55)',
     fontFamily: FONTS.ui,
-    fontSize: 11,
+    fontSize: 12.5,
     textAlign: 'center',
     marginTop: 14,
   },

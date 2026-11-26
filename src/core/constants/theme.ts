@@ -309,6 +309,53 @@ export const iconInk = {
   seam: "#BFB39C", steelEdge: "#7C878C", coffee: "#4A2E1E", dark: "#1B2421", white: WHITE, led: "#3FB57A",
 } as const;
 
+// ── Glass navigation bars (src/core/components/NavGlass) ─────────────────────────────────────────
+export const navGlass = {
+  /** Light wash inside Apple's Liquid Glass, so dark labels stay readable over photos. */
+  tint: white(0.3),
+  sheen: [white(0.62), white(0.34), white(0.46)] as const,
+  rim: white(0.85),
+  solid: "#F6F3EB",
+  /** The selected tab: a brighter droplet in the bar. */
+  pill: white(0.62),
+  pillRim: white(0.9),
+  ink: "#16382A",
+  shadow: "0px 10px 30px rgba(10, 24, 17, 0.2)",
+} as const;
+
+// ── Explore page (src/features/home) ────────────────────────────────────────────────────────────
+export const explore = {
+  canvas: "#F4EFE5",
+  sheet: "#FFFDF8",
+  /** Deep Pine of the full-bleed dark chapters. */
+  deep: "#0E231A",
+  deepFade: ["rgba(14, 35, 26, 0)", "rgba(14, 35, 26, 0.72)", "#0E231A"] as const,
+  deepTop: ["#0E231A", "rgba(14, 35, 26, 0)"] as const,
+  /** Hero photo: shade under the header, clear middle, deep Pine under the headline. */
+  heroFade: [shade(0.52), shade(0), shade(0.04), shade(0.58), shade(0.94)] as const,
+  heroStops: [0, 0.22, 0.44, 0.7, 1] as const,
+  /** Photo cards that carry their own words. */
+  cardFade: [shade(0.3), shade(0), shade(0.12), shade(0.9)] as const,
+  cardStops: [0, 0.2, 0.42, 1] as const,
+  tileFade: [shade(0), shade(0.16), shade(0.88)] as const,
+  finaleFade: [shade(0.1), shade(0.1), "#0E231A"] as const,
+  header: "#F4EFE5",
+  glass: white(0.16),
+  glassDark: shade(0.28),
+  glassEdge: white(0.34),
+  tick: white(0.4),
+  gold: "#E0BE86",
+  goldDeep: "#8A6736",
+  line: pine(0.14),
+  lineDark: white(0.14),
+  onDark: "#F4EFE5",
+  onDarkSoft: "rgba(244, 239, 229, 0.76)",
+  contour: "rgba(224, 190, 134, 0.26)",
+  contourMajor: "rgba(224, 190, 134, 0.7)",
+  contourInk: pine(0.09),
+  lift: "0px 18px 40px rgba(14, 35, 26, 0.22)",
+} as const;
+
 // ── Serene Bookings module (src/features/bookings/guest) ────────────────────────────────────────
 // Its palette shares Pine, Gold, Stone and Snow with the Groups app; only the canvas and card ivories differ slightly.
 export const bookingPine = (a: number) => pine(a);
@@ -320,8 +367,10 @@ export const bookingHex = {
   star: "#F2C94C", danger: "#B42318", blush: "#FFB4A8", positive: "#1D7348", night: "#121416", shade: "#0B1F15", deepPine: "#0F2A1E", fg: "#14261C", brandPine: "#143D29",
 } as const;
 export const bookingColors = {
-  sand: bookingHex.alabaster, pine: PINE, pineDeep: PINE, forest: PINE_FOREST, snow: STONE, white: bookingHex.ivory, pureWhite: WHITE,
-  ink: PINE, ink70: pine(0.78), ink55: pine(0.6), ink40: pine(0.42), line: STONE_DIVIDER, lineStrong: pine(0.2),
+  sand: explore.canvas, pine: PINE, pineDeep: PINE, forest: PINE_FOREST, snow: STONE, white: explore.sheet, pureWhite: explore.sheet,
+  ink: PINE, ink70: pine(0.78), ink55: pine(0.68), ink40: pine(0.52), line: pine(0.12), lineStrong: pine(0.2),
   cream: SNOW, cream70: snow(0.8), cream45: snow(0.45), gold: GOLD, goldSoft: gold(0.16), goldLine: gold(0.45),
   positive: bookingHex.positive, danger: bookingHex.danger,
+  goldInk: explore.goldDeep, goldBright: explore.gold, deep: explore.deep, cardFade: explore.cardFade, cardStops: explore.cardStops, tileFade: explore.tileFade,
+  heroFade: explore.heroFade, heroStops: explore.heroStops, lift: explore.lift, glass: explore.glass, glassDark: explore.glassDark, glassEdge: explore.glassEdge,
 } as const;

@@ -17,7 +17,7 @@ import { Text } from '@/features/bookings/guest/components/Text';
 import { Photo, PressableScale } from '@/features/bookings/guest/components/ui';
 import { fmtShort, guestsLabel, money, plural } from '@/features/bookings/guest/lib/stay';
 import { tabOf, useBooking, type Tab } from '@/features/bookings/guest/state/booking';
-import { C, FONTS, S, tabBarSpace, LOGO_TOP } from '@/features/bookings/guest/theme';
+import { C, FONTS, S, T, tabBarSpace, LOGO_TOP } from '@/features/bookings/guest/theme';
 import { canvas, glassCard } from '@/features/bookings/guest/theme/glass';
 
 export default function Trips() {
@@ -51,10 +51,7 @@ export default function Trips() {
 
         {/* ── Editorial Header ── */}
         <View style={styles.header}>
-          <Text style={styles.eyebrow}>
-            {user ? `${user.firstName} ${user.lastName}`.toUpperCase() : 'YOUR RESERVATIONS'}
-          </Text>
-          <Text style={styles.title}>Trips & Stays</Text>
+          <Text style={T.h1} accessibilityRole="header">Trips</Text>
           <Text style={styles.sub}>
             {`${plural(upcomingCount, 'upcoming stay')} · ${plural(bookings.length, 'booking')} in total`}
           </Text>
@@ -104,16 +101,16 @@ export default function Trips() {
 
             <Text style={styles.emptyTitle}>
               {tab === 'upcoming'
-                ? 'No Upcoming Stays'
+                ? 'No stays planned yet'
                 : tab === 'past'
-                  ? 'No Past Stays Yet'
-                  : 'No Cancelled Bookings'}
+                  ? 'No past stays yet'
+                  : 'Nothing cancelled'}
             </Text>
 
             <Text style={styles.emptyLede}>
               {tab === 'upcoming'
-                ? 'When you reserve an apartment at Serene Heights, your itinerary, check-in instructions, and concierge bookings will appear here.'
-                : 'Your completed mountain stays will be archived here for quick rebooking.'}
+                ? 'Your dates, reference and check-in details will appear here once you book.'
+                : tab === 'past' ? 'Stays you have finished will be kept here.' : 'Bookings you cancel will be kept here.'}
             </Text>
 
             {tab === 'upcoming' && (
@@ -129,7 +126,7 @@ export default function Trips() {
                 accessibilityRole="button"
                 accessibilityLabel="Plan a stay"
               >
-                <Text style={styles.planBtnText}>Explore Available Residences</Text>
+                <Text style={styles.planBtnText}>Plan a stay</Text>
                 <Ionicons name="arrow-forward" size={13} color={C.cream} style={{ marginLeft: 6 }} />
               </PressableScale>
             )}
@@ -184,8 +181,8 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     fontFamily: FONTS.uiBold,
-    fontSize: 9.5,
-    letterSpacing: 1.5,
+    fontSize: 12,
+    letterSpacing: 0,
     color: C.ink55,
   },
   title: {
@@ -198,7 +195,7 @@ const styles = StyleSheet.create({
   },
   sub: {
     fontFamily: FONTS.ui,
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 18,
     color: C.ink55,
     marginTop: 4,
@@ -226,7 +223,7 @@ const styles = StyleSheet.create({
   },
   guestBannerText: {
     fontFamily: FONTS.uiMedium,
-    fontSize: 12,
+    fontSize: 13,
     color: C.pine,
     flex: 1,
   },
@@ -272,7 +269,7 @@ const styles = StyleSheet.create({
   },
   emptyLede: {
     fontFamily: FONTS.ui,
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 19,
     color: C.ink55,
     textAlign: 'center',
@@ -296,7 +293,7 @@ const styles = StyleSheet.create({
   },
   planBtnText: {
     fontFamily: FONTS.uiBold,
-    fontSize: 13,
+    fontSize: 14,
     color: C.cream,
     letterSpacing: 0.2,
   },
@@ -338,7 +335,7 @@ const styles = StyleSheet.create({
   },
   refText: {
     fontFamily: FONTS.uiSemi,
-    fontSize: 10.5,
+    fontSize: 12.5,
     color: C.ink55,
     letterSpacing: 0.5,
   },
@@ -351,13 +348,13 @@ const styles = StyleSheet.create({
   },
   bookingMeta: {
     fontFamily: FONTS.ui,
-    fontSize: 12,
+    fontSize: 13,
     color: C.ink55,
     marginTop: 3,
   },
   bookingPrice: {
     fontFamily: FONTS.uiSemi,
-    fontSize: 12,
+    fontSize: 13,
     color: C.pine,
     marginTop: 2,
     fontVariant: ['tabular-nums'],

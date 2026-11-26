@@ -2,131 +2,75 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
-import BrandLockup from '@/features/bookings/guest/components/BrandLockup';
+import SereneLogoMark from '@/features/bookings/guest/components/SereneLogoMark';
 import { Text } from '@/features/bookings/guest/components/Text';
+import { PressableScale } from '@/features/bookings/guest/components/ui';
 import { CONTACT } from '@/features/bookings/guest/data/contact';
-import { C, FONTS, S, shadow } from '@/features/bookings/guest/theme';
-import { glassCard } from '@/features/bookings/guest/theme/glass';
+import { C, FONTS, S } from '@/features/bookings/guest/theme';
 
 type Glyph = ComponentProps<typeof Ionicons>['name'];
-
 const open = (href: string) => void Linking.openURL(href).catch(() => {});
 
-/** A hairline with a centred diamond — the section's ornament. */
-function Ornament({ children }: { children?: React.ReactNode }) {
-  return (
-    <View style={styles.ornament}>
-      <View style={styles.ornLine} />
-      {children ?? <View style={styles.diamond} />}
-      <View style={styles.ornLine} />
-    </View>
-  );
-}
-
-function Row({ icon, label, value, cta, href, last }: { icon: Glyph; label: string; value: string; cta: string; href: string; last?: boolean }) {
-  return (
-    <Pressable onPress={() => open(href)} style={({ pressed }) => [styles.row, !last && styles.rowLine, pressed && styles.pressed]} accessibilityRole="link" accessibilityLabel={`${label}: ${value}`}>
-      <View style={styles.well}>
-        <Ionicons name={icon} size={18} color={C.pine} />
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.label}>{label.toUpperCase()}</Text>
-        {/* A long email breaks once, right after the @, instead of shrinking or truncating. */}
-        <Text style={styles.value} numberOfLines={2}>
-          {value.replace('@', '@​')}
-        </Text>
-        <Text style={styles.cta}>{cta}</Text>
-      </View>
-      <Ionicons name="chevron-forward" size={16} color={C.ink40} />
-    </Pressable>
-  );
-}
-
-/** Discover's closing section: crest between hairlines, an editorial heading, contact lines, both sites, social. */
+/** Discover's closing chapter: people to talk to, on deep Pine, running to the end of the page. */
 export default function LuxuryFooter({ bottomSpace }: { bottomSpace: number }) {
-  const [booking, group] = CONTACT.sites;
+  const [whatsapp, call] = CONTACT.lines;
+  const rows = [CONTACT.lines[2], ...CONTACT.sites];
   return (
-    <View style={[styles.wrap, { paddingBottom: bottomSpace }]}>
-      <Ornament>
-        <BrandLockup />
-      </Ornament>
-
-      <View style={styles.head}>
-        <Text style={styles.eyebrow}>CONCIERGE · SEVEN DAYS A WEEK</Text>
-        <Text style={styles.title}>Reservations{'\n'}& Concierge</Text>
+    <View style={[styles.wrap, { paddingBottom: bottomSpace + 12 }]}>
+      <SereneLogoMark size={46} color={C.sand} snow={C.deep} />
+      <Text style={styles.title}>
+        Someone to{'\n'}
+        <Text style={styles.soft}>look after you.</Text>
+      </Text>
+      <Text style={styles.copy}>Our reservations team replies on WhatsApp and by phone, seven days a week.</Text>
+      <View style={styles.actions}>
+        <PressableScale onPress={() => open(whatsapp.href)} style={[styles.btn, styles.gold]} accessibilityRole="link" accessibilityLabel={`WhatsApp ${whatsapp.value}`}>
+          <Ionicons name="logo-whatsapp" size={20} color={C.deep} />
+          <Text style={[styles.btnText, { color: C.deep }]}>WhatsApp</Text>
+        </PressableScale>
+        <PressableScale onPress={() => open(call.href)} style={[styles.btn, styles.line]} accessibilityRole="link" accessibilityLabel={`Call ${call.value}`}>
+          <Ionicons name="call-outline" size={19} color={C.sand} />
+          <Text style={[styles.btnText, { color: C.sand }]}>Call us</Text>
+        </PressableScale>
       </View>
-
-      <View style={styles.group}>
-        {CONTACT.lines.map((l, i) => (
-          <Row key={l.label} icon={l.icon as Glyph} label={l.label} value={l.value} cta={l.cta} href={l.href} last={i === CONTACT.lines.length - 1} />
-        ))}
-      </View>
-
-      {/* Primary: book online */}
-      <Pressable
-        onPress={() => open(booking.href)}
-        accessibilityRole="link"
-        accessibilityLabel={`${booking.label}: ${booking.value}`}
-        style={({ pressed }) => [styles.book, pressed && { opacity: 0.9, transform: [{ scale: 0.985 }] }]}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.bookLabel}>BOOK ONLINE</Text>
-          <Text style={styles.bookValue} numberOfLines={1}>{booking.value}</Text>
-        </View>
-        <View style={styles.bookGo}>
-          <Ionicons name="arrow-forward" size={17} color={C.pine} />
-        </View>
-      </Pressable>
-
-      {/* Secondary: the group site, as a quiet text link */}
-      <Pressable onPress={() => open(group.href)} accessibilityRole="link" accessibilityLabel={`${group.label}: ${group.value}`} style={({ pressed }) => [styles.groupLink, pressed && styles.pressed]}>
-        <Ionicons name="globe-outline" size={15} color={C.ink55} />
-        <Text style={styles.groupText}>
-          {group.label} · <Text style={styles.groupValue}>{group.value}</Text>
-        </Text>
-        <Ionicons name="arrow-up-outline" size={13} color={C.ink55} style={{ transform: [{ rotate: '45deg' }] }} />
-      </Pressable>
-
-      <View style={styles.social}>
-        {CONTACT.social.map((s) => (
-          <Pressable key={s.label} onPress={() => open(s.href)} hitSlop={6} style={({ pressed }) => [styles.socialBtn, pressed && styles.pressed]} accessibilityRole="link" accessibilityLabel={s.label}>
-            <Ionicons name={s.icon as Glyph} size={17} color={C.pine} />
+      <View style={styles.list}>
+        {rows.map((r) => (
+          <Pressable key={r.label} onPress={() => open(r.href)} style={({ pressed }) => [styles.row, pressed && { opacity: 0.7 }]} accessibilityRole="link" accessibilityLabel={`${r.label}: ${r.value}`}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.rowLabel}>{r.label}</Text>
+              <Text style={styles.rowValue} numberOfLines={1} adjustsFontSizeToFit>{r.value}</Text>
+            </View>
+            <Ionicons name="arrow-forward" size={18} color={C.goldBright} />
           </Pressable>
         ))}
       </View>
-
-      <Ornament />
-      <Text style={styles.place}>NATHIA GALI · 7,906 FT</Text>
-      <Text style={styles.small}>{`© ${new Date().getFullYear()} Serene Heights · DM Consortium`}</Text>
+      <View style={styles.social}>
+        {CONTACT.social.map((s) => (
+          <PressableScale key={s.label} onPress={() => open(s.href)} style={styles.socialBtn} accessibilityRole="link" accessibilityLabel={s.label}>
+            <Ionicons name={s.icon as Glyph} size={21} color={C.sand} />
+          </PressableScale>
+        ))}
+      </View>
+      <Text style={styles.small}>{`© ${new Date().getFullYear()} Serene Heights, DM Consortium`}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { marginTop: 52, paddingTop: 8, paddingHorizontal: S.gutter },
-  ornament: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  ornLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: C.line },
-  diamond: { width: 6, height: 6, backgroundColor: C.gold, transform: [{ rotate: '45deg' }] },
-  head: { alignItems: 'center', marginTop: 18 },
-  eyebrow: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 10, letterSpacing: 2 },
-  title: { color: C.pine, fontFamily: FONTS.display, fontSize: 34, lineHeight: 37, textAlign: 'center', marginTop: 10 },
-  lede: { color: C.ink55, fontFamily: FONTS.ui, fontSize: 13.5, lineHeight: 20, textAlign: 'center', marginTop: 10, maxWidth: 300 },
-  group: { marginTop: 26, borderRadius: 24, backgroundColor: C.white, paddingHorizontal: 16, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...shadow.card, ...glassCard },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 15 },
-  rowLine: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },
-  well: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: C.sand, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line },
-  label: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 9.5, letterSpacing: 1.4 },
-  value: { color: C.ink, fontFamily: FONTS.uiSemi, fontSize: 15, marginTop: 2, fontVariant: ['tabular-nums'] },
-  cta: { color: C.ink55, fontFamily: FONTS.uiSemi, fontSize: 11.5, marginTop: 2 },
-  book: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 16, paddingLeft: 22, paddingRight: 8, height: 66, borderRadius: 33, backgroundColor: C.pine, ...shadow.card },
-  bookLabel: { color: C.cream70, fontFamily: FONTS.uiBold, fontSize: 9.5, letterSpacing: 1.8 },
-  bookValue: { color: C.cream, fontFamily: FONTS.uiSemi, fontSize: 15, marginTop: 2 },
-  bookGo: { width: 50, height: 50, borderRadius: 25, backgroundColor: C.gold, alignItems: 'center', justifyContent: 'center' },
-  groupLink: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, marginTop: 16, paddingVertical: 6 },
-  groupText: { color: C.ink55, fontFamily: FONTS.ui, fontSize: 13 },
-  groupValue: { color: C.pine, fontFamily: FONTS.uiSemi, textDecorationLine: 'underline' },
-  social: { flexDirection: 'row', justifyContent: 'center', gap: 14, marginTop: 26, marginBottom: 26 },
-  socialBtn: { width: 46, height: 46, borderRadius: 23, backgroundColor: C.white, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, alignItems: 'center', justifyContent: 'center' },
-  place: { color: C.ink55, fontFamily: FONTS.uiBold, fontSize: 10, letterSpacing: 2.2, textAlign: 'center', marginTop: 18 },
-  small: { color: C.ink40, fontFamily: FONTS.ui, fontSize: 11.5, textAlign: 'center', marginTop: 6 },
-  pressed: { opacity: 0.7 },
+  wrap: { marginTop: 64, paddingHorizontal: S.gutter, paddingTop: 48, backgroundColor: C.deep, borderTopLeftRadius: 38, borderTopRightRadius: 38 },
+  title: { fontFamily: FONTS.display, fontSize: 48, lineHeight: 49, letterSpacing: -1, color: C.sand, marginTop: 24 },
+  soft: { fontFamily: FONTS.displayItalic, fontStyle: 'italic', fontSize: 48, color: C.goldBright },
+  copy: { fontFamily: FONTS.ui, fontSize: 16, lineHeight: 25, color: C.cream70, marginTop: 14 },
+  actions: { flexDirection: 'row', gap: 10, marginTop: 24 },
+  btn: { flex: 1, height: 58, borderRadius: 29, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
+  gold: { backgroundColor: C.goldBright },
+  line: { borderWidth: 1, borderColor: C.glassEdge, backgroundColor: C.glass },
+  btnText: { fontFamily: FONTS.uiBold, fontSize: 16 },
+  list: { marginTop: 32, borderBottomWidth: 1, borderBottomColor: C.glass },
+  row: { minHeight: 70, flexDirection: 'row', alignItems: 'center', gap: 12, borderTopWidth: 1, borderTopColor: C.glass },
+  rowLabel: { fontFamily: FONTS.ui, fontSize: 13.5, color: C.cream70 },
+  rowValue: { fontFamily: FONTS.uiMedium, fontSize: 15, lineHeight: 21, color: C.sand },
+  social: { flexDirection: 'row', gap: 10, marginTop: 24 },
+  socialBtn: { width: 52, height: 52, borderRadius: 26, borderWidth: 1, borderColor: C.glass, alignItems: 'center', justifyContent: 'center' },
+  small: { fontFamily: FONTS.ui, fontSize: 13, color: C.cream70, marginTop: 24 },
 });

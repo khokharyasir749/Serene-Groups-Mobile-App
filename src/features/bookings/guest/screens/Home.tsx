@@ -1,107 +1,98 @@
-import { HEX, pine } from '@/features/bookings/guest/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import ClearGlass, { glassEdge, glassInk } from '@/features/bookings/guest/components/ClearGlass';
 import { LinearGradient } from 'expo-linear-gradient';
-import FocusedStatusBar from '@/features/bookings/guest/components/FocusedStatusBar';
-import { useRouter } from '@/features/bookings/guest/lib/nav';
-import { ChevronRight } from '@/features/bookings/guest/components/icons';
-import { memo, useRef, useState } from 'react';
-import { FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Text } from '@/features/bookings/guest/components/Text';
+import { memo, useRef, useState, type ComponentProps } from 'react';
+import { Animated, FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import BrandHeader from '@/features/bookings/guest/components/BrandHeader';
+import FocusedStatusBar from '@/features/bookings/guest/components/FocusedStatusBar';
 import LuxuryFooter from '@/features/bookings/guest/components/LuxuryFooter';
-import Scrim from '@/features/bookings/guest/components/Scrim';
 import { useScrollTop } from '@/features/bookings/guest/components/ScrollTop';
-import SearchCard from '@/features/bookings/guest/components/SearchCard';
+import StayBar from '@/features/bookings/guest/components/StayBar';
+import { Text } from '@/features/bookings/guest/components/Text';
 import { Photo, PressableScale } from '@/features/bookings/guest/components/ui';
-import { ROOM_TYPES, type RoomType } from '@/features/bookings/guest/data/catalog';
-import { useBooking } from '@/features/bookings/guest/state/booking';
-import { C, FONTS, S, shadow, tabBarSpace, LOGO_TOP } from '@/features/bookings/guest/theme';
-import { GLASS_CARDS, canvas, glassCard, glassCardDark } from '@/features/bookings/guest/theme/glass';
+import { areaRangeOf, REASONS, ROOM_TYPES, type RoomType } from '@/features/bookings/guest/data/catalog';
+import { useRouter } from '@/features/bookings/guest/lib/nav';
+import { fmtShort, lowestQuote, money, plural, type Stay } from '@/features/bookings/guest/lib/stay';
+import { tabOf, useBooking } from '@/features/bookings/guest/state/booking';
+import { C, FONTS, HEX, LOGO_TOP, S, T, tabBarSpace } from '@/features/bookings/guest/theme';
+import { canvas } from '@/features/bookings/guest/theme/glass';
 
-const SEASONS = {
-  summer: '/images/resort/hero-tower-mist.jpg',
-  winter: '/images/resort/aerial-snow-resort.jpg',
-} as const;
+type Glyph = ComponentProps<typeof Ionicons>['name'];
 
-const GLANCE = [
-  { value: '7,906 ft', label: 'Altitude', icon: 'trail-sign-outline' as const },
-  { value: '50+', label: 'Facilities', icon: 'business-outline' as const },
-  { value: '24/7', label: 'Concierge', icon: 'key-outline' as const },
-  { value: '2 hrs', label: 'Islamabad', icon: 'car-outline' as const },
+// What people ask before booking (from the resort's own policies).
+const PROMISES: { icon: Glyph; title: string; text: string }[] = [
+  { icon: 'shield-checkmark-outline', title: 'Free cancellation', text: 'Until 48 hours before, on flexible rates' },
+  { icon: 'wallet-outline', title: 'Pay at the property', text: 'Nothing is charged when you book' },
+  { icon: 'time-outline', title: 'Check in from 2 PM', text: 'Check out until 12 noon' },
+  { icon: 'car-outline', title: 'Two hours away', text: 'Drive from Islamabad' },
 ];
 
 const EXPERIENCES = [
-  {
-    title: 'Heated Glass Pool',
-    image: '/images/resort/aerial-rooftop-pool.jpg',
-  },
-  {
-    title: 'Panoramic Dining',
-    image: '/images/dining/rooftop-dining-glass.jpg',
-  },
-  {
-    title: 'Private Ski Slope',
-    image: '/images/activities/ski-slope-aerial.jpg',
-  },
-  {
-    title: 'Sunset Sky Lounge',
-    image: '/images/dining/sky-lounge.jpg',
-  },
-  {
-    title: 'Pine Forest Trails',
-    image: '/images/activities/winter-trails.jpg',
-  },
-  {
-    title: 'Cedarwood Sauna & Spa',
-    image: '/images/resort/glass-roof-pool.jpg',
-  },
+  { title: 'Rooftop pool', image: '/images/resort/aerial-pool-portrait.jpg' },
+  { title: 'Panoramic dining', image: '/images/dining/rooftop-dining-glass.jpg' },
+  { title: 'Ski slope', image: '/images/activities/ski-slope-aerial.jpg' },
+  { title: 'Sky lounge', image: '/images/dining/sky-lounge.jpg' },
+  { title: 'Pine forest trails', image: '/images/activities/winter-trails.jpg' },
 ];
+const REASON_PHOTO = ['/images/interiors/window-view.jpg', '/images/resort/tower-snow-night.jpg', '/images/interiors/guests-lounge.jpg'];
 
-const EDITORIAL_PILLARS = [
-  {
-    badge: '7,906 ft Elevation',
-    icon: 'trail-sign-outline' as const,
-    kicker: '01 · REAL MOUNTAIN AIR',
-    title: '7,906 ft above the noise',
-    text: 'Crisp pine forest air, cool summers, snowy winters, and unbroken valley views from every terrace.',
-    image: '/images/interiors/window-view.jpg',
-    chips: ['Pine Valley Canopy', '2 Hrs from ISB'],
-  },
-  {
-    badge: 'All-Year Resort',
-    icon: 'snow-outline' as const,
-    kicker: '02 · MADE FOR EVERY SEASON',
-    title: "Pakistan's first winter resort",
-    text: 'Heated glass infinity pool, cedarwood sauna, private snow ski slope, and cloud-level rooftop dining.',
-    image: '/images/resort/glass-roof-pool.jpg',
-    chips: ['Heated Pool', 'Ski Slope'],
-  },
-  {
-    badge: 'Serviced Living',
-    icon: 'key-outline' as const,
-    kicker: '03 · FULLY MANAGED LIVING',
-    title: 'A home with a hotel behind it',
-    text: 'Daily housekeeping, 24/7 concierge, in-room dining, and underfloor radiant heating throughout.',
-    image: '/images/interiors/living-room-wide.jpg',
-    chips: ['24/7 Concierge', 'Heated Floors'],
-  },
-];
+function Heading({ title, soft, more, onMore }: { title: string; soft: string; more?: string; onMore?: () => void }) {
+  return (
+    <View style={styles.heading}>
+      <Text style={styles.title} accessibilityRole="header">
+        {`${title}\n`}
+        <Text style={styles.soft}>{soft}</Text>
+      </Text>
+      {onMore ? (
+        <Pressable onPress={onMore} hitSlop={12} style={({ pressed }) => [styles.more, pressed && { opacity: 0.6 }]} accessibilityRole="link" accessibilityLabel={more}>
+          <Ionicons name="arrow-forward" size={21} color={C.pine} />
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
 
+const Residence = memo(function Residence({ t, stay, w, onPress }: { t: RoomType; stay: Stay; w: number; onPress: () => void }) {
+  const q = lowestQuote(t, stay).q;
+  return (
+    <PressableScale onPress={onPress} scaleTo={0.975} style={[styles.res, { width: w, height: Math.round(w * 1.38) }]} accessibilityRole="button" accessibilityLabel={t.name}>
+      <Photo src={t.images[0]} style={StyleSheet.absoluteFill} />
+      <LinearGradient pointerEvents="none" colors={C.tileFade} style={StyleSheet.absoluteFill} />
+      <Text style={styles.resName} numberOfLines={2}>{t.name.replace(' Apartment', '').replace(' One-', '\nOne-')}</Text>
+      <Text style={styles.resMeta} numberOfLines={1}>{`${areaRangeOf(t.slug)}, up to ${plural(t.maxOccupancy, 'guest')}`}</Text>
+      <View style={styles.resFoot}>
+        <Text style={styles.resPrice} numberOfLines={1}>
+          {money(q.grandTotal / Math.max(1, q.nights))}
+          <Text style={styles.resPer}>  a night</Text>
+        </Text>
+        <View style={styles.resGo}>
+          <Ionicons name="arrow-forward" size={19} color={C.deep} />
+        </View>
+      </View>
+    </PressableScale>
+  );
+});
+
+/** Discover: the search first, then what you can book, what there is to do, and who to ask. */
 export default function Discover() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  const { stay, setStay } = useBooking();
+  const { width, height } = useWindowDimensions();
+  const { stay, setStay, bookings } = useBooking();
   const { ref, onScroll } = useScrollTop();
-  // Once the hero photo has left the top, the clock sits on a solid strip so page text never runs under it.
   const [overHero, setOverHero] = useState(true);
-  const heroH = useRef(0);
-  const resW = Math.min(312, Math.round(width * 0.78));
+  const y = useRef(new Animated.Value(0)).current;
+  // The whole first view, with a sliver of the page below; the search sits clear of the dock.
+  const hero = Math.round(Math.max(560, height - 16));
+  const resW = Math.min(340, Math.round(width * 0.76));
+  const next = bookings.filter((b) => tabOf(b) === 'upcoming').sort((a, b) => a.stay.checkIn.localeCompare(b.stay.checkIn))[0];
 
   const openStay = (tab: 'dates' | 'guests') => router.push({ pathname: '/stay', params: { tab, next: 'apartments' } });
+  const search = () => {
+    setStay(stay);
+    router.navigate('/apartments');
+  };
 
   return (
     <View style={canvas}>
@@ -109,94 +100,77 @@ export default function Discover() {
       <ScrollView
         ref={ref}
         style={{ flex: 1 }}
-        scrollEnabled={true}
         removeClippedSubviews={false}
         nestedScrollEnabled
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
         onScroll={(e) => {
           onScroll(e);
-          const over = e.nativeEvent.contentOffset.y < Math.max(1, heroH.current - insets.top);
+          const at = e.nativeEvent.contentOffset.y;
+          y.setValue(at);
+          const over = at < hero - insets.top - 20;
           if (over !== overHero) setOverHero(over);
-        }}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 0, paddingBottom: 0 }}
-      >
-        {/* Full-Bleed Panoramic Mountain Hero Stage */}
-        <View onLayout={(e) => { heroH.current = e.nativeEvent.layout.height; }} style={[styles.hero, { paddingTop: insets.top + LOGO_TOP }]}>
-          <Photo src={SEASONS.summer} style={StyleSheet.absoluteFill} />
-          {/* Dual scrim: top scrim for brand header, bottom deep pine scrim for editorial copy */}
-          <Scrim top={0.35} bottom={0.92} />
-
-          {/* Integrated Luxury Brand Header */}
+        }}>
+        <View style={[styles.hero, { height: hero, paddingTop: insets.top + LOGO_TOP }]}>
+          <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateY: y.interpolate({ inputRange: [0, hero], outputRange: [0, hero * 0.28], extrapolate: 'clamp' }) }] }]}>
+            <Photo src="/images/interiors/sunrise-balcony.jpg" style={StyleSheet.absoluteFill} />
+          </Animated.View>
+          <LinearGradient pointerEvents="none" colors={C.heroFade} locations={C.heroStops} style={StyleSheet.absoluteFill} />
           <BrandHeader variant="overPhoto" />
-
           <View style={{ flex: 1 }} />
-
-          {/* Clean Editorial Content Inside Hero */}
-          <View style={styles.heroBottom}>
-            <Text style={styles.heroKicker}>NATHIA GALI · 7,906 FT</Text>
-            <Text style={styles.heroTitle}>
-              Where clouds meet <Text style={styles.heroTitleItalic}>luxury</Text>
+          <View style={[styles.heroBody, { paddingBottom: insets.bottom + S.tabBar + 8 }]}>
+            <View style={styles.heroPlace}>
+              <Ionicons name="location" size={14} color={C.goldBright} />
+              <Text style={styles.heroPlaceText}>Nathia Gali, 7,906 ft</Text>
+            </View>
+            <Text style={styles.heroTitle} accessibilityRole="header" maxFontSizeMultiplier={1.1}>
+              Wake above{'\n'}
+              <Text style={styles.heroSoft}>the clouds</Text>
             </Text>
+            <StayBar stay={stay} onDates={() => openStay('dates')} onGuests={() => openStay('guests')} onSearch={search} />
           </View>
         </View>
 
-        {/* Elevated Overlapping Search Card */}
-        <View style={styles.searchCardWrap}>
-          <SearchCard
-            stay={stay}
-            onDates={() => openStay('dates')}
-            onGuests={() => openStay('guests')}
-            onSearch={() => {
-              setStay(stay);
-              router.navigate('/apartments');
-            }}
-          />
-        </View>
+        {next ? (
+          <PressableScale onPress={() => router.push(`/booking/${next.reference}`)} scaleTo={0.985} style={styles.next} accessibilityRole="button" accessibilityLabel={`Your next stay: ${next.type.name}`}>
+            <Photo src={next.type.images[0]} style={styles.nextPhoto} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.nextLabel}>Your next stay</Text>
+              <Text style={styles.nextName} numberOfLines={1}>{next.type.name.replace(' Apartment', '')}</Text>
+              <Text style={T.small} numberOfLines={1}>{`${fmtShort(next.stay.checkIn)}, ${plural(next.price.nights, 'night')}`}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={C.pine} />
+          </PressableScale>
+        ) : null}
 
-        {/* At a glance metric bar */}
-        <View style={styles.glance}>
-          {GLANCE.map((g, i) => (
-            <View key={g.label} style={[styles.glanceItem, i > 0 && styles.glanceDiv]}>
-              <Ionicons name={g.icon} size={16} color={C.gold} />
-              <Text style={styles.glanceNum} numberOfLines={1}>{g.value}</Text>
-              <Text style={styles.glanceLabel} numberOfLines={1}>{g.label.toUpperCase()}</Text>
+        <View style={styles.promises}>
+          {PROMISES.map((p) => (
+            <View key={p.title} style={styles.promise}>
+              <Ionicons name={p.icon} size={24} color={C.goldInk} />
+              <Text style={styles.promiseTitle}>{p.title}</Text>
+              <Text style={styles.promiseText}>{p.text}</Text>
             </View>
           ))}
         </View>
 
-        {/* Curated Apartments Showcase */}
-        <SectionHead
-          title="Curated Residences"
-          onMore={() => router.navigate('/apartments')}
-        />
+        <Heading title="Five apartments," soft="one mountain." more="See all apartments" onMore={() => router.navigate('/apartments')} />
         <FlatList
           horizontal
           nestedScrollEnabled
           removeClippedSubviews={false}
           data={ROOM_TYPES}
           keyExtractor={(t) => t.slug}
-          renderItem={({ item }) => (
-            <ResidenceCard
-              t={item}
-              w={resW}
-              onPress={() => router.push(`/room/${item.slug}`)}
-            />
-          )}
+          renderItem={({ item }) => <Residence t={item} stay={stay} w={resW} onPress={() => router.push(`/room/${item.slug}`)} />}
           showsHorizontalScrollIndicator={false}
           decelerationRate="fast"
-          snapToInterval={resW + 14}
+          snapToInterval={resW + 12}
           initialNumToRender={2}
           windowSize={3}
-          contentContainerStyle={{ paddingHorizontal: S.gutter, gap: 14 }}
+          contentContainerStyle={styles.rail}
         />
 
-        {/* Resort Facilities & Experiences */}
-        <SectionHead
-          title="Resort Experiences"
-          onMore={() => router.push('/amenities')}
-        />
+        <Heading title="Days filled" soft="as you like." more="See all amenities" onMore={() => router.push('/amenities')} />
         <FlatList
           horizontal
           nestedScrollEnabled
@@ -204,675 +178,95 @@ export default function Discover() {
           data={EXPERIENCES}
           keyExtractor={(e) => e.title}
           renderItem={({ item }) => (
-            <ExperienceCard
-              title={item.title}
-              image={item.image}
-              onPress={() => router.push('/amenities')}
-            />
+            <PressableScale onPress={() => router.push('/amenities')} scaleTo={0.975} style={styles.exp} accessibilityRole="button" accessibilityLabel={item.title}>
+              <Photo src={item.image} style={StyleSheet.absoluteFill} />
+              <LinearGradient pointerEvents="none" colors={C.tileFade} style={StyleSheet.absoluteFill} />
+              <Text style={styles.expName}>{item.title}</Text>
+            </PressableScale>
           )}
           showsHorizontalScrollIndicator={false}
           decelerationRate="fast"
-          snapToInterval={240 + 14}
+          snapToInterval={232 + 12}
           initialNumToRender={3}
           windowSize={3}
-          contentContainerStyle={{ paddingHorizontal: S.gutter, gap: 14 }}
+          contentContainerStyle={styles.rail}
         />
 
-        {/* Resort Architecture & Floor Plans Feature Card */}
-        <View style={styles.storyCard}>
-          {/* Architectural Background Photography: Portrait Facade at Night */}
-          <Photo src="/images/resort/night-facade-portrait.jpg" style={StyleSheet.absoluteFill} />
-          <LinearGradient
-            colors={[
-              'rgba(0, 0, 0, 0.35)',
-              'transparent',
-              'rgba(0, 0, 0, 0.45)',
-            ]}
-            locations={[0, 0.35, 1]}
-            style={StyleSheet.absoluteFill}
-          />
-
-          {/* Top badges in crystal glass */}
-          <View style={styles.storyHeader}>
-            <View style={styles.storyBadge}>
-              <ClearGlass />
-              <Ionicons name="business-outline" size={12} style={[glassInk, { marginRight: 6 }]} />
-              <Text style={styles.storyBadgeText}>ARCHITECTURE & DESIGN</Text>
-            </View>
-            <View style={styles.storyPillMini}>
-              <ClearGlass />
-              <Text style={styles.storyPillMiniText}>G1 – 8TH FLOOR</Text>
-            </View>
-          </View>
-
-          <View style={{ flex: 1 }} />
-
-          {/* Bottom Crystal Clear Glass Dock with Limited Text */}
-          <View style={styles.archGlassDock}>
-            <ClearGlass />
-
-            <Text style={styles.storyTitle}>Residences & Alpine Terraces</Text>
-
-            {/* Luxury CTA Button */}
-            <PressableScale
-              onPress={() => router.push('/floor-plans')}
-              scaleTo={0.975}
-              style={styles.storyBtn}
-            >
-              <LinearGradient
-                colors={[HEX.goldLight, HEX.goldDeep]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
-              />
-              <Text style={styles.storyBtnText}>Floor plans</Text>
-              <View style={styles.storyBtnArrow}>
-                <Ionicons name="arrow-forward" size={13} color={HEX.white} />
+        <View style={styles.why}>
+          <Text style={[styles.title, { color: C.sand }]} accessibilityRole="header">
+            {'A home up here,\n'}
+            <Text style={[styles.soft, { color: C.goldBright }]}>a hotel behind it.</Text>
+          </Text>
+          {REASONS.map((r, i) => (
+            <View key={r.label} style={styles.reason}>
+              <Photo src={REASON_PHOTO[i]} style={styles.reasonPhoto} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.reasonTitle}>{r.label}</Text>
+                <Text style={styles.reasonText}>{r.text}</Text>
               </View>
-            </PressableScale>
-          </View>
-        </View>
-
-        {/* Why Serene Heights: one lead story, then two numbered pillars */}
-        <View style={{ paddingHorizontal: S.gutter, marginTop: 40 }}>
-          <Text style={styles.sectionTitle}>Why Serene Heights</Text>
-
-          <PressableScale onPress={() => router.push('/amenities')} scaleTo={0.985} style={styles.leadCard}>
-            <Photo src={EDITORIAL_PILLARS[0].image} style={StyleSheet.absoluteFill} />
-            <Scrim top={0.2} bottom={0.78} />
-            <View style={styles.leadTag}>
-              <ClearGlass />
-              <Ionicons name={EDITORIAL_PILLARS[0].icon} size={12} style={glassInk} />
-              <Text style={styles.leadTagText}>{EDITORIAL_PILLARS[0].badge}</Text>
             </View>
-            <View style={{ flex: 1 }} />
-            <Text style={styles.leadNum}>01</Text>
-            <Text style={styles.leadTitle}>{EDITORIAL_PILLARS[0].title}</Text>
-          </PressableScale>
-
-          <View style={styles.pillarList}>
-            {EDITORIAL_PILLARS.slice(1).map((p, i) => (
-              <PressableScale key={p.kicker} onPress={() => router.push('/amenities')} scaleTo={0.985} style={[styles.pillarRow, i > 0 && styles.pillarLine]}>
-                <Photo src={p.image} style={styles.pillarImg} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.pillarNum}>{String(i + 2).padStart(2, '0')} · {p.badge.toUpperCase()}</Text>
-                  <Text style={styles.pillarTitle}>{p.title}</Text>
-                </View>
-              </PressableScale>
-            ))}
-          </View>
+          ))}
         </View>
 
-        {/* Footer: concierge + contact */}
+        <PressableScale onPress={() => router.push('/floor-plans')} scaleTo={0.985} style={styles.plans} accessibilityRole="button" accessibilityLabel="See the floor plans">
+          <View style={styles.plansArt}>
+            <Photo src="/images/floor-plans/floor-3.png" style={StyleSheet.absoluteFill} />
+          </View>
+          <View style={styles.plansBody}>
+            <View style={{ flex: 1 }}>
+              <Text style={T.h3}>Choose by floor</Text>
+              <Text style={[T.small, { marginTop: 2 }]}>Plans from G1 to the 8th floor terraces</Text>
+            </View>
+            <View style={styles.plansGo}>
+              <Ionicons name="arrow-forward" size={20} color={C.sand} />
+            </View>
+          </View>
+        </PressableScale>
+
         <LuxuryFooter bottomSpace={tabBarSpace(insets.bottom)} />
       </ScrollView>
-      {overHero ? null : <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top, backgroundColor: C.sand }} />}
-    </View>
-  );
-}
-
-const ResidenceCard = memo(function ResidenceCard({
-  t,
-  w,
-  onPress,
-}: {
-  t: RoomType;
-  w: number;
-  onPress: () => void;
-}) {
-  return (
-    <PressableScale onPress={onPress} scaleTo={0.975} style={[styles.resCard, { width: w }]}>
-      {/* Full-bleed portrait photography */}
-      <Photo src={t.images[0]} style={StyleSheet.absoluteFill} />
-      <Scrim bottom={0.22} />
-
-      <View style={{ flex: 1 }} />
-
-      {/* Crystal clear glass pill */}
-      <View style={styles.glassDock}>
-        <View style={styles.crystalPill}>
-          <ClearGlass />
-          <Text numberOfLines={1} style={styles.crystalTitle}>{t.name}</Text>
-          <View style={styles.crystalArrow}>
-            <Ionicons name="arrow-forward" size={13} style={glassInk} />
-          </View>
-        </View>
-      </View>
-    </PressableScale>
-  );
-});
-
-const ExperienceCard = memo(function ExperienceCard({
-  title,
-  image,
-  onPress,
-}: {
-  title: string;
-  image: string;
-  onPress?: () => void;
-}) {
-  return (
-    <PressableScale onPress={onPress} scaleTo={0.975} style={styles.expCard}>
-      {/* Full-bleed experience photography */}
-      <Photo src={image} style={StyleSheet.absoluteFill} />
-      <Scrim bottom={0.22} />
-
-      <View style={{ flex: 1 }} />
-
-      {/* Crystal clear glass pill */}
-      <View style={styles.glassDock}>
-        <View style={styles.crystalPill}>
-          <ClearGlass />
-          <Text numberOfLines={1} style={styles.crystalTitle}>{title}</Text>
-          <View style={styles.crystalArrow}>
-            <Ionicons name="arrow-forward" size={13} style={glassInk} />
-          </View>
-        </View>
-      </View>
-    </PressableScale>
-  );
-});
-
-function SectionHead({
-  title,
-  sub,
-  onMore,
-}: {
-  title: string;
-  sub?: string;
-  onMore?: () => void;
-}) {
-  return (
-    <View style={styles.sectionHead}>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        {sub && <Text style={styles.sectionSub}>{sub}</Text>}
-      </View>
-      {onMore && (
-        <Pressable onPress={onMore} hitSlop={10} style={styles.more}>
-          <Text style={styles.moreText}>See all</Text>
-          <ChevronRight size={15} color={C.pine} strokeWidth={2} />
-        </Pressable>
-      )}
+      {overHero ? null : <View pointerEvents="none" style={[styles.strip, { height: insets.top }]} />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: {
-    width: '100%',
-    height: 420,
-    borderBottomLeftRadius: S.well,
-    borderBottomRightRadius: S.well,
-    overflow: 'hidden',
-    backgroundColor: C.pine,
-    ...shadow.cardHover,
-  },
-  heroBottom: {
-    paddingHorizontal: S.gutter,
-    paddingBottom: GLASS_CARDS ? 28 : 48,
-  },
-  heroKicker: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 9.5,
-    letterSpacing: 1.8,
-    color: C.gold,
-  },
-  heroTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 32,
-    lineHeight: S.well,
-    letterSpacing: -0.3,
-    color: HEX.white,
-    marginTop: 6,
-  },
-  heroTitleItalic: {
-    fontFamily: FONTS.displayItalic,
-    color: HEX.parchment,
-  },
-  heroSub: {
-    fontFamily: FONTS.ui,
-    fontSize: 13,
-    lineHeight: 19,
-    color: 'rgba(236, 238, 237, 0.92)',
-    marginTop: 6,
-  },
-  searchCardWrap: {
-    paddingHorizontal: S.gutter,
-    // Glass would show the photo's edge through the card, so it sits below the photo; solid, it overlaps as before.
-    marginTop: GLASS_CARDS ? 18 : -32,
-    zIndex: 10,
-  },
-  glance: {
-    flexDirection: 'row',
-    marginHorizontal: S.gutter,
-    marginTop: 20,
-    paddingVertical: 16,
-    backgroundColor: C.pine,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: C.goldLine,
-    ...shadow.card,
-    ...glassCardDark,
-  },
-  glanceItem: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 5,
-  },
-  glanceDiv: {
-    borderLeftWidth: StyleSheet.hairlineWidth,
-    borderLeftColor: 'rgba(200, 164, 106, 0.25)',
-  },
-  glanceNum: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 15.5,
-    lineHeight: 20,
-    color: C.cream,
-    fontVariant: ['tabular-nums'],
-  },
-  glanceLabel: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 9,
-    letterSpacing: 1.3,
-    color: C.gold,
-  },
-  sectionHead: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    paddingHorizontal: S.gutter,
-    marginTop: 34,
-    marginBottom: 14,
-  },
-  sectionTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 26,
-    lineHeight: 30,
-    color: C.ink,
-  },
-  sectionSub: {
-    fontFamily: FONTS.ui,
-    fontSize: 13,
-    color: C.ink55,
-    marginTop: 4,
-  },
-  more: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    paddingVertical: 4,
-  },
-  moreText: {
-    fontSize: 13,
-    fontFamily: FONTS.uiBold,
-    color: C.pine,
-  },
-  resCard: {
-    height: 360,
-    borderRadius: 26,
-    overflow: 'hidden',
-    backgroundColor: C.pine,
-    borderWidth: 1,
-    borderColor: 'rgba(200, 164, 106, 0.35)',
-    ...shadow.cardHover,
-  },
-  expCard: {
-    width: 240,
-    height: 300,
-    borderRadius: 24,
-    overflow: 'hidden',
-    backgroundColor: C.pine,
-    borderWidth: 1,
-    borderColor: 'rgba(200, 164, 106, 0.3)',
-    ...shadow.cardHover,
-  },
-  glassDock: {
-    padding: 12,
-  },
-  crystalPill: {
-    position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: 999,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    ...glassEdge,
-  },
-  crystalTitle: {
-    flex: 1,
-    fontFamily: FONTS.display,
-    fontSize: 15.5,
-    lineHeight: 19,
-    marginRight: 6,
-    ...glassInk,
-  },
-  crystalArrow: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.9)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  storyCard: {
-    marginHorizontal: S.gutter,
-    marginTop: 32,
-    height: 410,
-    borderRadius: 28,
-    overflow: 'hidden',
-    borderWidth: 1.2,
-    borderColor: 'rgba(200, 164, 106, 0.4)',
-    padding: 14,
-    backgroundColor: HEX.night,
-    ...shadow.cardHover,
-  },
-  storyHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  storyBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 11,
-    paddingVertical: 5,
-    borderRadius: 999,
-    ...glassEdge,
-  },
-  storyBadgeText: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 9.5,
-    letterSpacing: 1.3,
-    ...glassInk,
-  },
-  storyPillMini: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 999,
-    ...glassEdge,
-  },
-  storyPillMiniText: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 8.5,
-    letterSpacing: 1.1,
-    ...glassInk,
-  },
-  archGlassDock: {
-    position: 'relative',
-    borderRadius: 22,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    ...glassEdge,
-  },
-  storyTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 22,
-    lineHeight: 26,
-    letterSpacing: 0.2,
-    ...glassInk,
-  },
-  storySubtitle: {
-    fontFamily: FONTS.ui,
-    fontSize: 12.5,
-    lineHeight: 17,
-    color: 'rgba(255, 253, 249, 0.8)',
-    marginTop: 4,
-  },
-  storyBtn: {
-    position: 'relative',
-    marginTop: 14,
-    borderRadius: 999,
-    overflow: 'hidden',
-    paddingVertical: 11,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: HEX.goldPale,
-    shadowColor: HEX.black,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  storyBtnText: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 12.5,
-    letterSpacing: 0.3,
-    color: C.pine,
-  },
-  storyBtnArrow: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: pine(0.88),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  reviewSection: {
-    marginTop: 40,
-  },
-  eyebrow: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 10,
-    letterSpacing: 1.8,
-    color: C.gold,
-  },
-  scoreCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    marginHorizontal: S.gutter,
-    marginTop: 16,
-    marginBottom: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    backgroundColor: C.pine,
-    borderWidth: 1,
-    borderColor: C.goldLine,
-  },
-  scoreBig: {
-    fontFamily: FONTS.display,
-    fontSize: 46,
-    lineHeight: 50,
-    color: C.cream,
-    fontVariant: ['tabular-nums'],
-  },
-  scoreDivider: {
-    width: StyleSheet.hairlineWidth,
-    alignSelf: 'stretch',
-    backgroundColor: C.goldLine,
-  },
-  scoreLabel: {
-    fontFamily: FONTS.display,
-    fontSize: 20,
-    lineHeight: 24,
-    color: C.cream,
-    marginTop: 6,
-  },
-  scoreSub: {
-    fontFamily: FONTS.ui,
-    fontSize: 12.5,
-    color: C.cream70,
-    marginTop: 1,
-  },
-  starsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-  },
-  reviewCard: {
-    minHeight: 236,
-    padding: 20,
-    backgroundColor: C.white,
-    borderRadius: 22,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: C.line,
-    ...shadow.card,
-  },
-  reviewTop: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    height: 30,
-  },
-  quoteMark: {
-    fontFamily: FONTS.display,
-    fontSize: 52,
-    lineHeight: 52,
-    color: C.gold,
-    marginTop: -6,
-  },
-  reviewTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 21,
-    lineHeight: 25,
-    color: C.ink,
-    marginTop: 4,
-  },
-  reviewBody: {
-    fontFamily: FONTS.ui,
-    fontSize: 13.5,
-    lineHeight: 20.5,
-    color: C.ink70,
-    marginTop: 8,
-  },
-  reviewFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 11,
-    marginTop: 16,
-    paddingTop: 14,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: C.line,
-  },
-  authorAvatar: {
-    width: S.well,
-    height: S.well,
-    borderRadius: 18,
-    backgroundColor: C.pine,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  authorAvatarText: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 11.5,
-    letterSpacing: 0.5,
-    color: C.gold,
-  },
-  reviewAuthor: {
-    fontFamily: FONTS.uiSemi,
-    fontSize: 13,
-    color: C.ink,
-  },
-  reviewRoom: {
-    fontFamily: FONTS.ui,
-    fontSize: 11.5,
-    color: C.ink55,
-    marginTop: 1,
-  },
-  leadCard: {
-    height: 400,
-    marginTop: 16,
-    padding: 22,
-    borderRadius: 26,
-    overflow: 'hidden',
-    backgroundColor: C.pine,
-    ...shadow.card,
-  },
-  leadTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 6,
-    paddingHorizontal: 12,
-    height: 30,
-    borderRadius: 15,
-    ...glassEdge,
-  },
-  leadTagText: {
-    fontFamily: FONTS.uiSemi,
-    fontSize: 11.5,
-    letterSpacing: 0.3,
-    ...glassInk,
-  },
-  leadNum: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 11,
-    letterSpacing: 2,
-    color: C.gold,
-  },
-  leadTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 31,
-    lineHeight: 35,
-    color: HEX.white,
-    marginTop: 6,
-  },
-  leadText: {
-    fontFamily: FONTS.ui,
-    fontSize: 13.5,
-    lineHeight: 20,
-    color: 'rgba(255, 255, 255, 0.88)',
-    marginTop: 8,
-  },
-  leadMeta: {
-    fontFamily: FONTS.uiSemi,
-    fontSize: 11.5,
-    letterSpacing: 0.4,
-    color: C.gold,
-    marginTop: 14,
-    paddingTop: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(255, 255, 255, 0.28)',
-  },
-  pillarList: {
-    marginTop: 14,
-    paddingHorizontal: 14,
-    borderRadius: 22,
-    backgroundColor: C.white,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: C.line,
-    ...shadow.card,
-    ...glassCard,
-  },
-  pillarRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    paddingVertical: 14,
-  },
-  pillarLine: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: C.line,
-  },
-  pillarImg: {
-    width: 92,
-    height: 108,
-    borderRadius: 16,
-  },
-  pillarNum: {
-    fontFamily: FONTS.uiBold,
-    fontSize: 9.5,
-    letterSpacing: 1.5,
-    color: C.gold,
-  },
-  pillarTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 20,
-    lineHeight: 23,
-    color: C.ink,
-    marginTop: 4,
-  },
-  pillarText: {
-    fontFamily: FONTS.ui,
-    fontSize: 12.5,
-    lineHeight: 18,
-    color: C.ink70,
-    marginTop: 4,
-  },
+  strip: { position: 'absolute', top: 0, left: 0, right: 0, backgroundColor: C.sand },
+  hero: { overflow: 'hidden', backgroundColor: C.deep, borderBottomLeftRadius: 38, borderBottomRightRadius: 38 },
+  heroBody: { padding: 12, gap: 14 },
+  heroPlace: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 8 },
+  heroPlaceText: { fontFamily: FONTS.uiSemi, fontSize: 14, color: HEX.white },
+  heroTitle: { fontFamily: FONTS.display, fontSize: 60, lineHeight: 60, letterSpacing: -1.4, color: HEX.white, paddingHorizontal: 8, marginBottom: 6 },
+  heroSoft: { fontFamily: FONTS.displayItalic, fontStyle: 'italic', fontSize: 60, color: C.goldBright },
+  next: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 24, marginHorizontal: 12, padding: 12, paddingRight: 18, borderRadius: 28, backgroundColor: C.white, boxShadow: C.lift },
+  nextPhoto: { width: 76, height: 76, borderRadius: 20 },
+  nextLabel: { fontFamily: FONTS.uiSemi, fontSize: 13.5, color: C.goldInk },
+  nextName: { fontFamily: FONTS.display, fontSize: 24, lineHeight: 28, color: C.ink },
+  promises: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: S.gutter, marginTop: 38, rowGap: 26 },
+  promise: { width: '50%', paddingRight: 14 },
+  promiseTitle: { fontFamily: FONTS.uiBold, fontSize: 15.5, lineHeight: 21, color: C.ink, marginTop: 10 },
+  promiseText: { fontFamily: FONTS.ui, fontSize: 14, lineHeight: 20, color: C.ink55, marginTop: 2 },
+  heading: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: S.gutter, marginTop: 60, marginBottom: 22, gap: 12 },
+  title: { flex: 1, fontFamily: FONTS.display, fontSize: 44, lineHeight: 45, letterSpacing: -1, color: C.ink },
+  soft: { fontFamily: FONTS.displayItalic, fontStyle: 'italic', fontSize: 44, color: C.goldInk },
+  more: { width: 52, height: 52, borderRadius: 26, backgroundColor: C.white, alignItems: 'center', justifyContent: 'center' },
+  rail: { paddingHorizontal: S.gutter, gap: 12 },
+  res: { borderRadius: 34, overflow: 'hidden', justifyContent: 'flex-end', padding: 20, backgroundColor: C.deep },
+  resName: { fontFamily: FONTS.display, fontSize: 34, lineHeight: 35, letterSpacing: -0.5, color: HEX.white },
+  resMeta: { fontFamily: FONTS.ui, fontSize: 14.5, color: C.cream70, marginTop: 4 },
+  resFoot: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14 },
+  resPrice: { flex: 1, fontFamily: FONTS.uiBold, fontSize: 19, color: HEX.white, fontVariant: ['tabular-nums'] },
+  resPer: { fontFamily: FONTS.ui, fontSize: 14, color: C.cream70 },
+  resGo: { width: 50, height: 50, borderRadius: 25, backgroundColor: C.goldBright, alignItems: 'center', justifyContent: 'center' },
+  exp: { width: 232, height: 300, borderRadius: 30, overflow: 'hidden', justifyContent: 'flex-end', padding: 18, backgroundColor: C.deep },
+  expName: { fontFamily: FONTS.display, fontSize: 29, lineHeight: 31, color: HEX.white },
+  why: { marginTop: 64, paddingHorizontal: S.gutter, paddingTop: 48, paddingBottom: 28, gap: 8, backgroundColor: C.deep, borderRadius: 38 },
+  reason: { flexDirection: 'row', gap: 18, paddingVertical: 20, alignItems: 'center' },
+  reasonPhoto: { width: 104, height: 138, borderRadius: 26 },
+  reasonTitle: { fontFamily: FONTS.display, fontSize: 27, lineHeight: 29, color: C.sand },
+  reasonText: { fontFamily: FONTS.ui, fontSize: 14.5, lineHeight: 22, color: C.cream70, marginTop: 6 },
+  plans: { marginTop: 24, marginHorizontal: 12, borderRadius: 34, overflow: 'hidden', backgroundColor: C.white },
+  plansArt: { height: 210, overflow: 'hidden', backgroundColor: HEX.white },
+  plansBody: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 20 },
+  plansGo: { width: 52, height: 52, borderRadius: 26, backgroundColor: C.pine, alignItems: 'center', justifyContent: 'center' },
 });

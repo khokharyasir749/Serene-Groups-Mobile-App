@@ -11,7 +11,7 @@ import PageHeader from '@/features/bookings/guest/components/PageHeader';
 import { Text } from '@/features/bookings/guest/components/Text';
 import { useBooking } from '@/features/bookings/guest/state/booking';
 import { C, FONTS, S } from '@/features/bookings/guest/theme';
-import { ambient, glassCard } from '@/features/bookings/guest/theme/glass';
+import { glassCard } from '@/features/bookings/guest/theme/glass';
 
 const rise = (i: number) => 50 + i * 60;
 
@@ -41,7 +41,7 @@ export default function FindBookingScreen() {
           <Enter delay={rise(0)} duration={450} style={styles.hero}>
             <View style={styles.kickerRow}>
               <View style={styles.kickerDot} />
-              <Text style={styles.kickerText}>RESERVATION CONCIERGE</Text>
+              <Text style={styles.kickerText}>Reservations</Text>
             </View>
             <Text style={styles.headline}>Find Your Reservation</Text>
             <Text style={styles.lede}>
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: C.sand,
-    ...ambient,
   },
   hero: {
     marginBottom: 4,
@@ -185,8 +184,8 @@ const styles = StyleSheet.create({
   },
   kickerText: {
     fontFamily: FONTS.uiBold,
-    fontSize: 10.5,
-    letterSpacing: 1.6,
+    fontSize: 12.5,
+    letterSpacing: 0,
     color: HEX.bronze,
   },
   headline: {
@@ -242,7 +241,7 @@ const styles = StyleSheet.create({
   },
   cardSub: {
     fontFamily: FONTS.ui,
-    fontSize: 11.5,
+    fontSize: 13,
     color: C.ink55,
     marginTop: 1,
   },
@@ -257,7 +256,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontFamily: FONTS.uiSemi,
-    fontSize: 10.5,
+    fontSize: 12.5,
     color: C.pine,
   },
   options: {
@@ -300,7 +299,7 @@ const styles = StyleSheet.create({
   },
   optSub: {
     fontFamily: FONTS.ui,
-    fontSize: 12,
+    fontSize: 13,
     color: C.ink55,
     marginTop: 2,
   },
@@ -322,13 +321,13 @@ const styles = StyleSheet.create({
   },
   helpText: {
     fontFamily: FONTS.ui,
-    fontSize: 12.5,
+    fontSize: 14,
     color: C.ink55,
     marginLeft: 6,
   },
   helpLink: {
     fontFamily: FONTS.uiSemi,
-    fontSize: 12.5,
+    fontSize: 14,
     color: C.pine,
   },
 });

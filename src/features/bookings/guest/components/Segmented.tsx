@@ -39,10 +39,10 @@ export default function Segmented<T extends string>({ options, value, onChange, 
 }
 
 const styles = StyleSheet.create({
-  track: { flexDirection: 'row', borderRadius: 999, padding: 2, borderWidth: StyleSheet.hairlineWidth },
+  track: { flexDirection: 'row', borderRadius: 999, padding: 2 },
   trackDark: { backgroundColor: 'rgba(20,30,27,0.42)', borderColor: C.cream45 },
-  trackLight: { backgroundColor: C.snow, borderColor: C.line },
+  trackLight: { backgroundColor: C.snow },
   thumb: { position: 'absolute', top: 2, bottom: 2, borderRadius: 999 },
-  opt: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 9, paddingHorizontal: 16 },
-  label: { fontSize: 10.5, letterSpacing: 1.8, fontWeight: '700', textTransform: 'uppercase' },
+  opt: { flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 46, paddingHorizontal: 8 },
+  label: { fontSize: 12.5, letterSpacing: 0, fontWeight: '700' },
 });

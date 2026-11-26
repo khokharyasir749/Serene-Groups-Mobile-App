@@ -13,7 +13,7 @@ export const FONTS = { ...fonts, display: fonts.displaySemi, displayMedium: font
 export const F = { display: FONTS.display, sans: FONTS.ui };
 
 // radius: buttons & inputs · card: cards & photos · tabBar: height of the floating dock.
-export const S = { gutter: 20, radius: 14, card: 22, photo: 20, tabBar: 64, well: bookingWell };
+export const S = { gutter: 20, radius: 20, card: 28, photo: 26, tabBar: 64, well: bookingWell };
 
 /** Bottom padding a tab screen needs so its last item clears the floating dock. */
 /** Distance from the top safe-area edge to the brand lockup — the same on every screen, so the logo never shifts when you change screens. */
@@ -32,13 +32,13 @@ export const shadow = {
 //   h1 screen titles · h2 section headings · h3 card titles · body copy · small meta · caps labels · price.
 // Display sizes are tuned for Cormorant's small x-height; numbers use tabular figures.
 export const T = StyleSheet.create({
-  h1: { fontFamily: FONTS.display, fontSize: S.well, lineHeight: 40, letterSpacing: -0.4, color: C.ink },
-  h2: { fontFamily: FONTS.display, fontSize: 27, lineHeight: 31, letterSpacing: -0.3, color: C.ink },
-  h3: { fontFamily: FONTS.display, fontSize: 21, lineHeight: 25, color: C.ink },
-  eyebrow: { fontFamily: FONTS.uiSemi, fontSize: 10.5, lineHeight: 14, letterSpacing: 1.6, textTransform: 'uppercase', color: C.ink55 },
-  caps: { fontFamily: FONTS.uiBold, fontSize: 10.5, letterSpacing: 1.6, textTransform: 'uppercase', color: C.ink },
+  h1: { fontFamily: FONTS.display, fontSize: 42, lineHeight: 44, letterSpacing: -0.8, color: C.ink },
+  h2: { fontFamily: FONTS.display, fontSize: 32, lineHeight: 35, letterSpacing: -0.5, color: C.ink },
+  h3: { fontFamily: FONTS.display, fontSize: 24, lineHeight: 28, letterSpacing: -0.2, color: C.ink },
+  eyebrow: { fontFamily: FONTS.uiSemi, fontSize: 13.5, lineHeight: 19, color: C.goldInk },
+  caps: { fontFamily: FONTS.uiSemi, fontSize: 13.5, lineHeight: 19, color: C.ink },
   display: { fontFamily: FONTS.display, color: C.ink },
-  body: { fontFamily: FONTS.ui, fontSize: 15, lineHeight: 22, color: C.ink70 },
-  small: { fontFamily: FONTS.ui, fontSize: 13, lineHeight: 18, color: C.ink55 },
-  price: { fontFamily: FONTS.uiBold, fontSize: 18, lineHeight: 23, letterSpacing: -0.2, color: C.ink, fontVariant: ['tabular-nums'] },
+  body: { fontFamily: FONTS.ui, fontSize: 16, lineHeight: 25, color: C.ink70 },
+  small: { fontFamily: FONTS.ui, fontSize: 14, lineHeight: 20, color: C.ink55 },
+  price: { fontFamily: FONTS.uiBold, fontSize: 20, lineHeight: 26, letterSpacing: -0.3, color: C.ink, fontVariant: ['tabular-nums'] },
 });

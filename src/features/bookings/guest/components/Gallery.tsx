@@ -15,7 +15,7 @@ export function HeroGallery({ photos, height }: { photos: string[]; height: numb
   const [page, setPage] = useState(0);
 
   return (
-    <View style={{ height, overflow: 'hidden', backgroundColor: C.snow, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
+    <View style={{ height, overflow: 'hidden', backgroundColor: C.snow, borderBottomLeftRadius: 38, borderBottomRightRadius: 38 }}>
       <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={(e) => setPage(Math.round(e.nativeEvent.contentOffset.x / width))}>
         {photos.map((src, i) => (
           <Pressable key={src} onPress={() => setOpen(i)}>
@@ -25,7 +25,7 @@ export function HeroGallery({ photos, height }: { photos: string[]; height: numb
       </ScrollView>
       <View style={styles.counter} pointerEvents="none">
         <ClearGlass />
-        <Text style={{ ...glassInk, fontSize: 12, fontWeight: '600', letterSpacing: 0.5 }}>
+        <Text style={{ ...glassInk, fontSize: 13, fontWeight: '600', letterSpacing: 0.5 }}>
           {page + 1} / {photos.length}
         </Text>
       </View>

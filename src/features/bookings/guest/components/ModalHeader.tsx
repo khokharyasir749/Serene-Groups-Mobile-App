@@ -20,8 +20,8 @@ export default function ModalHeader({ title, onClose, right }: { title: string; 
 }
 
 const styles = StyleSheet.create({
-  bar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: S.gutter - 4, paddingBottom: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line, backgroundColor: C.sand },
-  close: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: C.white, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line },
+  bar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: S.gutter - 4, paddingBottom: 12, backgroundColor: C.sand },
+  close: { width: 46, height: 46, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: C.white, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line },
   title: { flex: 1, textAlign: 'center' },
-  side: { width: 40, alignItems: 'flex-end' },
+  side: { width: 46, alignItems: 'flex-end' },
 });

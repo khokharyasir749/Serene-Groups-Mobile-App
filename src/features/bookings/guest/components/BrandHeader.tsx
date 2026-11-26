@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   on: { backgroundColor: C.pureWhite, borderWidth: 1, borderColor: C.line, paddingLeft: 5 },
   onOverPhoto: { ...glassEdge, paddingLeft: 5 },
   pressed: { opacity: 0.88, transform: [{ scale: 0.97 }] },
-  label: { fontSize: 12.5, fontFamily: FONTS.uiBold },
+  label: { fontSize: 14, fontFamily: FONTS.uiBold },
   initials: { width: 28, height: 28, borderRadius: 14, backgroundColor: C.pine, alignItems: 'center', justifyContent: 'center' },
-  initialsText: { color: C.cream, fontSize: 11, fontFamily: FONTS.uiBold, letterSpacing: 0.5 },
+  initialsText: { color: C.cream, fontSize: 12.5, fontFamily: FONTS.uiBold, letterSpacing: 0.5 },
 });

@@ -1,114 +1,46 @@
-import { HEX } from '@/features/bookings/guest/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, View } from 'react-native';
+
 import { Text } from '@/features/bookings/guest/components/Text';
-
 import { PressableScale } from '@/features/bookings/guest/components/ui';
-import { fmtDay, plural, type Stay } from '@/features/bookings/guest/lib/stay';
+import { fmtDay, guestsLabel, nightsBetween, plural, type Stay } from '@/features/bookings/guest/lib/stay';
 import { C, FONTS } from '@/features/bookings/guest/theme';
-import { glassCard } from '@/features/bookings/guest/theme/glass';
 
-/**
- * Clean & Minimalist StayBar: Quiet monochrome luxury, zero clashing colors.
- */
-export default function StayBar({ stay, onPress }: { stay: Stay; onPress: () => void }) {
+type Props = {
+  stay: Stay;
+  onDates: () => void;
+  onGuests: () => void;
+  /** With a search button; without one the bar only edits the stay. */
+  onSearch?: () => void;
+};
+
+/** The stay at a glance: dates and guests, each tappable, and one search button. The same bar as Explore. */
+export default function StayBar({ stay, onDates, onGuests, onSearch }: Props) {
+  const dates = `${fmtDay(stay.checkIn)} – ${fmtDay(stay.checkOut)}`;
+  const guests = guestsLabel(stay.adults, stay.children);
   return (
-    <PressableScale
-      onPress={onPress}
-      scaleTo={0.985}
-      style={styles.bar}
-      accessibilityRole="button"
-      accessibilityLabel={`Dates: ${fmtDay(stay.checkIn)} to ${fmtDay(stay.checkOut)}, Guests: ${stay.adults + stay.children}`}
-    >
-      {/* Dates Cell */}
-      <View style={[styles.cell, { flex: 1.2 }]}>
-        <Ionicons name="calendar-outline" size={17} color={C.pine} style={styles.icon} />
-        <View style={styles.textWrap}>
-          <Text style={styles.label}>DATES</Text>
-          <Text style={styles.val} numberOfLines={1}>
-            {fmtDay(stay.checkIn)} – {fmtDay(stay.checkOut)}
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.divider} />
-
-      {/* Guests Cell */}
-      <View style={[styles.cell, { flex: 1 }]}>
-        <Ionicons name="people-outline" size={17} color={C.pine} style={styles.icon} />
-        <View style={styles.textWrap}>
-          <Text style={styles.label}>GUESTS</Text>
-          <Text style={styles.val} numberOfLines={1}>
-            {stay.adults + stay.children} · {plural(stay.rooms, 'apt')}
-          </Text>
-        </View>
-      </View>
-
-      {/* Search Button */}
-      <View style={styles.go}>
-        <Ionicons name="search" size={16} color={C.cream} />
-      </View>
-    </PressableScale>
+    <View style={styles.bar}>
+      <PressableScale onPress={onDates} scaleTo={0.97} style={[styles.field, { flex: 1.4 }]} accessibilityRole="button" accessibilityLabel={`Dates: ${dates}. Change`}>
+        <Text style={styles.label} numberOfLines={1} maxFontSizeMultiplier={1.1}>{plural(nightsBetween(stay.checkIn, stay.checkOut), 'night')}</Text>
+        <Text style={styles.value} numberOfLines={1} adjustsFontSizeToFit maxFontSizeMultiplier={1.1}>{dates}</Text>
+      </PressableScale>
+      <View style={styles.rule} />
+      <PressableScale onPress={onGuests} scaleTo={0.97} style={[styles.field, { flex: 1 }]} accessibilityRole="button" accessibilityLabel={`Guests: ${guests}, ${plural(stay.rooms, 'apartment')}. Change`}>
+        <Text style={styles.label} numberOfLines={1} maxFontSizeMultiplier={1.1}>{plural(stay.rooms, 'apartment')}</Text>
+        <Text style={styles.value} numberOfLines={1} adjustsFontSizeToFit maxFontSizeMultiplier={1.1}>{guests}</Text>
+      </PressableScale>
+      <PressableScale onPress={onSearch ?? onDates} scaleTo={0.94} style={styles.go} accessibilityRole="button" accessibilityLabel={onSearch ? 'Search apartments' : 'Change dates'}>
+        <Ionicons name={onSearch ? 'search' : 'calendar-outline'} size={21} color={C.sand} />
+      </PressableScale>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 16,
-    paddingRight: 6,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: C.pureWhite,
-    borderWidth: 1,
-    borderColor: C.line,
-    shadowColor: HEX.pine,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
-    ...glassCard,
-  },
-  cell: {
-    minWidth: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingVertical: 5,
-  },
-  icon: {
-    opacity: 0.75,
-  },
-  textWrap: {
-    flex: 1,
-    minWidth: 0,
-  },
-  label: {
-    fontSize: 9,
-    fontFamily: FONTS.uiBold,
-    letterSpacing: 1.2,
-    color: C.ink55,
-  },
-  val: {
-    fontFamily: FONTS.uiSemi,
-    fontSize: 13,
-    color: C.pine,
-    marginTop: 1.5,
-  },
-  divider: {
-    width: 1,
-    height: 24,
-    marginHorizontal: 10,
-    backgroundColor: C.line,
-  },
-  go: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 6,
-    backgroundColor: C.pine,
-  },
+  bar: { minHeight: 76, maxWidth: 560, flexDirection: 'row', alignItems: 'center', paddingLeft: 20, paddingRight: 9, borderRadius: 28, backgroundColor: C.white, boxShadow: C.lift },
+  field: { height: 76, justifyContent: 'center', gap: 2 },
+  label: { fontFamily: FONTS.uiMedium, fontSize: 12.5, lineHeight: 17, color: C.goldInk },
+  value: { fontFamily: FONTS.uiBold, fontSize: 16, lineHeight: 22, color: C.ink },
+  rule: { width: 1, height: 34, backgroundColor: C.line, marginHorizontal: 14 },
+  go: { width: 58, height: 58, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: C.pine, marginLeft: 8 },
 });
