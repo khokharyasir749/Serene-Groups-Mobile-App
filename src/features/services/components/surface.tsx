@@ -2,6 +2,8 @@ import { useRef, type ReactNode } from "react";
 import { Animated, Pressable, StyleSheet, View, type PressableProps, type StyleProp, type ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors, radius as R, svc } from "@/core/constants/theme";
+import { tone } from "@/features/services/components/tone";
+import { Ready } from "@/features/services/components/Text";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -10,7 +12,7 @@ type PressProps = Omit<PressableProps, "style" | "children"> & { style?: StylePr
 /** Every tappable surface in the module: the same quick spring under the finger. */
 export function Press({ style, children, ...rest }: PressProps) {
   const scale = useRef(new Animated.Value(1)).current;
-  const to = (v: number) => Animated.spring(scale, { toValue: v, speed: 40, bounciness: 5, useNativeDriver: true }).start();
+  const to = (v: number) => Animated.spring(scale, { toValue: v, damping: 16, stiffness: 340, mass: 0.7, useNativeDriver: true }).start();
   return (
     <AnimatedPressable accessibilityRole="button" {...rest} onPressIn={() => to(0.965)} onPressOut={() => to(1)} style={[style, { transform: [{ scale }] }]}>
       {children}
@@ -20,19 +22,18 @@ export function Press({ style, children, ...rest }: PressProps) {
 
 export type Finish = "ivory" | "pine" | "dark" | "clear" | "glass" | "frost" | "pineGlass";
 
-/** White paper and Pine are flat. The glass finishes carry a lit gradient. */
+/** Flat alabaster plates with a hairline edge, flat Pine, and clear glass for photos and Pine. */
 const SURFACE: Record<Finish, ViewStyle> = {
-  ivory: { backgroundColor: svc.surface, borderColor: svc.surfaceEdge },
-  pine: { backgroundColor: colors.crestSlate, borderColor: colors.crestSlate },
+  ivory: { backgroundColor: tone.plate, borderColor: tone.line, boxShadow: tone.shadow },
+  pine: { backgroundColor: tone.pine, borderColor: tone.pine },
   dark: { backgroundColor: svc.darkSurface, borderColor: svc.darkEdge },
   clear: { backgroundColor: colors.photoGlass, borderColor: svc.clearEdge },
-  frost: { backgroundColor: svc.frost, borderColor: svc.frostEdge },
-  pineGlass: { backgroundColor: svc.pineGlass, borderColor: svc.pineGlassEdge },
-  // boxShadow, not elevation: Android paints a dark box behind an elevated see-through view.
-  glass: { backgroundColor: colors.clear, borderColor: svc.glassEdge, boxShadow: svc.glassShadow },
+  frost: { backgroundColor: tone.glassOnPine, borderColor: tone.glassOnPineEdge },
+  pineGlass: { backgroundColor: tone.pine, borderColor: tone.pine },
+  glass: { backgroundColor: tone.plate, borderColor: tone.line, boxShadow: tone.shadow },
 };
 
-const SHEEN = { clear: svc.glassClear, glass: svc.glass, frost: svc.frostSheen, pineGlass: svc.pineSheen } as const;
+const SHEEN = { clear: svc.glassClear } as const;
 
 function Sheen({ finish, radius }: { finish: Finish; radius: number }) {
   if (!(finish in SHEEN)) return null;
@@ -59,17 +60,16 @@ export function SurfacePress({ children, style, finish = "ivory", radius = R.lg,
   );
 }
 
-/** Alabaster page, warmer at the top so the glass there has light behind it. */
+/** Plain ivory page. */
 export function Canvas({ children }: { children: ReactNode }) {
   return (
     <View style={styles.page}>
-      <LinearGradient colors={svc.canvas} locations={svc.canvasStops} style={StyleSheet.absoluteFill} />
-      {children}
+      <Ready>{children}</Ready>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: svc.page },
+  page: { flex: 1, backgroundColor: tone.page },
   edge: { borderWidth: 1 },
 });

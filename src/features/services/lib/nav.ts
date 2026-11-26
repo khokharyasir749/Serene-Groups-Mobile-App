@@ -17,7 +17,8 @@ function push(href: Href) {
 
 export const openCategory = (slug: string) => push({ pathname: "/serene-services/category/[slug]", params: { slug } });
 export const openService = (slug: string) => push({ pathname: "/serene-services/service/[slug]", params: { slug } });
-export const openBook = (slug: string) => push({ pathname: "/serene-services/book/[slug]", params: { slug } });
+/** `choice` arrives already picked. */
+export const openBook = (slug: string, choice?: string) => push({ pathname: "/serene-services/book/[slug]", params: choice ? { slug, choice } : { slug } });
 /** Extras open their page; complimentary care opens the one-tap sheet. */
 export const openAny = (s: Service) => (s.kind === "care" ? openCare(s.slug) : openService(s.slug));
 export const goBack = () => (router.canGoBack() ? router.back() : router.replace(BASE));

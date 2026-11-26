@@ -1,24 +1,29 @@
 import { useState, type ReactNode } from "react";
 import { KeyboardAvoidingView, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text } from "@/core/components/Text";
+import { Text } from "@/features/services/components/Text";
 import { CONTACT } from "@/core/constants/serene";
-import { colors, dark, font, fonts, spacing, svc } from "@/core/constants/theme";
+import { colors, dark, font, spacing } from "@/core/constants/theme";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { toast } from "@/core/stores/uiStore";
-import { Surface, SurfacePress } from "@/features/services/components/surface";
-import { IconWell } from "@/features/services/components/IconWell";
-import { Enter, Tick } from "@/features/services/components/motion";
-import type { ServiceIconName } from "@/features/services/components/ServiceIcon";
-import { ActionButton, RoundButton } from "@/features/services/components/ui";
-import { FREE_SENT, serviceBySlug, type Service } from "@/features/services/data/catalog";
+import { Pick } from "@/features/services/components/Pick";
+import { Surface } from "@/features/services/components/surface";
+import { tone } from "@/features/services/components/tone";
+import { DriftPhoto, Enter, Tick } from "@/features/services/components/motion";
+import { ServiceIcon, type ServiceIconName } from "@/features/services/components/ServiceIcon";
+import { ActionButton, Heading, RoundButton } from "@/features/services/components/ui";
+import { DESK_COVER, FREE_SENT, serviceBySlug, type Service } from "@/features/services/data/catalog";
 import { slotLabel, todayISO, tomorrowISO } from "@/features/services/lib/schedule";
 import { closeDesk, useDeskSheet, type DeskSheetState } from "@/features/services/store/useDeskSheet";
 import { describe, useServicesStore, type GuestRequest } from "@/features/services/store/useServicesStore";
+import { type } from "@/features/services/components/type";
+import { sf } from "@/features/services/components/fonts";
+import { Ready } from "@/features/services/components/Text";
 
-const QUICK = ["Something is wrong in my room", "Please call my room", "Late check-out, please", "Luggage help, please"];
+const QUICK = ["Problem in my room", "Call my room", "Late check-out", "Luggage help"];
 
 export function whatsappDesk(room: string, text: string) {
   openWhatsApp(`Serene Services · ${room}\n${text}`).catch(() => toast(`Please message ${CONTACT.whatsapp}`));
@@ -30,9 +35,9 @@ function Chips({ items, value, onPick }: { items: { key: string; label: string }
       {items.map((c) => {
         const on = c.key === value;
         return (
-          <SurfacePress key={c.key} finish={on ? "pine" : "ivory"} radius={10} onPress={() => onPick(c.key)} style={styles.chip} accessibilityRole="radio" accessibilityState={{ checked: on }}>
+          <Pick key={c.key} on={on} radius={21} onPress={() => onPick(c.key)} style={styles.chip}>
             <Text style={[styles.chipText, on && styles.chipOn]}>{c.label}</Text>
-          </SurfacePress>
+          </Pick>
         );
       })}
     </View>
@@ -43,38 +48,50 @@ function RoomField() {
   const room = useServicesStore((s) => s.room);
   const setRoom = useServicesStore((s) => s.setRoom);
   return (
-    <Surface radius={14} style={styles.field}>
-      <Ionicons name="key-outline" size={18} color={colors.crestSlate} />
-      <TextInput value={room} onChangeText={setRoom} placeholder="Room or suite number" placeholderTextColor={colors.textDim} maxLength={30} style={styles.input} accessibilityLabel="Room or suite number" />
+    <Surface radius={22} style={styles.field}>
+      <View style={styles.key}>
+        <Ionicons name="key-outline" size={17} color={tone.pine} />
+      </View>
+      <TextInput value={room} onChangeText={setRoom} placeholder="Room or suite number" placeholderTextColor={colors.muted} maxLength={30} style={styles.input} accessibilityLabel="Room or suite number" />
+      <Ionicons name="create-outline" size={17} color={tone.soft} />
     </Surface>
   );
 }
 
 function NoteField({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
   return (
-    <Surface radius={14}>
-      <TextInput value={value} onChangeText={onChange} placeholder={placeholder} placeholderTextColor={colors.textDim} multiline maxLength={300} style={styles.note} accessibilityLabel={placeholder} />
+    <Surface radius={22}>
+      <TextInput value={value} onChangeText={onChange} placeholder={placeholder} placeholderTextColor={colors.muted} multiline maxLength={300} style={styles.note} accessibilityLabel={placeholder} />
+      <Text style={styles.count}>{value.length}/300</Text>
     </Surface>
   );
 }
 
-/** Full-screen page: bar, photo, scrolling form, pinned actions. */
+/** Full-screen page: Pine header that scrolls away, grouped form, pinned actions. */
 function Page({ title, line, icon, footer, children }: { title: string; line: string; icon: ServiceIconName; footer: ReactNode; children: ReactNode }) {
   const insets = useSafeAreaInsets();
   return (
-    <KeyboardAvoidingView behavior="padding" style={[styles.page, { paddingTop: insets.top }]}>
-      <StatusBar style="dark" />
-      <View style={styles.barTop}>
-        <Text style={styles.title} numberOfLines={1}>
-          {title}
-        </Text>
-        <RoundButton icon="close-outline" label="Close" onPress={closeDesk} size={40} />
-      </View>
+    <KeyboardAvoidingView behavior="padding" style={styles.page}>
+      <StatusBar style="light" />
       <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        <Enter style={styles.lead}>
-          <IconWell name={icon} size={64} />
-          <Text style={styles.line}>{line}</Text>
-        </Enter>
+        <View style={[styles.head, { paddingTop: insets.top + spacing.md }]}>
+          <DriftPhoto source={DESK_COVER} style={StyleSheet.absoluteFill} />
+          <LinearGradient pointerEvents="none" colors={tone.deskHead} style={StyleSheet.absoluteFill} />
+          <View style={styles.close}>
+            <RoundButton finish="frost" icon="close-outline" label="Close" onPress={closeDesk} size={42} />
+          </View>
+          <Enter style={styles.headBody}>
+            <View style={styles.well}>
+              <ServiceIcon name={icon} size={28} color={colors.white} />
+            </View>
+            <Text style={styles.title} numberOfLines={2}>
+              {title}
+            </Text>
+            <View style={styles.tag}>
+              <Text style={styles.tagText}>{line}</Text>
+            </View>
+          </Enter>
+        </View>
         <Enter order={1} style={styles.body}>
           {children}
         </Enter>
@@ -119,17 +136,23 @@ function CareForm({ service }: { service: Service }) {
     setSent(add({ kind: "care", slug: service.slug, name: service.name, code: picked?.code ?? service.code ?? null, choices: picked ? [picked.label] : [], date: slot ? tomorrowISO() : todayISO(), slot, note }));
   };
   return (
-    <Page title={service.name} line={`Complimentary. ${service.description}`} icon={service.icon} footer={<SendButton label="Send to Front Desk" why={room.trim() ? null : "Please add your room number"} onPress={send} />}>
-      <Text style={styles.label}>Room or suite</Text>
-      <RoomField />
-      <Text style={styles.label}>{service.choiceTitle}</Text>
+    <Page title={service.name} line="Complimentary" icon={service.icon} footer={<SendButton label="Send to Front Desk" why={room.trim() ? null : "Please add your room number"} onPress={send} />}>
+      <View style={styles.block}>
+        <Heading small>Room or suite</Heading>
+        <RoomField />
+      </View>
+      <View style={styles.block}>
+        <Heading small>{service.choiceTitle}</Heading>
       {service.slots ? (
         <Chips items={service.slots.map((s) => ({ key: s, label: slotLabel(s) }))} value={slot} onPick={setSlot} />
       ) : (
         <Chips items={service.choices.map((c) => ({ key: c.label, label: c.label }))} value={choice} onPick={(k) => setChoice(k === choice ? null : k)} />
       )}
-      <Text style={styles.label}>Note</Text>
-      <NoteField value={note} onChange={setNote} placeholder="Optional" />
+      </View>
+      <View style={styles.block}>
+        <Heading small>Note</Heading>
+        <NoteField value={note} onChange={setNote} placeholder="Optional" />
+      </View>
     </Page>
   );
 }
@@ -145,7 +168,7 @@ function MessageForm() {
   return (
     <Page
       title="Message the Front Desk"
-      line="Report a problem or ask for anything."
+      line="Ask for anything"
       icon="message"
       footer={
         <SendButton label="Send to desk" why={why} onPress={() => setSent(add({ kind: "message", slug: null, name: "Message to desk", code: null, choices: [], date: todayISO(), slot: null, note: text }))}>
@@ -153,11 +176,15 @@ function MessageForm() {
         </SendButton>
       }
     >
-      <Text style={styles.label}>Room or suite</Text>
-      <RoomField />
-      <Text style={styles.label}>Message</Text>
-      <NoteField value={text} onChange={setText} placeholder="Write your message" />
-      <Chips items={QUICK.map((q) => ({ key: q, label: q }))} value={text} onPick={setText} />
+      <View style={styles.block}>
+        <Heading small>Room or suite</Heading>
+        <RoomField />
+      </View>
+      <View style={styles.block}>
+        <Heading small>Message</Heading>
+        <NoteField value={text} onChange={setText} placeholder="Write your message" />
+        <Chips items={QUICK.map((q) => ({ key: q, label: q }))} value={text} onPick={setText} />
+      </View>
     </Page>
   );
 }
@@ -169,7 +196,7 @@ function SendButton({ label, why, onPress, children }: { label: string; why: str
   return (
     <>
       {tried && why ? <Text style={styles.why}>{why}</Text> : null}
-      <ActionButton finish="pine" label={label} onPress={() => guard(onPress)} />
+      <ActionButton finish="pine" icon="paper-plane-outline" label={label} onPress={() => guard(onPress)} />
       {children?.(guard)}
     </>
   );
@@ -186,34 +213,43 @@ export function DeskSheetHost() {
   const { sheet, id } = useDeskSheet();
   return (
     <Modal visible={sheet !== null} animationType="slide" presentationStyle="fullScreen" onRequestClose={closeDesk} statusBarTranslucent>
-      {sheet ? <Body key={id} sheet={sheet} /> : <View style={styles.page} />}
+      {sheet ? (
+        <Ready key={id}>
+          <Body sheet={sheet} />
+        </Ready>
+      ) : <View style={styles.page} />}
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: svc.page },
-  barTop: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  title: { flex: 1, color: colors.ink, fontSize: 28, lineHeight: 35, fontFamily: fonts.display },
-  content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md },
-  lead: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  line: { flex: 1, color: colors.muted, fontSize: font.sm + 1 },
-  body: { gap: spacing.md },
-  label: { color: colors.ink, fontSize: font.sm, fontFamily: fonts.uiBold, marginTop: 4 },
-  field: { flexDirection: "row", alignItems: "center", gap: 10, height: 52, paddingHorizontal: 16 },
-  input: { flex: 1, height: 52, color: colors.ink, fontSize: font.md, fontFamily: fonts.uiSemi },
-  note: { minHeight: 104, padding: 16, textAlignVertical: "top", color: colors.ink, fontSize: font.md, fontFamily: fonts.ui },
+  page: { flex: 1, backgroundColor: tone.page },
+  content: { paddingBottom: spacing.xl },
+  head: { overflow: "hidden", backgroundColor: tone.pine, paddingHorizontal: spacing.lg, paddingBottom: spacing.xl },
+  close: { alignItems: "flex-end" },
+  headBody: { gap: 14, paddingTop: 2 },
+  well: { width: 60, height: 60, borderRadius: 30, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255, 255, 255, 0.14)", borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.4)" },
+  title: { ...type.page, color: colors.white },
+  tag: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, height: 30, paddingHorizontal: 13, borderRadius: 15, backgroundColor: "rgba(255, 255, 255, 0.12)", borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.3)" },
+  tagText: { ...type.eyebrow, fontSize: 10.5, color: colors.white },
+  body: { paddingHorizontal: spacing.lg, paddingTop: spacing.xl, gap: spacing.xl },
+  block: { gap: spacing.md },
+  field: { flexDirection: "row", alignItems: "center", gap: 12, height: 58, paddingLeft: 10, paddingRight: 18 },
+  key: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center", backgroundColor: tone.badge },
+  input: { flex: 1, height: 56, color: colors.ink, fontSize: font.md, fontFamily: sf.uiSemi },
+  note: { minHeight: 120, paddingHorizontal: 18, paddingTop: 16, paddingBottom: 30, textAlignVertical: "top", color: colors.ink, fontSize: font.md, fontFamily: sf.ui },
+  count: { position: "absolute", right: 16, bottom: 10, color: tone.soft, fontSize: 11.5 },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 9 },
   chip: { height: 42, paddingHorizontal: 15, justifyContent: "center" },
-  chipText: { color: colors.ink, fontSize: font.sm, fontFamily: fonts.uiSemi },
+  chipText: { color: colors.ink, fontSize: font.sm, fontFamily: sf.uiSemi },
   chipOn: { color: colors.white },
-  footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: 10, borderTopWidth: 1, borderTopColor: svc.surfaceEdge },
+  footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: 10, borderTopWidth: 1, borderTopColor: tone.hair, backgroundColor: tone.page },
   why: { color: colors.danger, fontSize: 12, textAlign: "center" },
-  sentPage: { backgroundColor: svc.panel, paddingHorizontal: spacing.lg },
+  sentPage: { backgroundColor: tone.pine, paddingHorizontal: spacing.lg },
   sent: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.lg },
   sentWords: { alignItems: "center", gap: 6 },
-  sentTitle: { color: dark.text, fontSize: 34, lineHeight: 42, fontFamily: fonts.display, textAlign: "center" },
-  sentLine: { color: colors.goldAccent, fontSize: font.md, fontFamily: fonts.uiBold },
+  sentTitle: { color: dark.text, fontSize: 34, lineHeight: 42, fontFamily: sf.display, textAlign: "center" },
+  sentLine: { color: colors.goldAccent, fontSize: font.md, fontFamily: sf.uiBold },
   sentMeta: { color: dark.muted, fontSize: font.sm },
   actions: { gap: 10 },
 });

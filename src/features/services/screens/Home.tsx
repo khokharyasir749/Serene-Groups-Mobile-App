@@ -1,127 +1,214 @@
-import { useState } from "react";
-import { Keyboard, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Keyboard, StyleSheet, TextInput, View, useWindowDimensions } from "react-native";
+import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
-import { Text } from "@/core/components/Text";
-import { CLEARANCE, colors, font, fonts, spacing } from "@/core/constants/theme";
-import { useAuthStore } from "@/core/stores/authStore";
-import { CareGrid } from "@/features/services/components/CareGrid";
-import { CategoryRow } from "@/features/services/components/CategoryRow";
-import { FeaturedCarousel } from "@/features/services/components/FeaturedCarousel";
-import { FrontDesk } from "@/features/services/components/FrontDesk";
+import { Text } from "@/features/services/components/Text";
+import { CLEARANCE, colors, spacing } from "@/core/constants/theme";
+import BrandLockup from "@/features/bookings/guest/components/BrandLockup";
+import { BilledGrid, billedCard, type BilledCard } from "@/features/services/components/BilledGrid";
+import { Fold } from "@/features/services/components/Fold";
+import { CareFeature } from "@/features/services/components/CareFeature";
+import { Closing } from "@/features/services/components/Closing";
+import { Curtain, CurtainEnd, type CurtainPanel } from "@/features/services/components/Curtain";
+import { CareTiles, careTile, type CareTile } from "@/features/services/components/CareGrid";
+import { FrontDesk, callDesk } from "@/features/services/components/FrontDesk";
+import { HeroPage, Reveal } from "@/features/services/components/HeroPage";
+import { IconWell } from "@/features/services/components/IconWell";
 import { Enter } from "@/features/services/components/motion";
+import { PackageRail } from "@/features/services/components/PackageRail";
+import { Headline, Rise } from "@/features/services/components/scroll";
 import { RoomPicker } from "@/features/services/components/RoomPicker";
-import { ServiceRow } from "@/features/services/components/ServiceRow";
-import { Canvas, Surface, Heading, SectionTitle, ServicesHeader } from "@/features/services/components/ui";
-import { inGroup, searchServices } from "@/features/services/data/catalog";
-import { openCategory } from "@/features/services/lib/nav";
+import type { ServiceIconName } from "@/features/services/components/ServiceIcon";
+import { tone } from "@/features/services/components/tone";
+import { GroupsBack, Heading, Press, RoundButton, Surface, SurfacePress } from "@/features/services/components/ui";
+import { HOME_COVER, ISSUE_PHOTO, PACKAGES, PANEL_PHOTO, inGroup, searchServices, serviceBySlug } from "@/features/services/data/catalog";
+import { BASE, openCategory } from "@/features/services/lib/nav";
+import { isActive, useServicesStore } from "@/features/services/store/useServicesStore";
+import { type } from "@/features/services/components/type";
+import { sf } from "@/features/services/components/fonts";
 
-const DINING = inGroup("dining");
-const WELLNESS = inGroup("wellness");
 const COMFORT = inGroup("comfort");
-const ISSUES = inGroup("issue");
+const ISSUES: CareTile[] = inGroup("issue").map(careTile);
+const CARE: CareTile[] = ["towels", "pillows", "wake-up", "room-refresh"].map((slug) => careTile(COMFORT.find((s) => s.slug === slug)!));
+const by = (slug: string) => billedCard([...inGroup("dining"), ...inGroup("wellness")].find((s) => s.slug === slug)!);
+const BILLED: BilledCard[] = ["breakfast", "restaurant", "laundry", "minibar"].map(by);
+/** The three the page stops for; the rest follow in a grid. */
+const PANELS: CurtainPanel[] = ["room-service", "spa", "transfer"].map((slug) => {
+  const c = by(slug);
+  return { key: slug, photo: PANEL_PHOTO[slug] ?? c.photo, over: c.line, name: c.name, cta: c.verb, onOpen: c.onPress };
+});
+const MORE: CurtainPanel[] = BILLED.map((c) => ({ key: c.key, photo: PANEL_PHOTO[c.key] ?? c.photo, over: c.line, name: c.name, cta: c.verb, onOpen: c.onPress }));
+const SHORTCUTS: { slug: "comfort" | "dining" | "wellness" | "issue"; label: string; icon: ServiceIconName }[] = [
+  { slug: "comfort", label: "Housekeeping", icon: "towels" },
+  { slug: "dining", label: "Dining", icon: "dining" },
+  { slug: "wellness", label: "Wellness", icon: "spa" },
+  { slug: "issue", label: "Room issue", icon: "maintenance" },
+];
+
+/** The four sides of the concierge, one tap away. */
+function Shortcuts() {
+  return (
+    <View style={styles.shortcuts}>
+      {SHORTCUTS.map((x, i) => (
+        <Enter key={x.slug} order={i + 4} style={styles.fill}>
+          <Press onPress={() => openCategory(x.slug)} accessibilityLabel={x.label} style={styles.shortcut}>
+            <IconWell name={x.icon} size={58} />
+            <Text style={styles.shortcutText} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} maxFontSizeMultiplier={1.1}>
+              {x.label}
+            </Text>
+          </Press>
+        </Enter>
+      ))}
+    </View>
+  );
+}
+const HEAD = 67; // a heading and the gap under it
+
+const greeting = () => {
+  const h = new Date().getHours();
+  return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+};
 
 export default function Home() {
-  const name = useAuthStore((s) => s.user?.name);
+  const { height } = useWindowDimensions();
+  const room = useServicesStore((s) => s.room);
+  const requests = useServicesStore((s) => s.requests);
+  const active = requests.filter(isActive);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const searching = query.trim().length > 0;
-  const results = searchServices(query);
-  const extras = results.filter((r) => r.kind === "extra");
-  const care = results.filter((r) => r.kind === "care");
+  // The top of the page comes first; what is below the fold is built once it has been drawn.
+  const [rest, setRest] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setRest(true), 300);
+    return () => clearTimeout(t);
+  }, []);
+  const searching = searchOpen && query.trim().length > 0;
+  const results = searching ? searchServices(query) : [];
+  const extras = results.filter((r) => r.kind === "extra").map(billedCard);
+  const care = results.filter((r) => r.kind === "care").map(careTile);
+  const closeSearch = () => {
+    Keyboard.dismiss();
+    setQuery("");
+    setSearchOpen(false);
+  };
 
   return (
-    <Canvas>
-      <StatusBar style="dark" />
-      <ServicesHeader />
-      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
-        <View style={styles.pad}>
-          <Enter>
-            <Text style={styles.over} numberOfLines={1}>
-              {name ? `Welcome back, ${name}` : "Your stay at Serene Heights"}
-            </Text>
-            <Text style={styles.hero}>{"Welcome to\nSerene Services"}</Text>
-          </Enter>
-          <Enter order={1}>
-            <RoomPicker />
-          </Enter>
-          <Enter order={2}>
-          <Surface finish="glass" radius={18} style={styles.search}>
-            <TextInput
-              value={query}
-              onChangeText={setQuery}
-              placeholder="What can we bring you?"
-              placeholderTextColor={colors.textDim}
-              style={styles.input}
-              returnKeyType="search"
-              onSubmitEditing={Keyboard.dismiss}
-              accessibilityLabel="Search services"
-            />
-            <Pressable onPress={() => (searching ? setQuery("") : undefined)} disabled={!searching} hitSlop={10} accessibilityRole="button" accessibilityLabel="Clear search">
-              <Ionicons name={searching ? "close-outline" : "search-outline"} size={20} color={colors.crestSlate} />
-            </Pressable>
-          </Surface>
+    <HeroPage
+      photo={HOME_COVER}
+      position="top"
+      title={room || "Your stay"}
+      height={Math.round(Math.min(Math.max(height * 0.7, 500), 680))}
+      bottom={CLEARANCE}
+      action={<RoundButton icon="call-outline" label="Call Front Desk" onPress={callDesk} size={40} />}
+      bar={
+        <>
+          <View style={styles.fill}>
+            <BrandLockup sub="SERVICES" onPhoto />
+          </View>
+          <GroupsBack onPhoto />
+        </>
+      }
+      foot={
+        <View style={styles.greet}>
+          <View>
+            <Enter order={1}>
+              <Text style={styles.over}>{greeting()}</Text>
+            </Enter>
+            <Headline mount key={room} text={room || "Your stay"} style={styles.room} />
+          </View>
+          <Enter order={5} style={styles.tools}>
+            <RoomPicker compact onPhoto />
+            <RoundButton finish="clear" icon={searchOpen ? "close-outline" : "search-outline"} label={searchOpen ? "Close search" : "Search services"} size={44} onPress={() => (searchOpen ? closeSearch() : setSearchOpen(true))} />
           </Enter>
         </View>
+      }
+    >
+        {searchOpen ? (
+          <Enter dy={-10}>
+          <Surface finish="glass" radius={18} style={styles.search}>
+            <Ionicons name="search-outline" size={19} color={tone.ink} />
+            <TextInput value={query} onChangeText={setQuery} autoFocus placeholder="What can we bring you?" placeholderTextColor={tone.soft} style={styles.input} returnKeyType="search" onSubmitEditing={Keyboard.dismiss} accessibilityLabel="Search services" />
+          </Surface>
+          </Enter>
+        ) : null}
 
         {searching ? (
-          <View style={styles.pad}>
+          <>
             <Heading>{results.length ? `${results.length} found` : "Nothing found"}</Heading>
-            {extras.map((r) => (
-              <ServiceRow key={r.slug} service={r} />
-            ))}
-            {care.length ? <CareGrid services={care} /> : null}
-            {results.length ? null : <Text style={styles.note}>Message the front desk and we will help.</Text>}
+            {care.length ? <CareTiles tiles={care} /> : null}
+            {extras.length ? <BilledGrid cards={extras} /> : null}
             {results.length ? null : <FrontDesk />}
-          </View>
+          </>
         ) : (
           <>
-            <Enter order={3} style={styles.headPad}>
+            <Shortcuts />
+            <Reveal>
               <FrontDesk />
-            </Enter>
-            <CategoryRow />
-
-            <View style={styles.block}>
-              <View style={styles.pad}>
-                <SectionTitle title="Extra Services" label="Billed to your room" />
-                <Heading action="View all" onAction={() => openCategory("dining")}>
-                  In-Room Dining & Food
-                </Heading>
-              </View>
-              <FeaturedCarousel services={DINING} />
-            </View>
-            <View style={styles.pad}>
-              <Heading>Wellness & Transfers</Heading>
-              {WELLNESS.map((r, i) => (
-                <Enter key={r.slug} order={i + 4}>
-                  <ServiceRow service={r} />
-                </Enter>
-              ))}
-            </View>
-
-            <View style={styles.pad}>
-              <SectionTitle free title="Room Care & Assistance" label="Complimentary" />
-              <Heading>Housekeeping & Comfort</Heading>
-              <CareGrid services={COMFORT} />
-              <View style={styles.space} />
-              <Heading>Report a Room Issue</Heading>
-              <CareGrid services={ISSUES} />
-            </View>
+            </Reveal>
+            {active.length ? (
+              <Enter order={1}>
+              <SurfacePress radius={18} onPress={() => router.navigate(`${BASE}/my-bookings`)} style={styles.active} accessibilityLabel={`${active.length} active requests. View`}>
+                <IconWell name={serviceBySlug(active[0].slug)?.icon ?? "message"} size={48} />
+                <View style={styles.fill}>
+                  <Text style={styles.activeName} numberOfLines={1}>
+                    {active[0].name}
+                  </Text>
+                  <Text style={styles.activeLine}>{active.length === 1 ? "1 active request" : `${active.length} active requests`}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={17} color={tone.soft} />
+              </SurfacePress>
+              </Enter>
+            ) : null}
+            <Reveal plain style={styles.block}>
+              <Heading action="All" onAction={() => openCategory("comfort")}>With our compliments</Heading>
+              <CareTiles tiles={CARE} at={HEAD} />
+            </Reveal>
+            {rest ? (
+              <>
+                <Reveal plain>
+                  <Heading>Billed to your room</Heading>
+                </Reveal>
+                <Curtain panels={PANELS} tall={0.72} />
+                <CurtainEnd>
+                <Reveal plain style={styles.block}>
+                  <Heading>Explore</Heading>
+                  <View style={styles.folds}>
+                    <Fold icon="room-service" title="More for your stay" note={`${BILLED.length} services · Billed to your room`}>
+                      <Curtain loose panels={MORE} tall={0.72} />
+                    </Fold>
+                    <Fold icon="spa" title="Curated stays" note={`${PACKAGES.length} stays · Price on request`}>
+                      <PackageRail />
+                    </Fold>
+                    <Fold icon="maintenance" title="Room issues" note="Complimentary · We come to you">
+                      <CareFeature photo={ISSUE_PHOTO} position="bottom" title="We come to you" onOpen={() => openCategory("issue")} tiles={ISSUES} />
+                    </Fold>
+                  </View>
+                </Reveal>
+                <Closing />
+                </CurtainEnd>
+              </>
+            ) : null}
           </>
         )}
-      </ScrollView>
-    </Canvas>
+    </HeroPage>
   );
 }
 
 const styles = StyleSheet.create({
-  space: { height: 2 },
-  content: { gap: spacing.xl + 4, paddingTop: spacing.sm, paddingBottom: CLEARANCE },
-  pad: { paddingHorizontal: spacing.lg, gap: spacing.md },
-  headPad: { paddingHorizontal: spacing.lg },
-  block: { gap: spacing.md },
-  hero: { color: colors.ink, fontSize: 34, lineHeight: 41, paddingBottom: 3, fontFamily: fonts.display },
-  over: { color: colors.goldText, fontSize: font.sm, fontFamily: fonts.uiSemi },
-  search: { flexDirection: "row", alignItems: "center", height: 52, paddingHorizontal: 20 },
-  input: { flex: 1, height: 54, color: colors.ink, fontSize: font.md, fontFamily: fonts.ui },
-  note: { color: colors.muted, fontSize: font.sm },
+  greet: { gap: 16 },
+  over: { ...type.eyebrow, color: colors.white, opacity: 0.9, marginBottom: 2 },
+  // Upright, like the names on the photo cards below: steady letters, figures level with the capitals.
+  room: { ...type.hero, fontFamily: sf.displayMedium, fontSize: 58, lineHeight: 66, letterSpacing: -1, color: colors.white },
+  tools: { flexDirection: "row", alignItems: "center", gap: 9 },
+  shortcuts: { flexDirection: "row", gap: 2, marginBottom: -12 },
+  shortcut: { alignItems: "center", gap: 10 },
+  shortcutText: { ...type.label, fontSize: 12, letterSpacing: 0, color: tone.ink, textAlign: "center" },
+  folds: { gap: 12 },
+  block: { gap: 18 },
+  fill: { flex: 1 },
+  active: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, paddingLeft: 10, paddingRight: 16 },
+  activeName: { ...type.button, color: tone.ink },
+  activeLine: { ...type.label, color: tone.soft },
+  search: { flexDirection: "row", alignItems: "center", gap: 10, height: 52, paddingHorizontal: 18 },
+  input: { flex: 1, height: 52, color: tone.ink, fontSize: 15, fontFamily: sf.ui },
 });
