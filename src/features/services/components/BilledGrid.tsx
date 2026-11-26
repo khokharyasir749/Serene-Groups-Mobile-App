@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import type { ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -19,7 +20,7 @@ const GAP = 12;
 const H = 226;
 
 /** Even photo cards, two to a row. No amounts; the desk confirms the price. */
-export function BilledGrid({ cards, at = 0 }: { cards: BilledCard[]; at?: number }) {
+export const BilledGrid = memo(function BilledGrid({ cards, at = 0 }: { cards: BilledCard[]; at?: number }) {
   return (
     <View style={styles.grid}>
       {cards.map((card, i) => (
@@ -41,7 +42,7 @@ export function BilledGrid({ cards, at = 0 }: { cards: BilledCard[]; at?: number
       ))}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   grid: { flexDirection: "row", flexWrap: "wrap", gap: GAP },

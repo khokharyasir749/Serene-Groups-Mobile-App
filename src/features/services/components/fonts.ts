@@ -1,34 +1,24 @@
 import { useSyncExternalStore } from "react";
-import { loadAsync } from "expo-font";
+import { fonts } from "@/core/constants/theme";
 
 /**
- * Serene Services has its own type: Playfair Display for names and titles, Manrope for everything read or tapped.
- * The files live in this module (../fonts) and load here, so the rest of the app keeps its own fonts.
+ * Serene Services sets type in the Serene Groups faces: Cormorant Garamond for names and titles, Plus Jakarta Sans for everything read
+ * or tapped. The app loads them at start-up.
  */
 export const sf = {
-  display: "SvcPlayfair_600SemiBold",
-  displayMedium: "SvcPlayfair_500Medium",
-  displaySemi: "SvcPlayfair_600SemiBold",
-  displayBold: "SvcPlayfair_700Bold",
-  displayItalic: "SvcPlayfair_500Medium_Italic",
-  displayItalicLight: "SvcPlayfair_400Regular_Italic",
-  ui: "SvcManrope_400Regular",
-  uiMedium: "SvcManrope_500Medium",
-  uiSemi: "SvcManrope_600SemiBold",
-  uiBold: "SvcManrope_700Bold",
+  display: fonts.display,
+  displayMedium: fonts.displayMedium,
+  displaySemi: fonts.displaySemi,
+  displayBold: fonts.displayBold,
+  displayItalic: fonts.displayItalic,
+  displayItalicLight: fonts.displayItalic,
+  ui: fonts.ui,
+  uiMedium: fonts.uiMedium,
+  uiSemi: fonts.uiSemi,
+  uiBold: fonts.uiBold,
 } as const;
 
-const FILES = {
-  [sf.display]: require("../fonts/PlayfairDisplay_600SemiBold.ttf"),
-  [sf.displayMedium]: require("../fonts/PlayfairDisplay_500Medium.ttf"),
-  [sf.displayBold]: require("../fonts/PlayfairDisplay_700Bold.ttf"),
-  [sf.displayItalic]: require("../fonts/PlayfairDisplay_500Medium_Italic.ttf"),
-  [sf.displayItalicLight]: require("../fonts/PlayfairDisplay_400Regular_Italic.ttf"),
-  [sf.ui]: require("../fonts/Manrope_400Regular.ttf"),
-  [sf.uiMedium]: require("../fonts/Manrope_500Medium.ttf"),
-  [sf.uiSemi]: require("../fonts/Manrope_600SemiBold.ttf"),
-  [sf.uiBold]: require("../fonts/Manrope_700Bold.ttf"),
-};
+
 
 let ready = false;
 const listeners = new Set<() => void>();
@@ -37,7 +27,8 @@ const done = () => {
   listeners.forEach((l) => l());
 };
 // Starts as soon as the module is first imported. A failure falls back to the system face rather than blocking the screen.
-void loadAsync(FILES).then(done, done);
+// The app loads these faces at start-up; nothing more to wait for.
+done();
 
 const subscribe = (l: () => void) => {
   listeners.add(l);

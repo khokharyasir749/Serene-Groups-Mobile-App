@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { memo, useRef } from "react";
 import { Animated, StyleSheet, useWindowDimensions } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,7 +14,7 @@ import { openService } from "@/features/services/lib/nav";
 const GAP = 12;
 
 /** Stay packages, aligned to the page's left edge. The front card stands full size and bright; the next ones sit back, dimmed, and every photograph slides in its frame. */
-export function PackageRail() {
+export const PackageRail = memo(function PackageRail() {
   const { width } = useWindowDimensions();
   const x = useRef(new Animated.Value(0)).current;
   const still = isReduced();
@@ -38,7 +38,7 @@ export function PackageRail() {
           <Animated.View key={s.slug} style={still ? null : { transform: [{ scale: at([0.9, 1, 0.9]) }] }}>
           <Press onPress={() => openService(s.slug)} accessibilityLabel={`${s.name}. ${s.line}`} style={[styles.card, { width: w }]}>
             <Animated.View style={[styles.photo, still ? null : { transform: [{ translateX: at([-34, 0, 34]) }, { scale: at([1.16, 1, 1.16]) }] }]}>
-              <Image source={s.photo} style={StyleSheet.absoluteFill} contentFit="cover" transition={120} />
+              <Image cachePolicy="memory-disk" source={s.photo} style={StyleSheet.absoluteFill} contentFit="cover" transition={120} />
             </Animated.View>
             <LinearGradient pointerEvents="none" colors={tone.photoFoot} locations={[0.4, 0.7, 1]} style={StyleSheet.absoluteFill} />
             <Animated.View style={[styles.words, still ? null : { transform: [{ translateX: at([26, 0, -26]) }] }]}>
@@ -54,7 +54,7 @@ export function PackageRail() {
       })}
     </Animated.ScrollView>
   );
-}
+});
 
 const styles = StyleSheet.create({
   bleed: { marginHorizontal: -spacing.lg, flexGrow: 0 },

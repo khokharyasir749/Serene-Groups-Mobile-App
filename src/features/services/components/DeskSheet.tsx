@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { KeyboardAvoidingView, Modal, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { Animated, Easing, KeyboardAvoidingView, Modal, PanResponder, Pressable, ScrollView, StyleSheet, TextInput, View, useWindowDimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
@@ -9,19 +9,25 @@ import { CONTACT } from "@/core/constants/serene";
 import { colors, dark, font, spacing } from "@/core/constants/theme";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { toast } from "@/core/stores/uiStore";
+import { Backdrop } from "@/features/services/components/Backdrop";
+import { ClearGlass, glassText } from "@/features/services/components/ClearGlass";
 import { Pick } from "@/features/services/components/Pick";
 import { Surface } from "@/features/services/components/surface";
 import { tone } from "@/features/services/components/tone";
 import { DriftPhoto, Enter, Tick } from "@/features/services/components/motion";
 import { ServiceIcon, type ServiceIconName } from "@/features/services/components/ServiceIcon";
 import { ActionButton, Heading, RoundButton } from "@/features/services/components/ui";
-import { DESK_COVER, FREE_SENT, serviceBySlug, type Service } from "@/features/services/data/catalog";
+import { DESK_COVER, FREE_SENT, GROUP_PHOTO, serviceBySlug, type Service } from "@/features/services/data/catalog";
 import { slotLabel, todayISO, tomorrowISO } from "@/features/services/lib/schedule";
 import { closeDesk, useDeskSheet, type DeskSheetState } from "@/features/services/store/useDeskSheet";
 import { describe, useServicesStore, type GuestRequest } from "@/features/services/store/useServicesStore";
 import { type } from "@/features/services/components/type";
 import { sf } from "@/features/services/components/fonts";
 import { Ready } from "@/features/services/components/Text";
+
+/** Closes the sheet the same way it came: down, unhurried. */
+const Dismiss = createContext<() => void>(closeDesk);
+export const useDismiss = () => useContext(Dismiss);
 
 const QUICK = ["Problem in my room", "Call my room", "Late check-out", "Luggage help"];
 
@@ -70,15 +76,16 @@ function NoteField({ value, onChange, placeholder }: { value: string; onChange: 
 /** Full-screen page: Pine header that scrolls away, grouped form, pinned actions. */
 function Page({ title, line, icon, footer, children }: { title: string; line: string; icon: ServiceIconName; footer: ReactNode; children: ReactNode }) {
   const insets = useSafeAreaInsets();
+  const dismiss = useDismiss();
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.page}>
       <StatusBar style="light" />
       <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        <View style={[styles.head, { paddingTop: insets.top + spacing.md }]}>
+        <View style={[styles.head, { paddingTop: insets.top + GRIP }]}>
           <DriftPhoto source={DESK_COVER} style={StyleSheet.absoluteFill} />
           <LinearGradient pointerEvents="none" colors={tone.deskHead} style={StyleSheet.absoluteFill} />
           <View style={styles.close}>
-            <RoundButton finish="frost" icon="close-outline" label="Close" onPress={closeDesk} size={42} />
+            <RoundButton finish="frost" icon="close-outline" label="Close" onPress={dismiss} size={42} />
           </View>
           <Enter style={styles.headBody}>
             <View style={styles.well}>
@@ -103,20 +110,29 @@ function Page({ title, line, icon, footer, children }: { title: string; line: st
 
 function Sent({ request }: { request: GuestRequest }) {
   const insets = useSafeAreaInsets();
+  const service = serviceBySlug(request.slug);
+  const photo = (service?.group ? GROUP_PHOTO[service.group] : undefined) ?? DESK_COVER;
+  const dismiss = useDismiss();
   return (
-    <View style={[styles.page, styles.sentPage, { paddingTop: insets.top, paddingBottom: insets.bottom + spacing.lg }]}>
+    <View style={[styles.page, styles.sentPage, { paddingTop: insets.top + GRIP, paddingBottom: insets.bottom + spacing.lg }]}>
       <StatusBar style="light" />
+      <Backdrop source={photo} />
       <View style={styles.sent}>
-        <Tick />
-        <Enter order={3} style={styles.sentWords}>
-          <Text style={styles.sentTitle}>{request.name}</Text>
-          <Text style={styles.sentLine}>{request.kind === "care" ? FREE_SENT : "Desk Notified"}</Text>
-          <Text style={styles.sentMeta}>{`${request.room} · ${request.reference}`}</Text>
+        <Enter order={1} style={styles.sentStretch}>
+          <ClearGlass dark style={styles.sentCard}>
+            <Tick />
+            <View style={styles.sentWords}>
+              <Text style={styles.sentTitle}>{request.name}</Text>
+              <Text style={styles.sentLine}>{request.kind === "care" ? FREE_SENT : "Desk Notified"}</Text>
+              <View style={styles.sentRule} />
+              <Text style={styles.sentMeta}>{`${request.room}  ·  ${request.reference}`}</Text>
+            </View>
+          </ClearGlass>
         </Enter>
       </View>
-      <Enter order={5} style={styles.actions}>
-        <ActionButton finish="frost" label="Done" onPress={closeDesk} />
-        <ActionButton finish="dark" icon="logo-whatsapp" label="Also send on WhatsApp" onPress={() => whatsappDesk(request.room, describe(request))} />
+      <Enter order={4} style={styles.actions}>
+        <ActionButton finish="frost" label="Done" onPress={dismiss} />
+        <ActionButton finish="clear" icon="logo-whatsapp" label="Also send on WhatsApp" onPress={() => whatsappDesk(request.room, describe(request))} />
       </Enter>
     </View>
   );
@@ -208,21 +224,78 @@ function Body({ sheet }: { sheet: DeskSheetState }) {
   return service ? <CareForm service={service} /> : null;
 }
 
+const GRIP = 26; // the handle's strip at the top of the sheet
+
+/**
+ * The sheet itself: it rises on a soft spring over a dimming page, can be drawn down by its handle, and sinks away on close. The
+ * page beneath stays in place, so a request feels like a card laid on the table rather than a new screen.
+ */
+export function Sheet({ children, onClosed = closeDesk }: { children: ReactNode; /** Runs once the sheet has gone. */ onClosed?: () => void }) {
+  const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
+  const travel = height;
+  const y = useRef(new Animated.Value(travel)).current;
+  const leaving = useRef(false);
+  const dismiss = () => {
+    if (leaving.current) return;
+    leaving.current = true;
+    Animated.timing(y, { toValue: travel, duration: 280, easing: Easing.in(Easing.cubic), useNativeDriver: true }).start(() => onClosed());
+  };
+  useEffect(() => {
+    Animated.spring(y, { toValue: 0, damping: 26, stiffness: 210, mass: 1, useNativeDriver: true }).start();
+  }, [y]);
+  const live = useRef({ dismiss });
+  live.current = { dismiss };
+  const drag = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, g) => g.dy > 4,
+      onPanResponderMove: (_, g) => y.setValue(Math.max(0, g.dy)),
+      onPanResponderRelease: (_, g) => {
+        if (g.dy > 120 || g.vy > 1.1) live.current.dismiss();
+        else Animated.spring(y, { toValue: 0, damping: 24, stiffness: 260, mass: 0.9, useNativeDriver: true }).start();
+      },
+    }),
+  ).current;
+  return (
+    <Dismiss.Provider value={dismiss}>
+      <View style={styles.stage}>
+        <Animated.View style={[StyleSheet.absoluteFill, styles.dim, { opacity: y.interpolate({ inputRange: [0, travel], outputRange: [1, 0], extrapolate: "clamp" }) }]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={dismiss} accessibilityLabel="Close" />
+        </Animated.View>
+        <Animated.View style={[styles.sheet, { transform: [{ translateY: y }] }]}>
+          {children}
+          <View {...drag.panHandlers} style={[styles.grip, { top: insets.top }]} accessibilityLabel="Drag down to close">
+            <View style={styles.handle} />
+          </View>
+        </Animated.View>
+      </View>
+    </Dismiss.Provider>
+  );
+}
+
 /** The one-tap request and quick-message pages; mounted once for the whole module. */
 export function DeskSheetHost() {
   const { sheet, id } = useDeskSheet();
   return (
-    <Modal visible={sheet !== null} animationType="slide" presentationStyle="fullScreen" onRequestClose={closeDesk} statusBarTranslucent>
+    <Modal visible={sheet !== null} transparent animationType="none" onRequestClose={closeDesk} statusBarTranslucent>
       {sheet ? (
-        <Ready key={id}>
-          <Body sheet={sheet} />
-        </Ready>
-      ) : <View style={styles.page} />}
+        <Sheet key={id}>
+          <Ready>
+            <Body sheet={sheet} />
+          </Ready>
+        </Sheet>
+      ) : null}
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  stage: { flex: 1 },
+  dim: { backgroundColor: "rgba(10, 18, 15, 0.5)" },
+  sheet: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, overflow: "hidden", backgroundColor: tone.page },
+  grip: { position: "absolute", left: 0, right: 0, height: GRIP + 14, alignItems: "center", paddingTop: 8 },
+  handle: { width: 40, height: 5, borderRadius: 3, backgroundColor: "rgba(255, 255, 255, 0.7)" },
   page: { flex: 1, backgroundColor: tone.page },
   content: { paddingBottom: spacing.xl },
   head: { overflow: "hidden", backgroundColor: tone.pine, paddingHorizontal: spacing.lg, paddingBottom: spacing.xl },
@@ -245,11 +318,15 @@ const styles = StyleSheet.create({
   chipOn: { color: colors.white },
   footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: 10, borderTopWidth: 1, borderTopColor: tone.hair, backgroundColor: tone.page },
   why: { color: colors.danger, fontSize: 12, textAlign: "center" },
-  sentPage: { backgroundColor: tone.pine, paddingHorizontal: spacing.lg },
+  sentPage: { backgroundColor: tone.pineDeep, paddingHorizontal: spacing.lg },
+  onGlass: { color: "rgba(255, 255, 255, 0.92)", textShadowColor: "rgba(0, 0, 0, 0.35)", textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 6 },
+  sentStretch: { alignSelf: "stretch" },
+  sentCard: { alignItems: "center", paddingTop: 8, paddingBottom: 28, paddingHorizontal: 22 },
+  sentRule: { width: 32, height: 1, marginVertical: 8, backgroundColor: "rgba(255, 255, 255, 0.4)" },
   sent: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.lg },
   sentWords: { alignItems: "center", gap: 6 },
-  sentTitle: { color: dark.text, fontSize: 34, lineHeight: 42, fontFamily: sf.display, textAlign: "center" },
-  sentLine: { color: colors.goldAccent, fontSize: font.md, fontFamily: sf.uiBold },
-  sentMeta: { color: dark.muted, fontSize: font.sm },
+  sentTitle: { ...type.hero, ...glassText, fontSize: 40, lineHeight: 44, color: colors.white, textAlign: "center" },
+  sentLine: { color: tone.champagne, fontSize: font.md, fontFamily: sf.uiBold },
+  sentMeta: { ...type.figure, ...glassText, fontSize: 13, lineHeight: 18, color: colors.white },
   actions: { gap: 10 },
 });

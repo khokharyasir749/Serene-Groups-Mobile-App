@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ComponentRef, type ReactNode } from "react";
+import { memo, useMemo, useRef, useState, type ComponentRef, type ReactNode } from "react";
 import { Animated, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -43,7 +43,7 @@ function Panel({ panel, index, h, pin, win, last, loose }: PanelProps) {
     <Animated.View style={[styles.panel, { top: index * h, height: h + LIP }, index > 0 && styles.lip, m?.hold ? { transform: [{ translateY: m.hold }] } : null]}>
       <Press onPress={panel.onOpen} accessibilityLabel={`${panel.name}. ${panel.over}`} style={StyleSheet.absoluteFill}>
         <Animated.View style={[styles.photo, m ? { transform: [{ translateY: m.slide }, { scale: m.zoom }] } : null]}>
-          <Image source={panel.photo} style={StyleSheet.absoluteFill} contentFit="cover" transition={120} />
+          <Image cachePolicy="memory-disk" source={panel.photo} style={StyleSheet.absoluteFill} contentFit="cover" transition={120} />
         </Animated.View>
         <LinearGradient pointerEvents="none" colors={tone.panelFade} locations={[0, 0.34, 0.66, 1]} style={StyleSheet.absoluteFill} />
       </Press>
@@ -86,7 +86,7 @@ function Panel({ panel, index, h, pin, win, last, loose }: PanelProps) {
  * Sticky curtains: each photograph holds under the title bar while the next one is drawn over it, darkening and still drifting as it
  * is covered. Use as a direct child of a HeroPage, followed by CurtainEnd, which is drawn over the last one.
  */
-export function Curtain({ panels, tall = 0.9, loose }: { panels: CurtainPanel[]; /** Share of the screen under the bar each panel fills. */ tall?: number; /** Placed inside other content (a dropdown): finds its own place on the page, and the last panel simply scrolls on. */ loose?: boolean }) {
+export const Curtain = memo(function Curtain({ panels, tall = 0.9, loose, release }: { panels: CurtainPanel[]; /** Nothing follows to cover the last panel: it scrolls on with the page. */ release?: boolean; /** Share of the screen under the bar each panel fills. */ tall?: number; /** Placed inside other content (a dropdown): finds its own place on the page, and the last panel simply scrolls on. */ loose?: boolean }) {
   const insets = useSafeAreaInsets();
   const { height: win } = useWindowDimensions();
   const scene = useScene();
@@ -99,20 +99,20 @@ export function Curtain({ panels, tall = 0.9, loose }: { panels: CurtainPanel[];
   // Where it sits in the scroll: its place on screen plus how far the page has scrolled. Measured once the dropdown has settled.
   const place = () => {
     if (!loose) return;
-    setTimeout(() => ref.current?.measureInWindow((_x: number, y: number) => setFound(y + (scene?.offset?.current ?? 0))), 420);
+    setTimeout(() => ref.current?.measureInWindow((_x: number, y: number) => setFound(y + (scene?.offset?.current ?? 0))), 650);
   };
   return (
     <View ref={ref} onLayout={(e) => (loose ? place() : setLocal(e.nativeEvent.layout.y))} style={[styles.stack, loose && styles.inset, { height: panels.length * h + LIP }]}>
       {panels.map((p, i) => (
-        <Panel key={p.key} panel={p} index={i} h={h} win={win} last={i === panels.length - 1} loose={loose} pin={top === null ? null : top + i * h - bar} />
+        <Panel key={p.key} panel={p} index={i} h={h} win={win} last={i === panels.length - 1} loose={loose || release} pin={top === null ? null : top + i * h - bar} />
       ))}
     </View>
   );
-}
+});
 
 /** The rest of the page, as a sheet drawn over the last curtain. */
-export function CurtainEnd({ children }: { children: ReactNode }) {
-  return <SceneGroup style={styles.end}>{children}</SceneGroup>;
+export function CurtainEnd({ children, minHeight }: { children: ReactNode; /** For a short page: keeps the sheet tall enough to cover the last panel. */ minHeight?: number }) {
+  return <SceneGroup style={[styles.end, minHeight ? { minHeight } : null]}>{children}</SceneGroup>;
 }
 
 const styles = StyleSheet.create({
@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
   // At the head of the panel: the first thing to come into sight, and the last to be covered.
   words: { position: "absolute", top: 48, left: 24, right: 24, gap: 22 },
   rule: { width: 30, height: 1.5, marginBottom: 12, backgroundColor: tone.champagne },
-  over: { ...type.eyebrow, color: colors.white, marginBottom: 6 },
-  name: { ...type.hero, fontSize: 46, lineHeight: 54, letterSpacing: -0.8, color: colors.white },
+  over: { ...type.eyebrow, color: tone.champagne, marginBottom: 6 },
+  name: { ...type.hero, fontSize: 50, lineHeight: 52, letterSpacing: -1, color: colors.white },
   lines: { marginTop: 12, gap: 7 },
   line: { flexDirection: "row", alignItems: "center", gap: 10 },
   lineText: { ...type.label, fontSize: 14.5, lineHeight: 20, color: colors.white, flexShrink: 1 },
@@ -134,5 +134,6 @@ const styles = StyleSheet.create({
   ctaSheen: { position: "absolute", top: 0, left: 0, right: 0, height: "55%" },
   ctaText: { ...type.button, color: colors.white },
   dim: { backgroundColor: tone.veil },
-  end: { marginHorizontal: -spacing.lg, marginTop: -(GAP + LIP), paddingHorizontal: spacing.lg, paddingTop: 34, gap: GAP, borderTopLeftRadius: LIP, borderTopRightRadius: LIP, backgroundColor: tone.page },
+  // Tall enough to cover the last panel as it lets go.
+  end: { minHeight: 320, marginHorizontal: -spacing.lg, marginTop: -(GAP + LIP), paddingHorizontal: spacing.lg, paddingTop: 34, gap: GAP, borderTopLeftRadius: LIP, borderTopRightRadius: LIP, backgroundColor: tone.page },
 });

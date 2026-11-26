@@ -2,10 +2,8 @@ import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { spacing } from "@/core/constants/theme";
-import { Closing } from "@/features/services/components/Closing";
-import { Curtain, CurtainEnd } from "@/features/services/components/Curtain";
-import { FrontDesk } from "@/features/services/components/FrontDesk";
+import { CLEARANCE, spacing } from "@/core/constants/theme";
+import { Curtain } from "@/features/services/components/Curtain";
 import { HeroPage, Reveal } from "@/features/services/components/HeroPage";
 import { Enter } from "@/features/services/components/motion";
 import { Headline } from "@/features/services/components/scroll";
@@ -32,6 +30,7 @@ export default function CategoryScreen() {
     );
   }
   const services = inGroup(category.slug);
+  const panels = services.map((x) => ({ key: x.slug, photo: PANEL_PHOTO[x.slug] ?? x.photo, over: x.line, name: x.tile ?? x.name, cta: x.verb ?? "Request", onOpen: () => openService(x.slug) }));
 
   return (
     <HeroPage
@@ -39,7 +38,7 @@ export default function CategoryScreen() {
       title={category.short}
       onBack={goBack}
       height={Math.round(Math.min(Math.max(height * 0.52, 360), 500))}
-      bottom={insets.bottom + spacing.hero}
+      bottom={CLEARANCE}
       bar={<RoundButton finish="clear" icon="chevron-back-outline" label="Back" onPress={goBack} />}
       foot={
         <View>
@@ -55,21 +54,11 @@ export default function CategoryScreen() {
           <Reveal>
             <ServiceRows services={services} />
           </Reveal>
-          <Reveal>
-            <FrontDesk />
-          </Reveal>
-          <Closing />
         </>
       ) : (
         <>
           <Text style={styles.line}>{category.line}</Text>
-          <Curtain panels={services.map((x) => ({ key: x.slug, photo: PANEL_PHOTO[x.slug] ?? x.photo, over: x.line, name: x.tile ?? x.name, cta: x.verb ?? "Request", onOpen: () => openService(x.slug) }))} />
-          <CurtainEnd>
-            <Reveal>
-              <FrontDesk />
-            </Reveal>
-            <Closing />
-          </CurtainEnd>
+          <Curtain release panels={panels} />
         </>
       )}
     </HeroPage>
@@ -77,7 +66,7 @@ export default function CategoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  over: { ...type.eyebrow, color: tone.plate, marginBottom: 6 },
+  over: { ...type.eyebrow, color: tone.champagne, marginBottom: 6 },
   title: { ...type.hero, fontSize: 38, lineHeight: 46, color: tone.plate },
   line: { ...type.lead, color: tone.ink },
 });

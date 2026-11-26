@@ -1,91 +1,99 @@
-import { memo, useEffect, useRef, type ComponentRef, type RefObject } from "react";
-import { Animated, Easing, Platform, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
+import { memo, useEffect, useMemo, useRef, useState, type ComponentRef, type ReactNode, type RefObject } from "react";
+import { Animated, Pressable, StyleSheet, View, useWindowDimensions, type LayoutChangeEvent } from "react-native";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { NavGlass } from "@/core/components/NavGlass";
+import { fonts, groups, navGlass } from "@/core/constants/theme";
 import { router, usePathname, type Href } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/core/components/Text";
-import { sf } from "@/features/services/components/fonts";
 import { isReduced } from "@/features/services/components/motion";
-import { ServiceIcon, type ServiceIconName } from "@/features/services/components/ServiceIcon";
-import { tone } from "@/features/services/components/tone";
 import { BASE } from "@/features/services/lib/nav";
 import { isActive, useServicesStore } from "@/features/services/store/useServicesStore";
 
-type Slot = { path: string; label: string; icon: ServiceIconName };
+type Slot = { path: string; label: string; icon: (color: string) => ReactNode };
+type Box = { x: number; width: number };
+
+const mci = (name: keyof typeof MaterialCommunityIcons.glyphMap) => (color: string) => <MaterialCommunityIcons name={name} size={24} color={color} />;
+const ion = (name: keyof typeof Ionicons.glyphMap) => (color: string) => <Ionicons name={name} size={22} color={color} />;
 
 const BOOKINGS = `${BASE}/my-bookings`;
 const SLOTS: Slot[] = [
-  { path: BASE, label: "Home", icon: "home" },
-  { path: BOOKINGS, label: "Bookings", icon: "calendar" },
-  { path: `${BASE}/packages`, label: "Packages", icon: "gift" },
-  { path: `${BASE}/profile`, label: "Profile", icon: "user" },
+  { path: BASE, label: "Home", icon: ion("home") },
+  { path: BOOKINGS, label: "Bookings", icon: mci("calendar-month") },
+  { path: `${BASE}/packages`, label: "Packages", icon: mci("gift") },
+  { path: `${BASE}/profile`, label: "Profile", icon: mci("card-account-details") },
 ];
+const INDEXES = SLOTS.map((_, i) => i);
 
-const H = 66;
-const PAD = 5;
+const H = 72;
+const PAD = 7;
 
 const Face = memo(function Face({ slot, on }: { slot: Slot; on?: boolean }) {
-  const color = on ? tone.onPine : tone.dockInk;
+  const color = on ? groups.pine : navGlass.ink;
   return (
     <>
-      <ServiceIcon name={slot.icon} size={24} color={color} filled={on} />
-      <Text style={[styles.label, { color }, on && styles.labelOn]} numberOfLines={1} maxFontSizeMultiplier={1}>
+      {slot.icon(color)}
+      <Text style={[styles.label, { color }]} numberOfLines={1} maxFontSizeMultiplier={1}>
         {slot.label}
       </Text>
     </>
   );
 });
 
-/** Blurred glass dock in the manner of an iPhone tab bar: line icons, quiet labels, and a glass capsule that lifts, stretches and settles on the open tab, all on the native driver. */
+/**
+ * The Serene Groups dock (core FloatingDock) with this module's tabs, animated the way Groups animates it: the route decides
+ * the active tab, and one spring carries the pill onto that tab's measured slot. Nothing else moves the pill, so it always
+ * comes to rest exactly on the tab that is open.
+ */
 export function ServicesDock({ blurTarget }: { blurTarget?: RefObject<ComponentRef<typeof View> | null> }) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const pathname = usePathname();
   const requests = useServicesStore((s) => s.requests.filter(isActive).length);
+
   const found = SLOTS.findIndex((s) => s.path === pathname);
   const held = useRef(0);
-  if (found >= 0) held.current = found; // a pushed page keeps the tab it came from
+  if (found >= 0) held.current = found; // a page pushed over a tab keeps that tab lit
   const active = held.current;
-  const barW = Math.min(width - 40, 390);
-  const cell = (barW - PAD * 2 - 2) / SLOTS.length;
-  const pos = useRef(new Animated.Value(active)).current;
-  const lift = useRef(new Animated.Value(0)).current;
 
-  const aim = useRef(active);
-  const frame = useRef(0);
-  const slide = (i: number) => {
-    if (aim.current === i) return;
-    aim.current = i;
+  const barW = Math.min(width - 32, 460);
+  const guess = (barW - PAD * 2) / SLOTS.length;
+  // Each tab's real place in the bar, read from layout; an even split until it is measured.
+  const [boxes, setBoxes] = useState<Box[]>(() => SLOTS.map((_, i) => ({ x: i * guess, width: guess })));
+  const measure = (i: number) => (e: LayoutChangeEvent) => {
+    const { x, width: w } = e.nativeEvent.layout;
+    const at = x - PAD; // the pill is placed from the padded edge
+    setBoxes((b) => (Math.abs(b[i].x - at) < 0.5 && Math.abs(b[i].width - w) < 0.5 ? b : b.map((o, k) => (k === i ? { x: at, width: w } : o))));
+  };
+
+  const pos = useRef(new Animated.Value(active)).current;
+  useEffect(() => {
     if (isReduced()) {
-      pos.setValue(i);
+      pos.setValue(active);
       return;
     }
-    // Like the iPhone's glass tab bar: the capsule lifts and stretches as it travels, then settles with a little give.
-    Animated.parallel([
-      Animated.spring(pos, { toValue: i, damping: 17, stiffness: 165, mass: 0.85, useNativeDriver: true }),
-      Animated.sequence([
-        Animated.timing(lift, { toValue: 1, duration: 140, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-        Animated.spring(lift, { toValue: 0, damping: 11, stiffness: 150, mass: 0.8, useNativeDriver: true }),
-      ]),
-    ]).start();
-  };
-  // A finger on a tab swells the capsule a little, as glass does under a touch.
-  const press = (v: number) => {
-    if (!isReduced()) Animated.spring(lift, { toValue: v, damping: 16, stiffness: 260, mass: 0.6, useNativeDriver: true }).start();
-  };
-  // The pill sets off first; the page changes on the next frame. The last tab tapped wins.
-  const open = (i: number) => {
-    slide(i);
-    cancelAnimationFrame(frame.current);
-    frame.current = requestAnimationFrame(() => router.navigate(SLOTS[i].path as Href));
-  };
+    // Driven from JS on purpose: with the native driver, Android could keep a half-way value when a page rebuilt during the
+    // slide, leaving the pill between two tabs. Here every frame is a real prop, so it always ends on the active tab.
+    const run = Animated.spring(pos, { toValue: active, damping: 20, stiffness: 230, mass: 0.8, useNativeDriver: false });
+    run.start();
+    return () => run.stop();
+  }, [active, pos]);
 
-  useEffect(() => {
-    slide(active);
-    // Follows the route (back button, links); slide works on refs.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
+  const pill = useMemo(
+    () => ({
+      width: boxes[active]?.width ?? guess,
+      transform: [{ translateX: pos.interpolate({ inputRange: INDEXES, outputRange: boxes.map((b) => b.x), extrapolate: "clamp" }) }],
+    }),
+    [boxes, active, guess, pos],
+  );
+  const faces = useMemo(
+    () =>
+      INDEXES.map((i) => ({
+        off: { opacity: pos.interpolate({ inputRange: [i - 1, i, i + 1], outputRange: [1, 0, 1], extrapolate: "clamp" }) },
+        on: { opacity: pos.interpolate({ inputRange: [i - 1, i, i + 1], outputRange: [0, 1, 0], extrapolate: "clamp" }) },
+      })),
+    [pos],
+  );
 
   // Builds the other tabs quietly, one at a time, so the first visit to each is instant.
   useEffect(() => {
@@ -93,46 +101,33 @@ export function ServicesDock({ blurTarget }: { blurTarget?: RefObject<ComponentR
     return () => waits.forEach((w) => w && clearTimeout(w));
   }, []);
 
-  const last = SLOTS.length - 1;
-
   return (
     <View pointerEvents="box-none" style={[styles.wrap, { bottom: insets.bottom + 10 }]}>
       <View style={[styles.shadow, { width: barW }]}>
         <View style={styles.bar}>
-          {/* Dark blur, kept strong by turning the reduction off; a low intensity keeps Android's own tint light. */}
-          <BlurView blurTarget={blurTarget} blurMethod="dimezisBlurView" blurReductionFactor={1} tint={Platform.OS === "ios" ? "systemUltraThinMaterialDark" : "dark"} intensity={Platform.OS === "ios" ? 60 : 30} style={StyleSheet.absoluteFill} />
-          <LinearGradient colors={Platform.OS === "ios" ? tone.dockGlassIos : tone.dockGlass} style={StyleSheet.absoluteFill} />
-          <View pointerEvents="none" style={styles.edge} />
-          <Animated.View pointerEvents="none" renderToHardwareTextureAndroid style={[
-              styles.pill,
-              {
-                width: cell,
-                transform: [
-                  { translateX: pos.interpolate({ inputRange: [0, last], outputRange: [0, cell * last], extrapolate: "clamp" }) },
-                  { scaleX: lift.interpolate({ inputRange: [-1, 0, 1], outputRange: [0.9, 1, 1.24] }) },
-                  { scaleY: lift.interpolate({ inputRange: [-1, 0, 1], outputRange: [1.06, 1, 1.12] }) },
-                ],
-              },
-            ]}
-          >
-            <LinearGradient pointerEvents="none" colors={tone.dockPillSheen} style={styles.pillSheen} />
-            <Animated.View style={[styles.glow, { opacity: lift.interpolate({ inputRange: [0, 1], outputRange: [0, 1], extrapolate: "clamp" }) }]} />
-          </Animated.View>
-          {SLOTS.map((s, i) => {
-            const on = pos.interpolate({ inputRange: [i - 1, i, i + 1], outputRange: [0, 1, 0], extrapolate: "clamp" });
-            const off = pos.interpolate({ inputRange: [i - 1, i, i + 1], outputRange: [1, 0, 1], extrapolate: "clamp" });
-            return (
-              <Pressable key={s.path} onPressIn={() => press(0.4)} onPressOut={() => i === aim.current && press(0)} onPress={() => (i !== aim.current ? open(i) : press(0))} style={styles.slot} accessibilityRole="tab" accessibilityState={{ selected: i === active }} accessibilityLabel={s.label}>
-                <Animated.View renderToHardwareTextureAndroid style={[styles.face, { opacity: off }]}>
-                  <Face slot={s} />
-                </Animated.View>
-                <Animated.View renderToHardwareTextureAndroid style={[styles.face, { opacity: on, transform: [{ scale: pos.interpolate({ inputRange: [i - 1, i, i + 1], outputRange: [0.86, 1, 0.86], extrapolate: "clamp" }) }] }]}>
-                  <Face slot={s} on />
-                </Animated.View>
-                {s.path === BOOKINGS && requests > 0 ? <View style={styles.dot} /> : null}
-              </Pressable>
-            );
-          })}
+          <NavGlass radius={H / 2} blurTarget={blurTarget} />
+          <Animated.View pointerEvents="none" style={[styles.pill, pill]} />
+          {SLOTS.map((s, i) => (
+            <Pressable
+              key={s.path}
+              onLayout={measure(i)}
+              onPress={() => {
+                if (i !== active) router.navigate(s.path as Href);
+              }}
+              style={styles.slot}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: i === active }}
+              accessibilityLabel={s.label}
+            >
+              <Animated.View style={[styles.face, faces[i].off]}>
+                <Face slot={s} />
+              </Animated.View>
+              <Animated.View style={[styles.face, faces[i].on]}>
+                <Face slot={s} on />
+              </Animated.View>
+              {s.path === BOOKINGS && requests > 0 ? <View style={styles.dot} /> : null}
+            </Pressable>
+          ))}
         </View>
       </View>
     </View>
@@ -141,16 +136,11 @@ export function ServicesDock({ blurTarget }: { blurTarget?: RefObject<ComponentR
 
 const styles = StyleSheet.create({
   wrap: { position: "absolute", left: 16, right: 16, alignItems: "center" },
-  shadow: { borderRadius: H / 2, boxShadow: tone.dockShadow },
-  bar: { height: H, borderRadius: H / 2, overflow: "hidden", flexDirection: "row", padding: PAD, borderWidth: 1, borderColor: tone.dockRim },
-  // Light caught along the rim of the glass.
-  edge: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, borderRadius: H / 2, boxShadow: tone.dockEdge },
-  pill: { position: "absolute", left: PAD, top: PAD, bottom: PAD, borderRadius: (H - PAD * 2) / 2, overflow: "hidden", backgroundColor: tone.dockPill, borderWidth: 1, borderColor: tone.dockPillEdge },
-  pillSheen: { position: "absolute", top: 0, left: 0, right: 0, height: "55%" },
-  glow: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, borderRadius: (H - PAD * 2) / 2, backgroundColor: tone.dockPillGlow },
+  shadow: { borderRadius: H / 2, boxShadow: navGlass.shadow },
+  bar: { height: H, borderRadius: H / 2, flexDirection: "row", padding: PAD },
+  pill: { position: "absolute", left: PAD, top: PAD, bottom: PAD, borderRadius: (H - PAD * 2) / 2, backgroundColor: navGlass.pill, borderWidth: 1, borderColor: navGlass.pillRim },
   slot: { flex: 1 },
-  face: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0, alignItems: "center", justifyContent: "center", gap: 2 },
-  label: { fontSize: 11, lineHeight: 14, letterSpacing: 0.1, fontFamily: sf.uiMedium },
-  labelOn: { fontFamily: sf.uiSemi },
-  dot: { position: "absolute", top: 7, right: "31%", width: 7, height: 7, borderRadius: 3.5, backgroundColor: tone.champagne },
+  face: { position: "absolute", left: 0, right: 0, top: 0, bottom: 0, alignItems: "center", justifyContent: "center", gap: 1 },
+  label: { fontSize: 11, lineHeight: 14, fontFamily: fonts.uiBold },
+  dot: { position: "absolute", top: 8, right: "28%", width: 10, height: 10, borderRadius: 5, backgroundColor: groups.champagne, borderWidth: 1.5, borderColor: groups.plate },
 });

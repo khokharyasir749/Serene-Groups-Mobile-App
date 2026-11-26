@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { Animated, Easing, Linking, StyleSheet, View } from "react-native";
 import { useIsFocused } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
@@ -9,7 +9,7 @@ import { colors, fonts } from "@/core/constants/theme";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { toast } from "@/core/stores/uiStore";
 import { isReduced } from "@/features/services/components/motion";
-import { Parallax } from "@/features/services/components/scroll";
+import { Image } from "expo-image";
 import { Press } from "@/features/services/components/surface";
 import { tone } from "@/features/services/components/tone";
 import { RECEPTION, type Glyph } from "@/features/services/data/catalog";
@@ -21,7 +21,7 @@ export const callDesk = () => void Linking.openURL(CONTACT.uanHref).catch(() => 
 
 // Keeps white words readable on the bright marble.
 const SHADOW = { textShadowColor: "rgba(0, 0, 0, 0.5)", textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 8 } as const;
-const CARD = 244;
+const CARD = 214;
 const LIVE = "rgb(126, 214, 164)";
 
 /** Small glass tag with a softly pulsing dot. */
@@ -68,12 +68,13 @@ function Round({ icon, hint, onPress }: { icon: Glyph; hint: string; onPress: ()
 }
 
 /** The concierge card: call first, or write in the app, or WhatsApp with the room already filled in. */
-export function FrontDesk() {
+export const FrontDesk = memo(function FrontDesk() {
   const room = useServicesStore((s) => s.room);
   const whatsapp = () => openWhatsApp(`Serene Services · ${room}\nI need some help, please.`).catch(() => toast(`Please message ${CONTACT.whatsapp}`));
   return (
     <View style={styles.card}>
-      <Parallax source={RECEPTION} height={CARD} depth={16} style={StyleSheet.absoluteFill} />
+      {/* Still and uncropped as far as the card allows: the desk sits in the middle of a wide photograph. */}
+      <Image cachePolicy="memory-disk" source={RECEPTION} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition="center" transition={150} />
       <LinearGradient pointerEvents="none" colors={tone.deskShade} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0.3 }} style={StyleSheet.absoluteFill} />
       <LinearGradient pointerEvents="none" colors={tone.deskFoot} locations={[0.3, 1]} style={StyleSheet.absoluteFill} />
       <View pointerEvents="none" style={styles.edge} />
@@ -93,10 +94,10 @@ export function FrontDesk() {
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
-  card: { minHeight: CARD, borderRadius: 18, overflow: "hidden", backgroundColor: "rgb(34, 34, 34)", padding: 18, justifyContent: "space-between", gap: 16 },
+  card: { minHeight: CARD, borderRadius: 18, overflow: "hidden", backgroundColor: "rgb(34, 34, 34)", padding: 16, justifyContent: "space-between", gap: 12 },
   // A thin light line round the card, like the edge of glass.
   edge: { ...StyleSheet.absoluteFill, borderRadius: 18, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.18)" },
   open: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 8, height: 30, paddingHorizontal: 13, borderRadius: 15, overflow: "hidden", borderWidth: 1, borderColor: tone.deskGlassEdge },
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
   title: { ...type.page, fontSize: 34, lineHeight: 42, color: colors.white, ...SHADOW },
   number: { ...type.figure, color: colors.white, ...SHADOW },
   row: { flexDirection: "row", gap: 10 },
-  call: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 9, height: 54, borderRadius: 27, overflow: "hidden", borderWidth: 1, borderColor: tone.deskGlassEdge },
+  call: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 9, height: 50, borderRadius: 25, overflow: "hidden", borderWidth: 1, borderColor: tone.deskGlassEdge },
   callText: { ...type.button, fontSize: 16, color: colors.white },
-  round: { width: 54, height: 54, borderRadius: 27, alignItems: "center", justifyContent: "center", overflow: "hidden", borderWidth: 1, borderColor: tone.deskGlassEdge },
+  round: { width: 50, height: 50, borderRadius: 25, alignItems: "center", justifyContent: "center", overflow: "hidden", borderWidth: 1, borderColor: tone.deskGlassEdge },
 });

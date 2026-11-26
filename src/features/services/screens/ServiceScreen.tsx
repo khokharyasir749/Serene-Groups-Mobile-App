@@ -112,7 +112,7 @@ export default function ServiceScreen() {
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   page: { flex: 1, backgroundColor: tone.page },
-  over: { ...type.eyebrow, color: colors.white, marginBottom: 6 },
+  over: { ...type.eyebrow, color: tone.champagne, marginBottom: 6 },
   title: { ...type.hero, fontSize: 42, lineHeight: 50, color: colors.white },
   sub: { ...type.label, fontSize: 14, color: colors.white, marginTop: 4 },
   about: { ...type.lead, color: tone.ink },

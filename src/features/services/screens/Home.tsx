@@ -173,7 +173,7 @@ export default function Home() {
                 <Reveal plain style={styles.block}>
                   <Heading>Explore</Heading>
                   <View style={styles.folds}>
-                    <Fold icon="room-service" title="More for your stay" note={`${BILLED.length} services · Billed to your room`}>
+                    <Fold first icon="room-service" title="More for your stay" note={`${BILLED.length} services · Billed to your room`}>
                       <Curtain loose panels={MORE} tall={0.72} />
                     </Fold>
                     <Fold icon="spa" title="Curated stays" note={`${PACKAGES.length} stays · Price on request`}>
@@ -196,14 +196,14 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   greet: { gap: 16 },
-  over: { ...type.eyebrow, color: colors.white, opacity: 0.9, marginBottom: 2 },
+  over: { ...type.eyebrow, color: tone.champagne, marginBottom: 2 },
   // Upright, like the names on the photo cards below: steady letters, figures level with the capitals.
-  room: { ...type.hero, fontFamily: sf.displayMedium, fontSize: 58, lineHeight: 66, letterSpacing: -1, color: colors.white },
+  room: { ...type.hero, fontFamily: sf.displayMedium, fontSize: 62, lineHeight: 64, letterSpacing: -1.4, color: colors.white },
   tools: { flexDirection: "row", alignItems: "center", gap: 9 },
   shortcuts: { flexDirection: "row", gap: 2, marginBottom: -12 },
   shortcut: { alignItems: "center", gap: 10 },
   shortcutText: { ...type.label, fontSize: 12, letterSpacing: 0, color: tone.ink, textAlign: "center" },
-  folds: { gap: 12 },
+  folds: {},
   block: { gap: 18 },
   fill: { flex: 1 },
   active: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, paddingLeft: 10, paddingRight: 16 },

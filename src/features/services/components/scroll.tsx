@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Animated, Easing, StyleSheet, View, useWindowDimensions, type StyleProp, type TextStyle, type ViewStyle } from "react-native";
 import { Image, type ImageSource } from "expo-image";
-import { isReduced } from "@/features/services/components/motion";
+import { Enter, isReduced } from "@/features/services/components/motion";
+import { sf } from "@/features/services/components/fonts";
 import { Text } from "@/features/services/components/Text";
 import { tone } from "@/features/services/components/tone";
 
@@ -57,9 +58,13 @@ export function Still({ children }: { children: ReactNode }) {
   return <Block.Provider value={null}>{children}</Block.Provider>;
 }
 
-export function Rise({ children, at = 0, order = 0, style }: { children: ReactNode; /** Distance below the top of the block. */ at?: number; order?: number; style?: StyleProp<ViewStyle> }) {
+/** Inside an opening dropdown: items play in one after another as it opens, rather than following the scroll. */
+export const Unfolding = createContext(false);
+
+export function Rise({ children, at = 0, order = 0, seq, style }: { children: ReactNode; /** Distance below the top of the block. */ at?: number; order?: number; /** Place in the stagger when a dropdown opens. */ seq?: number; style?: StyleProp<ViewStyle> }) {
   const scene = useContext(Scene);
   const top = useContext(Block);
+  const unfolding = useContext(Unfolding);
   const { height } = useWindowDimensions();
   const motion = useMemo(() => {
     if (!scene || top === null || isReduced()) return null;
@@ -69,6 +74,12 @@ export function Rise({ children, at = 0, order = 0, style }: { children: ReactNo
     const p = scene.y.interpolate({ inputRange: [start + 16, start + 170], outputRange: [0, 1], extrapolate: "clamp" });
     return { opacity: p, transform: [{ translateY: p.interpolate({ inputRange: [0, 1], outputRange: [34, 0] }) }, { scale: p.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) }] };
   }, [scene, top, at, height, order]);
+  if (unfolding)
+    return (
+      <Enter order={(seq ?? order) + 1} dy={16} style={style}>
+        {children}
+      </Enter>
+    );
   return <Animated.View style={[style, motion]}>{children}</Animated.View>;
 }
 
@@ -87,10 +98,10 @@ export function SceneGroup({ children, style }: { children: ReactNode; style?: S
   );
 }
 
-type HeadlineProps = { text: string; style: StyleProp<TextStyle>; /** Plays by itself when the page opens. */ mount?: boolean; /** Driven from outside, 0 to 1. */ progress?: Animated.AnimatedInterpolation<number> | null };
+type HeadlineProps = { text: string; style: StyleProp<TextStyle>; /** The last words set apart in italic gold, as Serene Groups does. */ soft?: number; softStyle?: StyleProp<TextStyle>; /** Plays by itself when the page opens. */ mount?: boolean; /** Driven from outside, 0 to 1. */ progress?: Animated.AnimatedInterpolation<number> | null };
 
 /** A heading whose words rise one after another from behind their own baseline: with the scroll, or once on opening. */
-export function Headline({ text, style, mount, progress }: HeadlineProps) {
+export function Headline({ text, style, mount, progress, soft = 0, softStyle }: HeadlineProps) {
   const scene = useContext(Scene);
   const top = useContext(Block);
   const { height } = useWindowDimensions();
@@ -119,7 +130,7 @@ export function Headline({ text, style, mount, progress }: HeadlineProps) {
         return (
           <View key={i} style={styles.mask}>
             <Animated.View style={p ? { opacity: p.interpolate({ inputRange: [from, from + 0.25], outputRange: [0, 1], extrapolate: "clamp" }), transform: [{ translateY: p.interpolate({ inputRange: [from, from + 0.5], outputRange: [line, 0], extrapolate: "clamp" }) }] } : null}>
-              <Text style={style} maxFontSizeMultiplier={1.15}>
+              <Text style={[style, i >= words.length - soft && [styles.soft, softStyle]]} maxFontSizeMultiplier={1.15}>
                 {i < words.length - 1 ? `${w} ` : w}
               </Text>
             </Animated.View>
@@ -139,7 +150,7 @@ export function Parallax({ source, height, at = 0, depth = 34, zoom, style, chil
   return (
     <View style={[styles.window, { height }, style]}>
       <Animated.View style={[styles.photo, { top: -depth, bottom: -depth }, shift ? { transform: zoom && scale ? [{ translateY: shift }, { scale }] : [{ translateY: shift }] } : null]}>
-        <Image source={source} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={position} transition={120} />
+        <Image cachePolicy="memory-disk" source={source} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={position} transition={120} />
       </Animated.View>
       {children}
     </View>
@@ -147,7 +158,8 @@ export function Parallax({ source, height, at = 0, depth = 34, zoom, style, chil
 }
 
 const styles = StyleSheet.create({
-  words: { flexDirection: "row", flexWrap: "wrap" },
+  words: { flexDirection: "row", flexWrap: "wrap", alignItems: "baseline" },
+  soft: { fontFamily: sf.displayItalic },
   mask: { overflow: "hidden" },
   window: { overflow: "hidden", backgroundColor: tone.pine },
   photo: { position: "absolute", left: 0, right: 0 },

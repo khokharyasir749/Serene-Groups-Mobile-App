@@ -34,6 +34,8 @@ export function HeroPage({ photo, height, title, onBack, bar, foot, children, bo
   const rise = useRef(new Animated.Value(isReduced() ? 1 : 0)).current;
   const [over, setOver] = useState(true);
   const offset = useRef(0);
+  // Mirrors `over`, so a scroll frame that changes nothing costs no React work.
+  const overNow = useRef(true);
   useEffect(() => {
     if (isReduced()) return;
     const a = Animated.parallel([
@@ -84,13 +86,17 @@ export function HeroPage({ photo, height, title, onBack, bar, foot, children, bo
           useNativeDriver: true,
           listener: (e: { nativeEvent: { contentOffset: { y: number } } }) => {
             offset.current = e.nativeEvent.contentOffset.y;
-            setOver(e.nativeEvent.contentOffset.y < turn + 8);
+            const next = e.nativeEvent.contentOffset.y < turn + 8;
+            if (next !== overNow.current) {
+              overNow.current = next;
+              setOver(next);
+            }
           },
         })}
       >
         <Animated.View style={[styles.hero, { height, transform: [{ translateY: hold }] }]}>
           <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateY: drift }, { scale: stretch }] }]}>
-            <Image source={photo} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={position} transition={120} />
+            <Image cachePolicy="memory-disk" source={photo} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={position} transition={120} />
           </Animated.View>
           <LinearGradient pointerEvents="none" colors={tone.heroFade} locations={[0, 0.24, 0.46, 1]} style={StyleSheet.absoluteFill} />
           <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.veil, { opacity: veil }]} />

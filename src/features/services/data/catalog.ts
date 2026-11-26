@@ -51,12 +51,14 @@ const PHOTO = {
   morningBed: require("../../../../assets/services/morning-bed.jpg"),
 } as const;
 
-export const RECEPTION: ImageSource = require("../../../../assets/services/reception.jpg");
+export const RECEPTION: ImageSource = require("../photos/reception.jpg");
 export const HOME_COVER: ImageSource = require("../../../../assets/bookings/photos/resort/night-facade-portrait.jpg");
 export const COMFORT_PHOTO: ImageSource = require("../../../../assets/bookings/photos/interiors/housekeeping.jpg");
 export const ISSUE_PHOTO: ImageSource = require("../../../../assets/bookings/photos/interiors/bedside-evening.jpg");
 export const REQUESTS_COVER: ImageSource = require("../../../../assets/bookings/photos/interiors/sunrise-balcony.jpg");
 export const STAYS_COVER: ImageSource = require("../../../../assets/bookings/photos/resort/aerial-pool-portrait.jpg");
+export const CLOSING_PHOTO: ImageSource = require("../../../../assets/bookings/photos/interiors/living-room-wide.jpg");
+export const ROOM_COVER: ImageSource = require("../../../../assets/bookings/photos/interiors/bedroom-arch-window.jpg");
 export const DESK_COVER: ImageSource = require("../../../../assets/bookings/photos/interiors/bedroom-arch-window.jpg");
 export const PROFILE_COVER: ImageSource = require("../../../../assets/bookings/photos/resort/hero-tower-mist.jpg");
 

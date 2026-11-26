@@ -92,7 +92,7 @@ export function Heading({ children, note, action, onAction, light, small }: { ch
     <View style={styles.headRow}>
       <View style={styles.fill}>
         {small ? null : <View style={styles.rule} />}
-        <Headline text={children} style={[styles.heading, small && styles.headingSmall, light && styles.onPhotoText]} />
+        <Headline text={children} soft={small || !children.includes(" ") ? 0 : 1} softStyle={light ? styles.softDark : styles.soft} style={[styles.heading, small && styles.headingSmall, light && styles.onPhotoText]} />
         {note ? <Text style={styles.headNote}>{note}</Text> : null}
       </View>
       {action && onAction ? (
@@ -122,7 +122,9 @@ const styles = StyleSheet.create({
   button: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.sm },
   buttonText: { fontFamily: sf.uiSemi, letterSpacing: 0.3 },
   headRow: { flexDirection: "row", alignItems: "flex-end", gap: 10, minHeight: 26 },
-  rule: { width: 28, height: 1.5, marginBottom: 10, backgroundColor: tone.champagne },
+  soft: { color: tone.goldText },
+  softDark: { color: tone.champagne },
+  rule: { width: 28, height: 1.5, marginBottom: 10, backgroundColor: tone.goldText },
   heading: { ...type.title, color: tone.ink },
   headingSmall: { fontSize: 21, lineHeight: 28, letterSpacing: -0.2 },
   headNote: { ...type.label, color: tone.soft, marginTop: 2 },

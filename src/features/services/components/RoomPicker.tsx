@@ -1,5 +1,8 @@
 import { useState, type ReactNode } from "react";
 import { KeyboardAvoidingView, Modal, StyleSheet, TextInput, View } from "react-native";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { ROOM_COVER } from "@/features/services/data/catalog";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -48,17 +51,32 @@ export function RoomPicker({ compact, onPhoto, trigger }: { compact?: boolean; o
         </SurfacePress>
       )}
       <Modal visible={draft !== null} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => setDraft(null)} statusBarTranslucent>
-        <KeyboardAvoidingView behavior="padding" style={[styles.page, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom + spacing.lg }]}>
-          <StatusBar style="dark" />
-          <View style={styles.top}>
-            <Text style={styles.title}>Your room or suite</Text>
-            <RoundButton icon="close-outline" label="Close" onPress={() => setDraft(null)} size={40} />
+        <KeyboardAvoidingView behavior="padding" style={styles.page}>
+          <StatusBar style="light" />
+          <View style={styles.photo}>
+            <Image cachePolicy="memory-disk" source={ROOM_COVER} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
+            <LinearGradient pointerEvents="none" colors={tone.heroFade} locations={[0, 0.3, 0.55, 1]} style={StyleSheet.absoluteFill} />
+            <View style={[styles.close, { top: insets.top + spacing.sm }]}>
+              <RoundButton finish="frost" icon="close-outline" label="Close" onPress={() => setDraft(null)} size={40} />
+            </View>
+            <View style={styles.photoWords}>
+              <Text style={styles.eyebrow}>Serene Heights</Text>
+              <Text style={styles.title}>
+                Your room <Text style={styles.titleSoft}>or suite</Text>
+              </Text>
+            </View>
           </View>
-          <Surface radius={14}>
-            <TextInput value={draft ?? ""} onChangeText={setDraft} autoFocus placeholder="For example Suite 4B" placeholderTextColor={colors.textDim} maxLength={30} returnKeyType="done" onSubmitEditing={save} style={styles.input} accessibilityLabel="Room or suite number" />
-          </Surface>
-          <View style={styles.fill} />
-          <ActionButton finish="pine" label="Save" onPress={save} />
+          <View style={[styles.form, { paddingBottom: insets.bottom + spacing.lg }]}>
+            <Text style={styles.hint}>We send every request to this room.</Text>
+            <Surface radius={18} style={styles.field}>
+              <View style={styles.well}>
+                <Ionicons name="key-outline" size={19} color={tone.pine} />
+              </View>
+              <TextInput value={draft ?? ""} onChangeText={setDraft} autoFocus placeholder="For example Suite 4B" placeholderTextColor={colors.textDim} maxLength={30} returnKeyType="done" onSubmitEditing={save} style={styles.input} accessibilityLabel="Room or suite number" />
+            </Surface>
+            <View style={styles.fill} />
+            <ActionButton finish="pine" label="Save" onPress={save} />
+          </View>
         </KeyboardAvoidingView>
       </Modal>
     </>
@@ -74,8 +92,15 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   over: { color: colors.muted, fontSize: 11.5, lineHeight: 16 },
   label: { color: colors.ink, fontSize: font.sm, fontFamily: sf.uiSemi },
-  page: { flex: 1, backgroundColor: tone.page, paddingHorizontal: spacing.lg, gap: spacing.md },
-  top: { flexDirection: "row", alignItems: "center" },
-  title: { flex: 1, color: colors.ink, fontSize: 28, lineHeight: 35, fontFamily: sf.display },
-  input: { height: 54, paddingHorizontal: 20, color: colors.ink, fontSize: font.md, fontFamily: sf.uiSemi },
+  page: { flex: 1, backgroundColor: tone.page },
+  photo: { height: "42%", minHeight: 260, justifyContent: "flex-end", backgroundColor: tone.pine },
+  close: { position: "absolute", right: spacing.lg },
+  photoWords: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: 4 },
+  eyebrow: { ...type.eyebrow, color: tone.champagne },
+  title: { ...type.hero, fontSize: 44, lineHeight: 48, color: colors.white },
+  titleSoft: { fontFamily: sf.displayItalic, color: tone.champagne },
+  form: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.xl, gap: spacing.md },
+  hint: { ...type.label, color: tone.soft },
+  field: { flexDirection: "row", alignItems: "center", gap: 12, height: 62, paddingLeft: 10, paddingRight: 18 },
+  input: { flex: 1, height: 60, color: colors.ink, fontSize: font.md, fontFamily: sf.uiSemi },
 });

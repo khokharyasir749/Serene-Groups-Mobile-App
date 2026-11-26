@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import type { ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -16,7 +17,7 @@ const GAP = 12;
 type Props = { photo: ImageSource; title: string; onOpen: () => void; tiles: CareTile[]; at?: number; position?: "center" | "top" | "bottom" };
 
 /** A photograph across the column, its one-tap requests in an even grid beneath. */
-export function CareFeature({ photo, title, onOpen, tiles, at = 0, position }: Props) {
+export const CareFeature = memo(function CareFeature({ photo, title, onOpen, tiles, at = 0, position }: Props) {
   return (
     <View style={styles.stack}>
       <Rise at={at}>
@@ -35,7 +36,7 @@ export function CareFeature({ photo, title, onOpen, tiles, at = 0, position }: P
       <CareTiles tiles={tiles} at={at + H + GAP} />
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   stack: { gap: GAP },

@@ -14,7 +14,7 @@ export function Press({ style, children, ...rest }: PressProps) {
   const scale = useRef(new Animated.Value(1)).current;
   const to = (v: number) => Animated.spring(scale, { toValue: v, damping: 16, stiffness: 340, mass: 0.7, useNativeDriver: true }).start();
   return (
-    <AnimatedPressable accessibilityRole="button" {...rest} onPressIn={() => to(0.965)} onPressOut={() => to(1)} style={[style, { transform: [{ scale }] }]}>
+    <AnimatedPressable accessibilityRole="button" {...rest} onPressIn={() => to(0.955)} onPressOut={() => to(1)} style={[style, { transform: [{ scale }] }]}>
       {children}
     </AnimatedPressable>
   );

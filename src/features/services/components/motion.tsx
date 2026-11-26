@@ -40,7 +40,7 @@ export function DriftPhoto({ source, style }: { source: ImageSource; style?: Sty
   return (
     <View style={[styles.clip, style]}>
       <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ scale: p.interpolate({ inputRange: [0, 1], outputRange: [1.08, 1] }) }] }]}>
-        <Image source={source} style={StyleSheet.absoluteFill} contentFit="cover" transition={120} />
+        <Image cachePolicy="memory-disk" source={source} style={StyleSheet.absoluteFill} contentFit="cover" transition={120} />
       </Animated.View>
     </View>
   );

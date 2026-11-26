@@ -1,10 +1,8 @@
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { CLEARANCE, colors } from "@/core/constants/theme";
 import BrandLockup from "@/features/bookings/guest/components/BrandLockup";
-import { Closing } from "@/features/services/components/Closing";
-import { Curtain, CurtainEnd, type CurtainPanel } from "@/features/services/components/Curtain";
-import { FrontDesk } from "@/features/services/components/FrontDesk";
-import { HeroPage, Reveal } from "@/features/services/components/HeroPage";
+import { Curtain, type CurtainPanel } from "@/features/services/components/Curtain";
+import { HeroPage } from "@/features/services/components/HeroPage";
 import { Headline } from "@/features/services/components/scroll";
 import { Text } from "@/features/services/components/Text";
 import { tone } from "@/features/services/components/tone";
@@ -34,16 +32,10 @@ export default function Packages() {
           <GroupsBack onPhoto />
         </>
       }
-      foot={<Headline mount text="Curated stays" style={styles.title} />}
+      foot={<Headline mount soft={1} softStyle={styles.titleSoft} text="Curated stays" style={styles.title} />}
     >
       <Text style={styles.line}>Arranged by the Front Desk.</Text>
-      <Curtain panels={PANELS} />
-      <CurtainEnd>
-        <Reveal>
-          <FrontDesk />
-        </Reveal>
-        <Closing />
-      </CurtainEnd>
+      <Curtain release panels={PANELS} />
     </HeroPage>
   );
 }
@@ -52,4 +44,5 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   title: { ...type.hero, fontSize: 48, lineHeight: 56, color: colors.white },
   line: { ...type.lead, color: tone.ink },
+  titleSoft: { color: tone.champagne },
 });
