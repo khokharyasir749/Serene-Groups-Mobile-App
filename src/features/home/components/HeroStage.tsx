@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { FadeIn } from "@/core/components/FadeIn";
 import { Text } from "@/core/components/Text";
 import { WEB } from "@/core/constants/serene";
@@ -38,7 +38,7 @@ function Photo({ frame, on, still }: { frame: Frame; on: boolean; still: boolean
   }, [on, still, opacity, scale]);
   return (
     <Animated.View style={[StyleSheet.absoluteFill, { opacity, transform: [{ scale }] }]}>
-      <Image source={frame.image} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: frame.focus ?? "50%", top: "50%" }} />
+      <Image cachePolicy="memory-disk" source={frame.image} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: frame.focus ?? "50%", top: "50%" }} />
     </Animated.View>
   );
 }
@@ -84,9 +84,14 @@ export function HeroStage({ height, dock, passed }: Props) {
     return () => clearTimeout(t);
   }, [active, still, held, passed, focused]);
 
-  const drift = y.interpolate({ inputRange: [-height, 0, height], outputRange: [-height / 2, 0, still ? 0 : height * 0.3], extrapolate: "clamp" });
-  const stretch = y.interpolate({ inputRange: [-height, 0], outputRange: [2, 1], extrapolate: "clamp" });
-  const fade = y.interpolate({ inputRange: [0, height * 0.5], outputRange: [1, 0], extrapolate: "clamp" });
+  const { drift, stretch, fade } = useMemo(
+    () => ({
+      drift: y.interpolate({ inputRange: [-height, 0, height], outputRange: [-height / 2, 0, still ? 0 : height * 0.3], extrapolate: "clamp" }),
+      stretch: y.interpolate({ inputRange: [-height, 0], outputRange: [2, 1], extrapolate: "clamp" }),
+      fade: y.interpolate({ inputRange: [0, height * 0.5], outputRange: [1, 0], extrapolate: "clamp" }),
+    }),
+    [y, height, still],
+  );
   const frame = FRAMES[active % FRAMES.length];
 
   return (

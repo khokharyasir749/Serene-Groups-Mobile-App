@@ -11,6 +11,7 @@ import Segmented from '@/features/bookings/guest/components/Segmented';
 import { Button, Stepper } from '@/features/bookings/guest/components/ui';
 import { CONFIG, roomType, type RoomType } from '@/features/bookings/guest/data/catalog';
 import { addDays, fromISO, guestsLabel, monthName, nightlyRate, nightsBetween, plural, today, toISO } from '@/features/bookings/guest/lib/stay';
+import { useShallow } from 'zustand/react/shallow';
 import { useBooking } from '@/features/bookings/guest/state/booking';
 import { C, FONTS, S, T } from '@/features/bookings/guest/theme';
 import { canvas, glassCardDark } from '@/features/bookings/guest/theme/glass';
@@ -23,7 +24,7 @@ export default function StayModal() {
   const params = useLocalSearchParams<{ tab?: Tab; type?: string; next?: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { stay, setStay } = useBooking();
+  const { stay, setStay } = useBooking(useShallow((s) => ({ stay: s.stay, setStay: s.setStay })));
   const type = params.type ? roomType(params.type) : undefined;
   const [draft, setDraft] = useState(stay);
   const [tab, setTab] = useState<Tab>(params.tab === 'guests' ? 'guests' : 'dates');

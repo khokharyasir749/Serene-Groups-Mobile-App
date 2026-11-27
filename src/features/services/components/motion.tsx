@@ -1,7 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { AccessibilityInfo, Animated, Easing, StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import { Image, type ImageSource } from "expo-image";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { colors } from "@/core/constants/theme";
 import { tone } from "@/features/services/components/tone";
 

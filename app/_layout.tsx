@@ -8,18 +8,14 @@ import { Provider } from "react-redux";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import NetInfo from "@react-native-community/netinfo";
-import {
-  CormorantGaramond_500Medium,
-  CormorantGaramond_500Medium_Italic,
-  CormorantGaramond_600SemiBold,
-  CormorantGaramond_700Bold,
-} from "@expo-google-fonts/cormorant-garamond";
-import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
-} from "@expo-google-fonts/plus-jakarta-sans";
+import { CormorantGaramond_500Medium } from "@expo-google-fonts/cormorant-garamond/500Medium";
+import { CormorantGaramond_500Medium_Italic } from "@expo-google-fonts/cormorant-garamond/500Medium_Italic";
+import { CormorantGaramond_600SemiBold } from "@expo-google-fonts/cormorant-garamond/600SemiBold";
+import { CormorantGaramond_700Bold } from "@expo-google-fonts/cormorant-garamond/700Bold";
+import { PlusJakartaSans_400Regular } from "@expo-google-fonts/plus-jakarta-sans/400Regular";
+import { PlusJakartaSans_500Medium } from "@expo-google-fonts/plus-jakarta-sans/500Medium";
+import { PlusJakartaSans_600SemiBold } from "@expo-google-fonts/plus-jakarta-sans/600SemiBold";
+import { PlusJakartaSans_700Bold } from "@expo-google-fonts/plus-jakarta-sans/700Bold";
 import { store } from "@/core/stores/store";
 import { hydrateSession } from "@/core/auth/session";
 import { useUiStore } from "@/core/stores/uiStore";

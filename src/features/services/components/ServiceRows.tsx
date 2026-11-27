@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/features/services/components/Text";
 import { fonts } from "@/core/constants/theme";
 import { ServiceIcon } from "@/features/services/components/ServiceIcon";

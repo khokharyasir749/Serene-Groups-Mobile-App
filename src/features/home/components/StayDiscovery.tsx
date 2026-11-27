@@ -1,7 +1,7 @@
 import { Linking, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { Image, type ImageSource } from "expo-image";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useGetAvailabilityQuery } from "@/core/api/endpoints/publicApi";
 import { PressScale } from "@/core/components/PressScale";
 import { QuickRow } from "@/core/components/QuickRow";
@@ -66,7 +66,7 @@ export function StayRooms() {
           const full = live ? live.available <= 0 : false;
           return (
             <View key={r.slug} style={styles.room}>
-              <Image source={photo(ROOM_PHOTO[r.slug]) as ImageSource} style={styles.roomPhoto} contentFit="cover" transition={300} accessibilityLabel={r.name} />
+              <Image cachePolicy="memory-disk" source={photo(ROOM_PHOTO[r.slug]) as ImageSource} style={styles.roomPhoto} contentFit="cover" transition={300} accessibilityLabel={r.name} />
               <View style={styles.roomBody}>
                 <View>
                   <Text style={styles.roomName} maxFontSizeMultiplier={1.1}>

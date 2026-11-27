@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import type { ImageSource } from "expo-image";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { PressScale } from "@/core/components/PressScale";
 import { Text } from "@/core/components/Text";
 import { MEDIA } from "@/core/constants/media";

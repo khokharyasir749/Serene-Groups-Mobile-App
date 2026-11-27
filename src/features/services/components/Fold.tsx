@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { spacing } from "@/core/constants/theme";
 import { IconWell } from "@/features/services/components/IconWell";
 import { isReduced } from "@/features/services/components/motion";

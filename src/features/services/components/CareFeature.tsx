@@ -2,7 +2,7 @@ import { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import type { ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/features/services/components/Text";
 import { colors } from "@/core/constants/theme";
 import { CareTiles, type CareTile } from "@/features/services/components/CareGrid";

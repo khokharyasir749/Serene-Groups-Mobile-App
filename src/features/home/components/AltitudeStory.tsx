@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Animated, StyleSheet, View, useWindowDimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Circle, Path } from "react-native-svg";
@@ -50,6 +50,16 @@ function useCount(to: number, run: boolean, still: boolean) {
   return n;
 }
 
+/** The altitude, counting up. Its own component, so the count re-renders only this number while the page scrolls. */
+function Feet({ to, run, still }: { to: number; run: boolean; still: boolean }) {
+  const feet = useCount(to, run, still);
+  return (
+    <Text style={styles.feet} numberOfLines={1} maxFontSizeMultiplier={1}>
+      {feet.toLocaleString("en-US")}
+    </Text>
+  );
+}
+
 /** The climb to the resort, then the group behind it. A full-bleed dark chapter. */
 export function AltitudeStory() {
   const { y, view, still } = usePage();
@@ -57,10 +67,11 @@ export function AltitudeStory() {
   const [at, setAt] = useState<number | null>(null);
   const reached = useReached(at, 0.55);
   const [founded, altitude, storeys, apartments] = WEB.about.stats;
-  const feet = useCount(altitude.n, reached, still);
   const art = (width * contours.height) / contours.width;
-  const range = [(at ?? 0) - view, (at ?? 0) + art];
-  const drift = still || at === null ? 0 : y.interpolate({ inputRange: range, outputRange: [-46, 46], extrapolate: "clamp" });
+  const drift = useMemo(
+    () => (still || at === null ? 0 : y.interpolate({ inputRange: [at - view, at + art], outputRange: [-46, 46], extrapolate: "clamp" })),
+    [y, at, view, art, still],
+  );
 
   return (
     <View style={styles.wrap} onLayout={(e) => setAt(e.nativeEvent.layout.y)}>
@@ -75,9 +86,7 @@ export function AltitudeStory() {
       <View style={styles.body}>
         <View accessible accessibilityLabel={`${altitude.n.toLocaleString("en-US")} feet, Nathia Gali altitude`}>
           <View style={styles.feetRow}>
-            <Text style={styles.feet} numberOfLines={1} maxFontSizeMultiplier={1}>
-              {feet.toLocaleString("en-US")}
-            </Text>
+            <Feet to={altitude.n} run={reached} still={still} />
             <Text style={styles.feetUnit}>ft</Text>
           </View>
           <Text style={styles.feetNote}>Nathia Gali, where the group began</Text>

@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Modal, StyleSheet, TextInput, View } from "react-
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { ROOM_COVER } from "@/features/services/data/catalog";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/features/services/components/Text";

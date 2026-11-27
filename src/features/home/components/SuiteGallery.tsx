@@ -1,9 +1,9 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Animated, StyleSheet, View, useWindowDimensions } from "react-native";
 import { router } from "expo-router";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { PressScale } from "@/core/components/PressScale";
 import { Text } from "@/core/components/Text";
 import { ROOMS, WEB } from "@/core/constants/serene";
@@ -34,6 +34,7 @@ export function SuiteGallery() {
   const card = Math.min(Math.round(width * 0.78), 400);
   const step = card + GAP;
   const x = useRef(new Animated.Value(0)).current;
+  const onScroll = useMemo(() => Animated.event([{ nativeEvent: { contentOffset: { x } } }], { useNativeDriver: true }), [x]);
   return (
     <View style={styles.wrap}>
       <ChapterTitle title={WEB.stays.roomsTitle} soft={`${WEB.stays.roomsSoft}.`} />
@@ -45,7 +46,7 @@ export function SuiteGallery() {
         style={styles.bleed}
         contentContainerStyle={{ paddingLeft: spacing.lg, paddingRight: width - card - spacing.lg, gap: GAP }}
         scrollEventThrottle={16}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x } } }], { useNativeDriver: true })}
+        onScroll={onScroll}
       >
         {ROOMS.map((r, i) => {
           const range = [(i - 1) * step, i * step, (i + 1) * step];
@@ -55,7 +56,7 @@ export function SuiteGallery() {
             <Animated.View key={r.slug} style={{ width: card, transform: [{ scale: still ? 1 : at(0.95, 1) }] }}>
               <PressScale onPress={() => open(r.slug)} style={[styles.card, { height: Math.round(card * 1.42) }]} accessibilityLabel={`${r.name}. ${r.tagline}. ${r.size}, ${r.guests}. View`}>
                 <Animated.View style={[styles.photo, { transform: [{ translateX: still ? 0 : slide }] }]}>
-                  <Image source={photo(PHOTO[r.slug]) as ImageSource} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
+                  <Image cachePolicy="memory-disk" source={photo(PHOTO[r.slug]) as ImageSource} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
                 </Animated.View>
                 <LinearGradient pointerEvents="none" colors={explore.tileFade} style={StyleSheet.absoluteFill} />
                 <View style={styles.body}>

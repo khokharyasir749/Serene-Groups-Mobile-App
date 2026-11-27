@@ -1,6 +1,7 @@
 import { memo, useEffect, useMemo, useRef, useState, type ComponentRef, type ReactNode, type RefObject } from "react";
 import { Animated, Pressable, StyleSheet, View, useWindowDimensions, type LayoutChangeEvent } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { NavGlass } from "@/core/components/NavGlass";
 import { fonts, groups, navGlass } from "@/core/constants/theme";
 import { router, usePathname, type Href } from "expo-router";
@@ -72,19 +73,19 @@ export function ServicesDock({ blurTarget }: { blurTarget?: RefObject<ComponentR
       pos.setValue(active);
       return;
     }
-    // Driven from JS on purpose: with the native driver, Android could keep a half-way value when a page rebuilt during the
-    // slide, leaving the pill between two tabs. Here every frame is a real prop, so it always ends on the active tab.
-    const run = Animated.spring(pos, { toValue: active, damping: 20, stiffness: 230, mass: 0.8, useNativeDriver: false });
+    // On the native thread, as Serene Groups does it: the new page can take JavaScript's time without stalling the pill.
+    const run = Animated.spring(pos, { toValue: active, damping: 20, stiffness: 230, mass: 0.8, useNativeDriver: true });
     run.start();
     return () => run.stop();
   }, [active, pos]);
 
   const pill = useMemo(
     () => ({
-      width: boxes[active]?.width ?? guess,
+      // Every tab is the same width: nothing here changes with the active tab, so the pill is not re-attached mid-slide.
+      width: boxes[0].width,
       transform: [{ translateX: pos.interpolate({ inputRange: INDEXES, outputRange: boxes.map((b) => b.x), extrapolate: "clamp" }) }],
     }),
-    [boxes, active, guess, pos],
+    [boxes, pos],
   );
   const faces = useMemo(
     () =>

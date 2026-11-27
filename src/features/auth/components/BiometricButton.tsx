@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { colors, groups } from "@/core/constants/theme";
 
 export const BIOMETRIC_BUTTON_SIZE = 56;

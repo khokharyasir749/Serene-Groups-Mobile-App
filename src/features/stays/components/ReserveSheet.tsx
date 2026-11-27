@@ -5,7 +5,7 @@ import { Text } from "@/core/components/Text";
 import { useReserveStayMutation } from "@/core/api/endpoints/staysApi";
 import { Button } from "@/core/components/Button";
 import { Input } from "@/core/components/Input";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { ROOMS } from "@/core/constants/serene";
 import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";

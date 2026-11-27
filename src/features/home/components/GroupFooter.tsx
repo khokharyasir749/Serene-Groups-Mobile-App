@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Animated, Linking, Pressable, StyleSheet, View } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { PressScale } from "@/core/components/PressScale";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { Text } from "@/core/components/Text";
@@ -39,12 +39,15 @@ function Row({ label, value, onPress }: { label: string; value: string; onPress:
 export function GroupFooter() {
   const { y, view, still } = usePage();
   const [at, setAt] = useState<number | null>(null);
-  const drift = still || at === null ? 0 : y.interpolate({ inputRange: [at - view, at + HEIGHT], outputRange: [-40, 40], extrapolate: "clamp" });
+  const drift = useMemo(
+    () => (still || at === null ? 0 : y.interpolate({ inputRange: [at - view, at + HEIGHT], outputRange: [-40, 40], extrapolate: "clamp" })),
+    [y, at, view, still],
+  );
   return (
     <View style={styles.wrap} onLayout={(e) => setAt(e.nativeEvent.layout.y)}>
       <View style={styles.photo}>
         <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateY: drift }, { scale: 1.22 }] }]}>
-          <Image source={PHOTO} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: "72%", top: "50%" }} transition={300} />
+          <Image cachePolicy="memory-disk" source={PHOTO} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: "72%", top: "50%" }} transition={300} />
         </Animated.View>
         <LinearGradient pointerEvents="none" colors={explore.finaleFade} style={StyleSheet.absoluteFill} />
       </View>

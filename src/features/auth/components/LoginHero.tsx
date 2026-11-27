@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { MEDIA } from "@/core/constants/media";
 import { colors, fonts, gradients, radius, SCRIM_STOPS, spacing, groups } from "@/core/constants/theme";
@@ -11,7 +11,7 @@ import { colors, fonts, gradients, radius, SCRIM_STOPS, spacing, groups } from "
 export function LoginHero() {
   return (
     <View style={styles.hero}>
-      <Image source={MEDIA.loginHero} style={StyleSheet.absoluteFill} contentFit="cover" />
+      <Image cachePolicy="memory-disk" source={MEDIA.loginHero} style={StyleSheet.absoluteFill} contentFit="cover" />
       <LinearGradient colors={gradients.heroScrim} locations={[...SCRIM_STOPS]} style={StyleSheet.absoluteFill} />
       <LinearGradient colors={[colors.scrim, colors.clear]} style={styles.topScrim} />
 

@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Text } from "@/core/components/Text";
 import { WEB } from "@/core/constants/serene";
 import { explore, font, fonts, spacing } from "@/core/constants/theme";

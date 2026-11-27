@@ -1,6 +1,6 @@
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@/core/components/Button";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";

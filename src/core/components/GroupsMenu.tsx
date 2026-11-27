@@ -2,17 +2,21 @@ import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Image, type ImageSource } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { LAHORE_URL, NATHIA_GALI_URL } from "@/core/constants/serene";
-import { colors, dark, font, fonts, groups, letter, spacing } from "@/core/constants/theme";
+import { colors, dark, explore, font, fonts, groups, letter, menuScrim, spacing } from "@/core/constants/theme";
 import { openSite } from "@/core/lib/openSite";
 import { switchTo } from "@/core/stores/switchStore";
 import { PlateButton } from "./PlateButton";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 
 type Item = { label: string; go: () => void; badge?: string; quiet?: boolean; external?: boolean };
+
+const PHOTO = require("../../../assets/bookings/photos/resort/aerial-pool-portrait.jpg") as ImageSource;
 
 const ITEMS: Item[] = [
   { label: "Serene Bookings", badge: "BOOK NOW", go: () => switchTo("Serene Bookings", () => router.push("/serene-bookings")) },
@@ -48,13 +52,20 @@ export function GroupsMenu({ glass }: { glass?: boolean }) {
       <PlateButton glass={glass} icon="menu-outline" label="Open menu" onPress={() => setOpen(true)} />
       <Modal visible={open} animationType="fade" onRequestClose={() => setOpen(false)} statusBarTranslucent presentationStyle="fullScreen">
         <View style={[styles.page, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom + spacing.lg }]}>
+          <Image cachePolicy="memory-disk" source={PHOTO} style={StyleSheet.absoluteFill} contentFit="cover" />
+          <LinearGradient pointerEvents="none" colors={menuScrim.colors} locations={menuScrim.stops} style={StyleSheet.absoluteFill} />
           <View style={styles.top}>
-            <View style={styles.crest}>
-              <SereneLogoMark width={26} fill={colors.snow} snow={groups.pine} />
+            <View style={styles.brand}>
+              <SereneLogoMark width={40} fill={colors.snow} snow={groups.pine} />
+              <View style={styles.words}>
+                <Text style={styles.name} numberOfLines={1} adjustsFontSizeToFit>
+                  SERENE GROUP
+                </Text>
+                <Text style={styles.sub} numberOfLines={1}>
+                  BY DM CONSORTIUM
+                </Text>
+              </View>
             </View>
-            <Text style={styles.brand} numberOfLines={1}>
-              SERENE GROUP
-            </Text>
             <Pressable onPress={() => setOpen(false)} hitSlop={10} style={styles.close} accessibilityRole="button" accessibilityLabel="Close menu">
               <Ionicons name="close-outline" size={22} color={colors.snow} />
             </Pressable>
@@ -90,8 +101,10 @@ export function GroupsMenu({ glass }: { glass?: boolean }) {
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: groups.pine, paddingHorizontal: spacing.lg },
   top: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingBottom: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.lineNight },
-  crest: { width: 46, height: 46, borderRadius: 23, borderWidth: 1.5, borderColor: colors.goldAccent, alignItems: "center", justifyContent: "center" },
-  brand: { flex: 1, color: dark.text, fontFamily: fonts.display, fontSize: 20, letterSpacing: 2.4 },
+  brand: { flex: 1, flexDirection: "row", alignItems: "center", gap: 10 },
+  words: { flex: 1, gap: 1 },
+  name: { color: colors.white, fontFamily: fonts.display, fontSize: 20, lineHeight: 26, letterSpacing: 1.4 },
+  sub: { color: explore.gold, fontSize: 10.5, lineHeight: 14, letterSpacing: 0.9, fontFamily: fonts.uiMedium },
   close: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: colors.goldAccent, backgroundColor: colors.white16, alignItems: "center", justifyContent: "center" },
   list: { paddingVertical: spacing.md },
   item: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingVertical: spacing.lg - 2, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.lineNight },

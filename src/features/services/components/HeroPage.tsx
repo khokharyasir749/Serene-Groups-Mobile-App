@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { Image, type ImageSource } from "expo-image";
@@ -62,6 +62,22 @@ export function HeroPage({ photo, height, title, onBack, bar, foot, children, bo
   );
 
   const turn = height - LIP - insets.top - BAR;
+  // Built once, so a re-render never re-attaches the native scroll animation under the finger.
+  const onScroll = useMemo(
+    () =>
+      Animated.event([{ nativeEvent: { contentOffset: { y } } }], {
+        useNativeDriver: true,
+        listener: (e: { nativeEvent: { contentOffset: { y: number } } }) => {
+          offset.current = e.nativeEvent.contentOffset.y;
+          const next = e.nativeEvent.contentOffset.y < turn + 8;
+          if (next !== overNow.current) {
+            overNow.current = next;
+            setOver(next);
+          }
+        },
+      }),
+    [y, turn],
+  );
   const still = isReduced();
   const hold = y.interpolate({ inputRange: [0, height], outputRange: [0, still ? 0 : height], extrapolate: "clamp" });
   const drift = y.interpolate({ inputRange: [-200, 0, height], outputRange: [-100, 0, still ? 0 : -height * 0.08], extrapolate: "clamp" });
@@ -82,17 +98,7 @@ export function HeroPage({ photo, height, title, onBack, bar, foot, children, bo
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: bottom }}
         scrollEventThrottle={16}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y } } }], {
-          useNativeDriver: true,
-          listener: (e: { nativeEvent: { contentOffset: { y: number } } }) => {
-            offset.current = e.nativeEvent.contentOffset.y;
-            const next = e.nativeEvent.contentOffset.y < turn + 8;
-            if (next !== overNow.current) {
-              overNow.current = next;
-              setOver(next);
-            }
-          },
-        })}
+        onScroll={onScroll}
       >
         <Animated.View style={[styles.hero, { height, transform: [{ translateY: hold }] }]}>
           <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateY: drift }, { scale: stretch }] }]}>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { CLEARANCE, colors, spacing } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";
 import BrandLockup from "@/features/bookings/guest/components/BrandLockup";

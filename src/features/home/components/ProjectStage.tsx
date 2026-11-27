@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Animated, Linking, StyleSheet, View } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PressScale } from "@/core/components/PressScale";
 import { Text } from "@/core/components/Text";
@@ -46,7 +46,7 @@ function Face({ project: p }: { project: ProjectInfo }) {
   const specs = DESTINATIONS[p.slug].specs.filter((s) => FIGURES[p.slug].includes(s.k));
   return (
     <>
-      <Image source={PHOTO[p.slug]} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={FOCUS[p.slug]} transition={300} accessibilityLabel={`Serene Heights ${p.name}`} />
+      <Image cachePolicy="memory-disk" source={PHOTO[p.slug]} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={FOCUS[p.slug]} transition={300} accessibilityLabel={`Serene Heights ${p.name}`} />
       <LinearGradient pointerEvents="none" colors={explore.cardFade} locations={explore.cardStops} style={StyleSheet.absoluteFill} />
       <View style={styles.status}>
         <View style={styles.dot} />
@@ -104,7 +104,7 @@ function Upcoming() {
   const { cta, interest } = WEB.upcoming;
   return (
     <View style={styles.farms}>
-      <Image source={MEDIA.farms} style={styles.farmsPhoto} contentFit="cover" contentPosition={{ left: "50%", top: "34%" }} transition={300} accessibilityLabel={FARMS.name} />
+      <Image cachePolicy="memory-disk" source={MEDIA.farms} style={styles.farmsPhoto} contentFit="cover" contentPosition={{ left: "50%", top: "34%" }} transition={300} accessibilityLabel={FARMS.name} />
       <View style={styles.farmsBody}>
         <Text style={styles.farmsKind}>{`${FARMS.status}, ${FARMS.place}`}</Text>
         <Text style={styles.farmsText}>{`${FARMS.facts.map((f, i) => (i ? f.toLowerCase() : f)).join(", ")}.`}</Text>

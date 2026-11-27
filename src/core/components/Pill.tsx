@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { colors, font, fonts, radius, shadows, spacing, toneColors, type Tone, groups } from "@/core/constants/theme";
 
 type Props = {

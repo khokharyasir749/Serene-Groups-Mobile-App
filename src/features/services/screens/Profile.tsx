@@ -1,7 +1,7 @@
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { CONTACT } from "@/core/constants/serene";
 import { CLEARANCE, colors } from "@/core/constants/theme";
 import { useAuthStore } from "@/core/stores/authStore";

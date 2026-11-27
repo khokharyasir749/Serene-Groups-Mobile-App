@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Keyboard, StyleSheet, TextInput, View, useWindowDimensions } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/features/services/components/Text";
 import { CLEARANCE, colors, spacing } from "@/core/constants/theme";
 import BrandLockup from "@/features/bookings/guest/components/BrandLockup";

@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BookingLookupForm from '@/features/bookings/guest/components/BookingLookupForm';
 import PageHeader from '@/features/bookings/guest/components/PageHeader';
 import { Text } from '@/features/bookings/guest/components/Text';
+import { useShallow } from 'zustand/react/shallow';
 import { useBooking } from '@/features/bookings/guest/state/booking';
 import { C, FONTS, S } from '@/features/bookings/guest/theme';
 import { glassCard } from '@/features/bookings/guest/theme/glass';
@@ -18,7 +19,7 @@ const rise = (i: number) => 50 + i * 60;
 export default function FindBookingScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { user, bookings } = useBooking();
+  const { user, bookings } = useBooking(useShallow((s) => ({ user: s.user, bookings: s.bookings })));
 
   useEffect(() => {
     return () => {

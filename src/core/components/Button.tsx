@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/core/components/Text";
 import { colors, font, fonts, groups, radius, shadows, spacing } from "@/core/constants/theme";
 

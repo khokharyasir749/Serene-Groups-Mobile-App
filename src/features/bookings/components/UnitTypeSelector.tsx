@@ -17,7 +17,7 @@ export function UnitTypeSelector({ project, value, onChange }: Props) {
         const size = ROOMS.find((r) => r.slug === u.id)?.size;
         return (
           <Pressable key={u.id} onPress={() => onChange(u.id)} style={[styles.card, on && styles.on]} accessibilityState={{ selected: on }}>
-            <Image source={unitImage(project, u.id)} style={StyleSheet.absoluteFill} contentFit="cover" />
+            <Image cachePolicy="memory-disk" source={unitImage(project, u.id)} style={StyleSheet.absoluteFill} contentFit="cover" />
             <LinearGradient colors={gradients.heroScrim} locations={[...SCRIM_STOPS]} style={StyleSheet.absoluteFill} />
             <View style={styles.body}>
               <Text style={styles.name} numberOfLines={2}>

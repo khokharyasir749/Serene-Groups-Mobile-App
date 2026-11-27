@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { tone } from "@/features/services/components/tone";
 
 type Glyph = keyof typeof Ionicons.glyphMap;

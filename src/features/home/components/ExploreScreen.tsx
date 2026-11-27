@@ -38,7 +38,34 @@ export function ExploreScreen({ scrollRef, refreshing = false, onRefresh, hero: 
   const y = useRef(new Animated.Value(0)).current;
   const last = useRef(0);
   const [solid, setSolid] = useState(false);
-  const page = useMemo(() => ({ y, view: height, top, still }), [y, height, top, still]);
+  const solidNow = useRef(false);
+  const watchers = useRef(new Set<(at: number) => void>());
+  const watch = useCallback((fn: (at: number) => void) => {
+    watchers.current.add(fn);
+    return () => {
+      watchers.current.delete(fn);
+    };
+  }, []);
+  const page = useMemo(() => ({ y, view: height, top, still, watch }), [y, height, top, still, watch]);
+
+  // Built once, so a re-render while the finger is moving never re-attaches the native scroll animation.
+  const onScroll = useMemo(
+    () =>
+      Animated.event([{ nativeEvent: { contentOffset: { y } } }], {
+        useNativeDriver: true,
+        listener: (e: { nativeEvent: { contentOffset: { y: number } } }) => {
+          last.current = e.nativeEvent.contentOffset.y;
+          watchers.current.forEach((fn) => fn(last.current));
+          useScrollTopStore.getState().setVisible(last.current > SCROLL_TOP_THRESHOLD);
+          const next = last.current > solidAt - spacing.xxl;
+          if (next !== solidNow.current) {
+            solidNow.current = next;
+            setSolid(next);
+          }
+        },
+      }),
+    [y, solidAt],
+  );
 
   // While this page is focused, the dock's up-arrow scrolls it back to the top and shows once it is scrolled down.
   useFocusEffect(
@@ -64,14 +91,7 @@ export function ExploreScreen({ scrollRef, refreshing = false, onRefresh, hero: 
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
             scrollEventThrottle={16}
-            onScroll={Animated.event([{ nativeEvent: { contentOffset: { y } } }], {
-              useNativeDriver: true,
-              listener: (e: { nativeEvent: { contentOffset: { y: number } } }) => {
-                last.current = e.nativeEvent.contentOffset.y;
-                useScrollTopStore.getState().setVisible(last.current > SCROLL_TOP_THRESHOLD);
-                setSolid(last.current > solidAt - spacing.xxl);
-              },
-            })}
+            onScroll={onScroll}
             refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={top} tintColor={colors.white} colors={[groups.pine]} /> : undefined}
           >
             {ownHero ? ownHero(hero) : <HeroStage height={hero} dock={insets.bottom + DOCK - PEEK} passed={solid} />}

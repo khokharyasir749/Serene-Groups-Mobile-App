@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -50,9 +50,13 @@ export function ExploreHeader({ y, solidAt, solid }: Props) {
       return () => setFocused(false);
     }, []),
   );
-  const range = [solidAt - 70, solidAt];
-  const on = y.interpolate({ inputRange: range, outputRange: [0, 1], extrapolate: "clamp" });
-  const off = y.interpolate({ inputRange: range, outputRange: [1, 0], extrapolate: "clamp" });
+  const { on, off } = useMemo(() => {
+    const range = [solidAt - 70, solidAt];
+    return {
+      on: y.interpolate({ inputRange: range, outputRange: [0, 1], extrapolate: "clamp" }),
+      off: y.interpolate({ inputRange: range, outputRange: [1, 0], extrapolate: "clamp" }),
+    };
+  }, [y, solidAt]);
   return (
     <View pointerEvents="box-none" style={[styles.wrap, { paddingTop: insets.top + PAD }]}>
       {focused ? <StatusBar style={solid ? "dark" : "light"} /> : null}

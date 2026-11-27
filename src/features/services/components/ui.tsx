@@ -1,6 +1,6 @@
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/features/services/components/Text";
 import { colors, font, spacing, svc } from "@/core/constants/theme";

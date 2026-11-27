@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/core/components/Text";
 import { colors, fonts, groups } from "@/core/constants/theme";
 import { PressScale } from "./PressScale";

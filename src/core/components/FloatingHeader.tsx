@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { colors, font, fonts, groups, shadows, spacing } from "@/core/constants/theme";
 import { PlateButton } from "./PlateButton";
 

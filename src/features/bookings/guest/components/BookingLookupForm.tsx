@@ -24,7 +24,7 @@ export default function BookingLookupForm({
   onFocusField?: () => void;
   hideNote?: boolean;
 }) {
-  const { findBooking } = useBooking();
+  const findBooking = useBooking((s) => s.findBooking);
   const [reference, setReference] = useState(__DEV__ ? 'SH-4QK8TW' : '');
   const [email, setEmail] = useState(__DEV__ ? 'guest@example.com' : '');
   const [error, setError] = useState('');

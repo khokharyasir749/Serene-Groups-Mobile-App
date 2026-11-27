@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { projectName } from "@/core/constants/serene";
 import { colors, font, fonts, radius, shadows, spacing, groups } from "@/core/constants/theme";
 import { formatDate } from "@/core/lib/formatDate";

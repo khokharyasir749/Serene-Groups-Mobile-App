@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/features/services/components/Text";
 import { IconWell } from "@/features/services/components/IconWell";
 import { Rise } from "@/features/services/components/scroll";

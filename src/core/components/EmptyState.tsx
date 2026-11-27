@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { colors, font, icon as iconSize, spacing } from "@/core/constants/theme";
 import { Button } from "./Button";
 

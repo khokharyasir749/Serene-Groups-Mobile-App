@@ -13,6 +13,7 @@ import StatusPill from '@/features/bookings/guest/components/StatusPill';
 import { BackBar, BookingSteps, Button, Caps, Photo, Sheet } from '@/features/bookings/guest/components/ui';
 import { PROPERTY } from '@/features/bookings/guest/data/catalog';
 import { fmtDate, guestsLabel, money, plural } from '@/features/bookings/guest/lib/stay';
+import { useShallow } from 'zustand/react/shallow';
 import { freeCancelUntil, tabOf, useBooking } from '@/features/bookings/guest/state/booking';
 import { C, F, FONTS, S, T } from '@/features/bookings/guest/theme';
 import { canvas, glassCard } from '@/features/bookings/guest/theme/glass';
@@ -24,7 +25,7 @@ export default function BookingScreen() {
   const { ref, new: isNewParam } = useLocalSearchParams<{ ref: string; new?: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { bookings, cancelBooking } = useBooking();
+  const { bookings, cancelBooking } = useBooking(useShallow((s) => ({ bookings: s.bookings, cancelBooking: s.cancelBooking })));
   const b = bookings.find((x) => x.reference === ref);
   const [confirm, setConfirm] = useState(false);
   const [reason, setReason] = useState('');

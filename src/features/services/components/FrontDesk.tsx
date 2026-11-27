@@ -2,7 +2,7 @@ import { memo, useEffect, useRef } from "react";
 import { Animated, Easing, Linking, StyleSheet, View } from "react-native";
 import { useIsFocused } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/features/services/components/Text";
 import { CONTACT } from "@/core/constants/serene";
 import { colors, fonts } from "@/core/constants/theme";

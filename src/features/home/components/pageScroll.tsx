@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Animated, type StyleProp, type ViewStyle } from "react-native";
 
 type Page = {
@@ -10,6 +10,8 @@ type Page = {
   top: number;
   /** Less motion was asked for. */
   still: boolean;
+  /** Hears the scroll position from the page's own scroll listener; returns how to stop listening. */
+  watch: (fn: (y: number) => void) => () => void;
 };
 
 const Ctx = createContext<Page | null>(null);
@@ -25,14 +27,14 @@ export function usePage(): Page {
 export function Reveal({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const { y, view, still } = usePage();
   const [at, setAt] = useState<number | null>(null);
-  const range = at === null ? null : [at - view * 0.96, at - view * 0.7];
-  const motion =
-    range && !still
-      ? {
-          opacity: y.interpolate({ inputRange: range, outputRange: [0, 1], extrapolate: "clamp" }),
-          transform: [{ translateY: y.interpolate({ inputRange: range, outputRange: [46, 0], extrapolate: "clamp" }) }],
-        }
-      : null;
+  const motion = useMemo(() => {
+    if (at === null || still) return null;
+    const range = [at - view * 0.96, at - view * 0.7];
+    return {
+      opacity: y.interpolate({ inputRange: range, outputRange: [0, 1], extrapolate: "clamp" }),
+      transform: [{ translateY: y.interpolate({ inputRange: range, outputRange: [46, 0], extrapolate: "clamp" }) }],
+    };
+  }, [y, at, view, still]);
   return (
     <Animated.View onLayout={(e) => setAt(Math.round(e.nativeEvent.layout.y))} style={[style, motion]}>
       {children}
@@ -42,17 +44,19 @@ export function Reveal({ children, style }: { children: ReactNode; style?: Style
 
 /** True from the first time the page is scrolled to `at` (less `lead` of the screen). */
 export function useReached(at: number | null, lead = 0.6) {
-  const { y, view } = usePage();
+  const { view, watch } = usePage();
   const [reached, setReached] = useState(false);
   const done = useRef(false);
   useEffect(() => {
     if (at === null || done.current) return undefined;
-    const id = y.addListener(({ value }) => {
+    // Rides on the page's scroll listener: a listener on the native value would make every frame report to JavaScript.
+    const stop = watch((value) => {
       if (done.current || value < at - view * lead) return;
       done.current = true;
+      stop();
       setReached(true);
     });
-    return () => y.removeListener(id);
-  }, [at, lead, view, y]);
+    return stop;
+  }, [at, lead, view, watch]);
   return reached;
 }

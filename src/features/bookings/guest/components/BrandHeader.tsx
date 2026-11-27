@@ -8,6 +8,7 @@ import ClearGlass, { glassEdge, glassInk } from '@/features/bookings/guest/compo
 import GroupsPill from '@/features/bookings/guest/components/GroupsPill';
 import { exitToGroups } from '@/features/bookings/guest/lib/nav';
 import { Text } from '@/features/bookings/guest/components/Text';
+import { useShallow } from 'zustand/react/shallow';
 import { useBooking } from '@/features/bookings/guest/state/booking';
 import { C, FONTS, S, shadow } from '@/features/bookings/guest/theme';
 
@@ -18,7 +19,7 @@ import { C, FONTS, S, shadow } from '@/features/bookings/guest/theme';
  */
 export default function BrandHeader({ variant = 'light' }: { variant?: 'light' | 'overPhoto' }) {
   const router = useRouter();
-  const { user, signOut } = useBooking();
+  const { user, signOut } = useBooking(useShallow((s) => ({ user: s.user, signOut: s.signOut })));
   const isOverPhoto = variant === 'overPhoto';
 
   const press = () =>

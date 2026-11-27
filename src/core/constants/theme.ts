@@ -171,6 +171,12 @@ export const shadows = {
 } as const;
 
 /** Text / line tokens for content sitting on a Pine surface. */
+/** The Pine wash laid over the Groups menu photograph, so every line stays readable (the same wash as the Bookings menu). */
+export const menuScrim = {
+  colors: ["rgba(10, 24, 17, 0.90)", "rgba(12, 28, 20, 0.82)", "rgba(12, 28, 20, 0.86)", "rgba(8, 20, 14, 0.95)"],
+  stops: [0, 0.25, 0.7, 1],
+} as const;
+
 export const dark = {
   text: colors.onNight,
   muted: colors.onNightMuted,

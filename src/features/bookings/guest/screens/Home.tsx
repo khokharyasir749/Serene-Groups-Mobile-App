@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { memo, useRef, useState, type ComponentProps } from 'react';
-import { Animated, FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { memo, useMemo, useRef, useState, type ComponentProps } from 'react';
+import { Animated, FlatList, Pressable, ScrollView, StyleSheet, useWindowDimensions, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import BrandHeader from '@/features/bookings/guest/components/BrandHeader';
@@ -14,6 +14,7 @@ import { Photo, PressableScale } from '@/features/bookings/guest/components/ui';
 import { areaRangeOf, REASONS, ROOM_TYPES, type RoomType } from '@/features/bookings/guest/data/catalog';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import { fmtShort, lowestQuote, money, plural, type Stay } from '@/features/bookings/guest/lib/stay';
+import { useShallow } from 'zustand/react/shallow';
 import { tabOf, useBooking } from '@/features/bookings/guest/state/booking';
 import { C, FONTS, HEX, LOGO_TOP, S, T, tabBarSpace } from '@/features/bookings/guest/theme';
 import { canvas } from '@/features/bookings/guest/theme/glass';
@@ -79,7 +80,7 @@ export default function Discover() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
-  const { stay, setStay, bookings } = useBooking();
+  const { stay, setStay, bookings } = useBooking(useShallow((s) => ({ stay: s.stay, setStay: s.setStay, bookings: s.bookings })));
   const { ref, onScroll } = useScrollTop();
   const [overHero, setOverHero] = useState(true);
   const y = useRef(new Animated.Value(0)).current;
@@ -87,6 +88,19 @@ export default function Discover() {
   const hero = Math.round(Math.max(560, height - 16));
   const resW = Math.min(340, Math.round(width * 0.76));
   const next = bookings.filter((b) => tabOf(b) === 'upcoming').sort((a, b) => a.stay.checkIn.localeCompare(b.stay.checkIn))[0];
+
+  // The hero follows the finger natively; JavaScript only keeps the up-arrow and status bar in step.
+  const scrolled = useMemo(
+    () =>
+      Animated.event([{ nativeEvent: { contentOffset: { y } } }], {
+        useNativeDriver: true,
+        listener: (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+          onScroll(e);
+          setOverHero(e.nativeEvent.contentOffset.y < hero - insets.top - 20);
+        },
+      }),
+    [y, onScroll, hero, insets.top],
+  );
 
   const openStay = (tab: 'dates' | 'guests') => router.push({ pathname: '/stay', params: { tab, next: 'apartments' } });
   const search = () => {
@@ -97,7 +111,7 @@ export default function Discover() {
   return (
     <View style={canvas}>
       <FocusedStatusBar style={overHero ? 'light' : 'dark'} />
-      <ScrollView
+      <Animated.ScrollView
         ref={ref}
         style={{ flex: 1 }}
         removeClippedSubviews={false}
@@ -105,13 +119,7 @@ export default function Discover() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
-        onScroll={(e) => {
-          onScroll(e);
-          const at = e.nativeEvent.contentOffset.y;
-          y.setValue(at);
-          const over = at < hero - insets.top - 20;
-          if (over !== overHero) setOverHero(over);
-        }}>
+        onScroll={scrolled}>
         <View style={[styles.hero, { height: hero, paddingTop: insets.top + LOGO_TOP }]}>
           <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateY: y.interpolate({ inputRange: [0, hero], outputRange: [0, hero * 0.28], extrapolate: 'clamp' }) }] }]}>
             <Photo src="/images/interiors/sunrise-balcony.jpg" style={StyleSheet.absoluteFill} />
@@ -224,7 +232,7 @@ export default function Discover() {
         </PressableScale>
 
         <LuxuryFooter bottomSpace={tabBarSpace(insets.bottom)} />
-      </ScrollView>
+      </Animated.ScrollView>
       {overHero ? null : <View pointerEvents="none" style={[styles.strip, { height: insets.top }]} />}
     </View>
   );

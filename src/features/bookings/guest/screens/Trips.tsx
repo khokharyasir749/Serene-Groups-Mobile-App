@@ -16,6 +16,7 @@ import StatusPill from '@/features/bookings/guest/components/StatusPill';
 import { Text } from '@/features/bookings/guest/components/Text';
 import { Photo, PressableScale } from '@/features/bookings/guest/components/ui';
 import { fmtShort, guestsLabel, money, plural } from '@/features/bookings/guest/lib/stay';
+import { useShallow } from 'zustand/react/shallow';
 import { tabOf, useBooking, type Tab } from '@/features/bookings/guest/state/booking';
 import { C, FONTS, S, T, tabBarSpace, LOGO_TOP } from '@/features/bookings/guest/theme';
 import { canvas, glassCard } from '@/features/bookings/guest/theme/glass';
@@ -24,7 +25,7 @@ export default function Trips() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { lookup } = useLocalSearchParams<{ lookup?: string }>();
-  const { bookings, user } = useBooking();
+  const { bookings, user } = useBooking(useShallow((s) => ({ bookings: s.bookings, user: s.user })));
   const { ref, onScroll } = useScrollTop();
   const [tab, setTab] = useState<Tab>('upcoming');
   const list = bookings.filter((b) => tabOf(b) === tab);

@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Text } from "@/core/components/Text";
 import { fonts, groups, spacing } from "@/core/constants/theme";
 import { PressScale } from "./PressScale";

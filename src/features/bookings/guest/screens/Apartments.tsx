@@ -60,7 +60,7 @@ const SORTS: { key: SortKey; label: string }[] = [
 export default function Apartments() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { stay } = useBooking();
+  const stay = useBooking((s) => s.stay);
   const { ref, onScroll } = useScrollTop();
   const [filters, setFilters] = useState<FilterKey[]>([]);
   const [sort, setSort] = useState<SortKey>('recommended');

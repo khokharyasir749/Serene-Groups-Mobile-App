@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { FilterChip } from "@/core/components/FilterChip";
 import { Input } from "@/core/components/Input";
 import { PROJECTS } from "@/core/constants/serene";

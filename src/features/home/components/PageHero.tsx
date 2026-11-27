@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import { Animated, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { FadeIn } from "@/core/components/FadeIn";
 import { PressScale } from "@/core/components/PressScale";
 import { Text } from "@/core/components/Text";
@@ -22,7 +22,7 @@ export function PageHero({ height, image, focus, children }: { height: number; i
       <View style={styles.clip}>
         <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateY: drift }, { scale: stretch }] }]}>
           {image ? (
-            <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: focus ?? "50%", top: "50%" }} />
+            <Image cachePolicy="memory-disk" source={image} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: focus ?? "50%", top: "50%" }} />
           ) : (
             <Contours width={width} line={explore.contour} major={explore.contour} />
           )}

@@ -1,4 +1,4 @@
-import { memo, useRef } from "react";
+import { memo, useMemo, useRef } from "react";
 import { Animated, StyleSheet, useWindowDimensions } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -17,6 +17,7 @@ const GAP = 12;
 export const PackageRail = memo(function PackageRail() {
   const { width } = useWindowDimensions();
   const x = useRef(new Animated.Value(0)).current;
+  const onScroll = useMemo(() => Animated.event([{ nativeEvent: { contentOffset: { x } } }], { useNativeDriver: true }), [x]);
   const still = isReduced();
   const w = Math.round(Math.min(width * 0.76, 340));
   const step = w + GAP;
@@ -27,7 +28,7 @@ export const PackageRail = memo(function PackageRail() {
       decelerationRate="fast"
       snapToInterval={step}
       scrollEventThrottle={16}
-      onScroll={Animated.event([{ nativeEvent: { contentOffset: { x } } }], { useNativeDriver: true })}
+      onScroll={onScroll}
       style={styles.bleed}
       // The end pad lets the last card rest on the same edge as the first.
       contentContainerStyle={{ paddingLeft: spacing.lg, paddingRight: width - w - spacing.lg, gap: GAP }}

@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useLogoutMutation } from "@/core/api/endpoints/authApi";
 import { P } from "@/core/constants/api";
 import { colors, explore, font, fonts, radius, spacing, groups } from "@/core/constants/theme";

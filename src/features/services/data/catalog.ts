@@ -1,4 +1,4 @@
-import type { Ionicons } from "@expo/vector-icons";
+import type Ionicons from "@expo/vector-icons/Ionicons";
 import type { ImageSource } from "expo-image";
 import type { ServiceIconName } from "@/features/services/components/ServiceIcon";
 

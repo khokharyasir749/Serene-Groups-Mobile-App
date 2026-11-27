@@ -22,7 +22,7 @@ export default function RatesModal() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { stay } = useBooking();
+  const stay = useBooking((s) => s.stay);
   const type = roomType(slug ?? '');
   const [code, setCode] = useState<RatePlan['code']>('FLEX');
 

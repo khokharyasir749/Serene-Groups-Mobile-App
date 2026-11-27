@@ -2,7 +2,7 @@ import { memo, useMemo, useRef, useState, type ComponentRef, type ReactNode } fr
 import { Animated, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, spacing } from "@/core/constants/theme";
 import { isReduced } from "@/features/services/components/motion";

@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { PressScale } from "@/core/components/PressScale";
 import { Text } from "@/core/components/Text";
 import { colors, explore, font, fonts, groups, spacing } from "@/core/constants/theme";
@@ -27,7 +27,7 @@ const all = () => switchTo("Serene Bookings", () => router.push("/serene-booking
 function Tile({ shot, height }: { shot: Shot; height: number }) {
   return (
     <PressScale onPress={all} style={[styles.tile, { height }]} accessibilityLabel={`${shot.name}. See all amenities`}>
-      <Image source={photo(shot.src) as ImageSource} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: shot.focus ?? "50%", top: "50%" }} transition={300} />
+      <Image cachePolicy="memory-disk" source={photo(shot.src) as ImageSource} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: shot.focus ?? "50%", top: "50%" }} transition={300} />
       <LinearGradient pointerEvents="none" colors={explore.tileFade} style={StyleSheet.absoluteFill} />
       <Text style={styles.name} maxFontSizeMultiplier={1.15}>
         {shot.name}

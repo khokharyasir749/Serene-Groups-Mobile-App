@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { PressScale } from "@/core/components/PressScale";
 import { Text } from "@/core/components/Text";
 import type { Tile } from "@/core/components/TileRail";

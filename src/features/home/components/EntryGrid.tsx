@@ -2,7 +2,8 @@ import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { PressScale } from "@/core/components/PressScale";
 import { Text } from "@/core/components/Text";
 import { P } from "@/core/constants/api";
@@ -55,7 +56,7 @@ export function EntryGrid() {
         <View style={styles.apps}>
           {APPS.map((a) => (
             <PressScale key={a.title} onPress={a.go} style={styles.app} accessibilityLabel={`Serene ${a.title}. ${a.line}`}>
-              <Image source={a.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
+              <Image cachePolicy="memory-disk" source={a.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
               <LinearGradient colors={explore.tileFade} style={StyleSheet.absoluteFill} />
               <View style={styles.arrow}>
                 <Ionicons name="arrow-forward" size={18} color={colors.white} style={styles.arrowIcon} />

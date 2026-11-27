@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button } from "@/core/components/Button";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";

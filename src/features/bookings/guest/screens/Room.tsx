@@ -31,7 +31,7 @@ export default function RoomDetail() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const { stay } = useBooking();
+  const stay = useBooking((s) => s.stay);
 
   if (!t) {
     return (

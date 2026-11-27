@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { PressScale } from "@/core/components/PressScale";
 import { Text } from "@/core/components/Text";
 import { colors, explore, fonts, groups } from "@/core/constants/theme";

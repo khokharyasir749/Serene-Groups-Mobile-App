@@ -36,7 +36,7 @@ export default function Login() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const { signIn } = useBooking();
+  const signIn = useBooking((s) => s.signIn);
   const [method, setMethod] = useState<Method>('phone');
   const [step, setStep] = useState<Step>('id');
   const [phone, setPhone] = useState(__DEV__ ? '3001234567' : ''); // sample values only while developing

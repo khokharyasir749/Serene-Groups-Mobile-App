@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/core/components/Text";
 import { colors, fonts, groups, spacing } from "@/core/constants/theme";
 
@@ -11,7 +11,7 @@ type Props = { image: ImageSource; tag: string; place: string; badge: string; ti
 export function PhotoBanner({ image, tag, place, badge, title, kind, where, height = 224 }: Props) {
   return (
     <View style={[styles.card, { height }]}>
-      <Image source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
+      <Image cachePolicy="memory-disk" source={image} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
       <BannerFace tag={tag} place={place} badge={badge} title={title} kind={kind} where={where} />
     </View>
   );

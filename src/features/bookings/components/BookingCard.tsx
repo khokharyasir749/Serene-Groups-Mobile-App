@@ -20,7 +20,7 @@ export function BookingCard({ booking: b, onPress }: Props) {
   return (
     <PressScale onPress={onPress} style={styles.card} accessibilityLabel={`${b.reference}, ${b.customer.name || "booking"}`}>
       <View style={styles.row}>
-        <Image source={unitImage(b.project, b.unitType)} style={styles.thumb} contentFit="cover" transition={300} />
+        <Image cachePolicy="memory-disk" source={unitImage(b.project, b.unitType)} style={styles.thumb} contentFit="cover" transition={300} />
         <View style={styles.fill}>
           <View style={styles.between}>
             <Text style={styles.ref}>{b.reference}</Text>

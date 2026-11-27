@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ComponentRef, type RefObject } from "react";
 import { Animated, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavGlass } from "@/core/components/NavGlass";
 import { PlateButton } from "@/core/components/PlateButton";

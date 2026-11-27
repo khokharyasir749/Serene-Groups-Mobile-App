@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useGetMyPortfolioQuery } from "@/core/api/endpoints/portfolioApi";
 import { useListMyStaysQuery } from "@/core/api/endpoints/staysApi";
 import { PressScale } from "@/core/components/PressScale";

@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "@/core/components/Text";
 import { Controller } from "react-hook-form";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button } from "@/core/components/Button";
 import { Input } from "@/core/components/Input";
 import { colors, font, fonts, letter, radius, shadows, spacing, groups } from "@/core/constants/theme";

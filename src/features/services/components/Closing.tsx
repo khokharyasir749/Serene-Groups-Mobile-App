@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Linking, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { SereneLogoMark } from "@/core/components/SereneLogoMark";
 import { CONTACT, GROUP } from "@/core/constants/serene";
 import { CLEARANCE, explore, spacing } from "@/core/constants/theme";

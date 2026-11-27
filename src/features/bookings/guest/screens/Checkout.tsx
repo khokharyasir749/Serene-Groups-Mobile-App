@@ -11,6 +11,7 @@ import PriceSummary from '@/features/bookings/guest/components/PriceSummary';
 import { BackBar, BookingSteps, Button, Caps } from '@/features/bookings/guest/components/ui';
 import { ARRIVAL_TIMES, ratePlan, roomType } from '@/features/bookings/guest/data/catalog';
 import { availability, money, quote } from '@/features/bookings/guest/lib/stay';
+import { useShallow } from 'zustand/react/shallow';
 import { useBooking, type Guest } from '@/features/bookings/guest/state/booking';
 import { C, F, FONTS, S, T } from '@/features/bookings/guest/theme';
 import { canvas, glassCard } from '@/features/bookings/guest/theme/glass';
@@ -32,7 +33,7 @@ export default function Checkout() {
   const { slug, rate } = useLocalSearchParams<{ slug: string; rate: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { stay, guest: known, user, createBooking } = useBooking();
+  const { stay, guest: known, user, createBooking } = useBooking(useShallow((s) => ({ stay: s.stay, guest: s.guest, user: s.user, createBooking: s.createBooking })));
   const t = roomType(slug ?? '');
   const plan = ratePlan(rate ?? '');
 
