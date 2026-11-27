@@ -20,6 +20,8 @@ function resolve(family: string | undefined, size: number, weight: string, itali
   return w >= 700 ? FONTS.uiBold : w >= 600 ? FONTS.uiSemi : w >= 500 ? FONTS.uiMedium : FONTS.ui;
 }
 
+const LINING = { fontVariant: ['lining-nums' as const] };
+
 const weightGiven = (w: string) => w !== 'undefined' && w !== '' && w !== 'normal';
 
 /**
@@ -30,5 +32,6 @@ export function Text({ style, ...rest }: TextProps) {
   const flat = StyleSheet.flatten(style) ?? {};
   const size = typeof flat.fontSize === 'number' ? flat.fontSize : 14;
   const family = resolve(flat.fontFamily, size, String(flat.fontWeight), flat.fontStyle === 'italic');
-  return <RNText {...rest} style={[style, { fontFamily: family, fontWeight: 'normal', fontStyle: 'normal' }]} />;
+  const lining = family.startsWith('Cormorant') && !flat.fontVariant ? LINING : null;
+  return <RNText {...rest} style={[style, lining, { fontFamily: family, fontWeight: 'normal', fontStyle: 'normal' }]} />;
 }

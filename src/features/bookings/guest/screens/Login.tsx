@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
@@ -139,7 +140,7 @@ export default function Login() {
                     </View>
                   )}
                 </View>
-                <Text style={styles.heading}>{heading}</Text>
+                <Title style={styles.heading}>{heading}</Title>
                 <Text style={styles.lede}>{lede}</Text>
               </Enter>
 

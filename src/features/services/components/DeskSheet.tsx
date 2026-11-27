@@ -230,7 +230,7 @@ const GRIP = 26; // the handle's strip at the top of the sheet
  * The sheet itself: it rises on a soft spring over a dimming page, can be drawn down by its handle, and sinks away on close. The
  * page beneath stays in place, so a request feels like a card laid on the table rather than a new screen.
  */
-export function Sheet({ children, onClosed = closeDesk }: { children: ReactNode; /** Runs once the sheet has gone. */ onClosed?: () => void }) {
+export function Sheet({ children, onClosed = closeDesk, handle = "light" }: { children: ReactNode; /** Runs once the sheet has gone. */ onClosed?: () => void; /** "dark" for a light page under the handle. */ handle?: "light" | "dark" }) {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
   const travel = height;
@@ -266,7 +266,7 @@ export function Sheet({ children, onClosed = closeDesk }: { children: ReactNode;
         <Animated.View style={[styles.sheet, { transform: [{ translateY: y }] }]}>
           {children}
           <View {...drag.panHandlers} style={[styles.grip, { top: insets.top }]} accessibilityLabel="Drag down to close">
-            <View style={styles.handle} />
+            <View style={[styles.handle, handle === "dark" && styles.handleDark]} />
           </View>
         </Animated.View>
       </View>
@@ -296,6 +296,7 @@ const styles = StyleSheet.create({
   sheet: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, overflow: "hidden", backgroundColor: tone.page },
   grip: { position: "absolute", left: 0, right: 0, height: GRIP + 14, alignItems: "center", paddingTop: 8 },
   handle: { width: 40, height: 5, borderRadius: 3, backgroundColor: "rgba(255, 255, 255, 0.7)" },
+  handleDark: { backgroundColor: tone.line },
   page: { flex: 1, backgroundColor: tone.page },
   content: { paddingBottom: spacing.xl },
   head: { overflow: "hidden", backgroundColor: tone.pine, paddingHorizontal: spacing.lg, paddingBottom: spacing.xl },

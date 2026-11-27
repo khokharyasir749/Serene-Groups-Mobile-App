@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { memo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -17,7 +18,7 @@ export default function Reviews() {
       <PageHeader title="Guest reviews" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, paddingTop: 20, paddingBottom: insets.bottom + 40 }}>
         <Text style={styles.eyebrow}>Guest reviews</Text>
-        <Text style={styles.title}>Moments at Serene Heights</Text>
+        <Title style={styles.title}>Moments at Serene Heights</Title>
 
         <View style={styles.scoreCard}>
           <Text style={styles.scoreBig}>{REVIEW_SCORE.average.toFixed(1)}</Text>
@@ -50,7 +51,7 @@ const ReviewCard = memo(function ReviewCard({ item }: { item: (typeof REVIEWS)[n
                 <Text style={styles.quoteMark}>“</Text>
                 <View style={styles.starsRow}>
                   {Array.from({ length: 5 }).map((_, k) => (
-                    <Ionicons key={k} name={k < item.rating ? 'star' : 'star-outline'} size={11.5} color={C.gold} />
+                    <Ionicons key={k} name={k < item.rating ? 'star' : 'star-outline'} size={11.5} color={C.goldInk} />
                   ))}
                 </View>
               </View>
@@ -64,14 +65,14 @@ const ReviewCard = memo(function ReviewCard({ item }: { item: (typeof REVIEWS)[n
                   <Text numberOfLines={1} style={styles.author}>{item.author} · {item.country}</Text>
                   <Text numberOfLines={1} style={styles.room}>{item.roomType} · {item.stayed}</Text>
                 </View>
-                <Ionicons name="checkmark-circle" size={18} color={C.gold} accessibilityLabel="Verified stay" />
+                <Ionicons name="checkmark-circle" size={18} color={C.goldInk} accessibilityLabel="Verified stay" />
               </View>
             </View>
   );
 });
 
 const styles = StyleSheet.create({
-  eyebrow: { fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0, color: C.gold },
+  eyebrow: { fontFamily: FONTS.uiBold, fontSize: 12.5, letterSpacing: 0, color: C.goldInk },
   title: { fontFamily: FONTS.display, fontSize: 28, lineHeight: 32, color: C.ink, marginTop: 4 },
   scoreCard: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 16, marginBottom: 18, paddingVertical: 16, paddingHorizontal: 20, borderRadius: 20, backgroundColor: C.pine, borderWidth: 1, borderColor: C.goldLine, ...glassCardDark },
   scoreBig: { fontFamily: FONTS.display, fontSize: 46, lineHeight: 50, color: C.cream, fontVariant: ['tabular-nums'] },
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   starsRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   card: { padding: 20, backgroundColor: C.white, borderRadius: 22, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line, ...shadow.card, ...glassCard },
   top: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', height: 30 },
-  quoteMark: { fontFamily: FONTS.display, fontSize: 52, lineHeight: 52, color: C.gold, marginTop: -6 },
+  quoteMark: { fontFamily: FONTS.display, fontSize: 52, lineHeight: 52, color: C.goldInk, marginTop: -6 },
   reviewTitle: { fontFamily: FONTS.display, fontSize: 21, lineHeight: 25, color: C.ink, marginTop: 4 },
   body: { fontFamily: FONTS.ui, fontSize: 13.5, lineHeight: 20.5, color: C.ink70, marginTop: 8 },
   footer: { flexDirection: 'row', alignItems: 'center', gap: 11, marginTop: 16, paddingTop: 14, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.line },

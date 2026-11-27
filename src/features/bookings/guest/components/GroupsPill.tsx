@@ -10,7 +10,7 @@ export default function GroupsPill({ onPress, onPhoto }: { onPress: () => void; 
   return (
     <Pressable onPress={onPress} hitSlop={6} accessibilityRole="button" accessibilityLabel="Back to Serene Groups" style={({ pressed }) => [styles.pill, onPhoto ? glassEdge : styles.light, pressed && styles.pressed]}>
       {onPhoto && <ClearGlass />}
-      <Ionicons name="arrow-back-outline" size={14} style={onPhoto ? glassInk : { color: C.gold }} />
+      <Ionicons name="arrow-back-outline" size={14} style={onPhoto ? glassInk : { color: C.goldInk }} />
       <Text numberOfLines={1} style={[styles.label, onPhoto ? glassInk : { color: C.pine }]}>Groups</Text>
     </Pressable>
   );
@@ -18,7 +18,7 @@ export default function GroupsPill({ onPress, onPhoto }: { onPress: () => void; 
 
 const styles = StyleSheet.create({
   pill: { flexDirection: 'row', alignItems: 'center', gap: 5, height: 38, paddingHorizontal: 11, borderRadius: 999 },
-  light: { backgroundColor: C.sand, borderWidth: 1, borderColor: C.gold },
+  light: { backgroundColor: C.sand, borderWidth: 1, borderColor: C.goldLine },
   pressed: { opacity: 0.8, transform: [{ scale: 0.97 }] },
   label: { fontSize: 14, fontFamily: FONTS.uiBold },
 });

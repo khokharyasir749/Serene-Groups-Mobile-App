@@ -1,6 +1,5 @@
-import { memo, useEffect, useRef } from "react";
-import { Animated, Easing, Linking, StyleSheet, View } from "react-native";
-import { useIsFocused } from "expo-router";
+import { memo } from "react";
+import { Linking, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/features/services/components/Text";
@@ -8,7 +7,6 @@ import { CONTACT } from "@/core/constants/serene";
 import { colors, fonts } from "@/core/constants/theme";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { toast } from "@/core/stores/uiStore";
-import { isReduced } from "@/features/services/components/motion";
 import { Image } from "expo-image";
 import { Press } from "@/features/services/components/surface";
 import { tone } from "@/features/services/components/tone";
@@ -22,25 +20,13 @@ export const callDesk = () => void Linking.openURL(CONTACT.uanHref).catch(() => 
 // Keeps white words readable on the bright marble.
 const SHADOW = { textShadowColor: "rgba(0, 0, 0, 0.5)", textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 8 } as const;
 const CARD = 214;
-const LIVE = "rgb(126, 214, 164)";
 
-/** Small glass tag with a softly pulsing dot. */
+/** A quiet glass tag: no pulse or glow, a small gold dot. */
 function Open() {
-  const p = useRef(new Animated.Value(0)).current;
-  const focused = useIsFocused();
-  useEffect(() => {
-    if (isReduced() || !focused) return;
-    const loop = Animated.loop(Animated.timing(p, { toValue: 1, duration: 2000, easing: Easing.out(Easing.quad), useNativeDriver: true }));
-    loop.start();
-    return () => loop.stop();
-  }, [p, focused]);
   return (
     <View style={styles.open}>
       <GlassFill />
-      <View style={styles.dotBox}>
-        <Animated.View style={[styles.ring, { opacity: p.interpolate({ inputRange: [0, 1], outputRange: [0.7, 0] }), transform: [{ scale: p.interpolate({ inputRange: [0, 1], outputRange: [1, 2.8] }) }] }]} />
-        <View style={styles.dot} />
-      </View>
+      <View style={styles.dot} />
       <Text style={styles.openText} maxFontSizeMultiplier={1.05}>
         Open 24/7
       </Text>
@@ -102,9 +88,7 @@ const styles = StyleSheet.create({
   edge: { ...StyleSheet.absoluteFill, borderRadius: 18, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.18)" },
   open: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 8, height: 30, paddingHorizontal: 13, borderRadius: 15, overflow: "hidden", borderWidth: 1, borderColor: tone.deskGlassEdge },
   sheen: { position: "absolute", top: 0, left: 0, right: 0, height: "55%" },
-  dotBox: { width: 8, height: 8, alignItems: "center", justifyContent: "center" },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: LIVE },
-  ring: { position: "absolute", width: 8, height: 8, borderRadius: 4, backgroundColor: LIVE },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: tone.champagne },
   openText: { ...type.eyebrow, fontSize: 11, color: colors.white },
   words: { gap: 2 },
   title: { ...type.page, fontSize: 34, lineHeight: 42, color: colors.white, ...SHADOW },

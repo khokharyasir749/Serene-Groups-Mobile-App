@@ -51,7 +51,7 @@ export default function ServiceScreen() {
             <Enter order={1}>
               <Text style={styles.over}>{service.group ? groupBySlug(service.group)?.short : "Stay package"}</Text>
             </Enter>
-            <Headline mount text={service.name} style={styles.title} />
+            <Headline mount soft={service.name.includes(" ") ? 1 : 0} softStyle={styles.titleSoft} text={service.name} style={styles.title} />
             <Enter order={5}>
               <Text style={styles.sub}>{service.line}</Text>
             </Enter>
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   page: { flex: 1, backgroundColor: tone.page },
   over: { ...type.eyebrow, color: tone.champagne, marginBottom: 6 },
+  titleSoft: { color: tone.champagne },
   title: { ...type.hero, fontSize: 42, lineHeight: 50, color: colors.white },
   sub: { ...type.label, fontSize: 14, color: colors.white, marginTop: 4 },
   about: { ...type.lead, color: tone.ink },

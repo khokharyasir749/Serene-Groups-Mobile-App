@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
@@ -88,7 +89,7 @@ export default function RatesModal() {
           </View>
         ) : (
           <>
-            <Text style={[T.h2, { marginTop: 28 }]}>Select your rate</Text>
+            <Title style={[T.h2, { marginTop: 28 }]}>Select your rate</Title>
             <Text style={[T.small, { marginTop: 3, marginBottom: 14 }]}>Prices are for your whole stay and include taxes. Nothing is charged now.</Text>
 
             {RATE_PLANS.map((rp) => (

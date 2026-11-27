@@ -65,7 +65,7 @@ export default function BookScreen() {
           bottom={spacing.xxl}
           bar={<RoundButton finish="clear" icon="chevron-back-outline" label="Back" onPress={goBack} />}
           foot={
-            <Headline mount text={service.name} style={styles.title} />
+            <Headline mount soft={service.name.includes(" ") ? 1 : 0} softStyle={styles.titleSoft} text={service.name} style={styles.title} />
           }
         >
           <View style={styles.sheet}>
@@ -136,6 +136,7 @@ export default function BookScreen() {
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   page: { flex: 1, backgroundColor: tone.page },
+  titleSoft: { color: tone.champagne },
   title: { ...type.hero, fontSize: 38, lineHeight: 46, color: colors.white },
   sheet: { gap: spacing.xxl },
   block: { gap: spacing.md },

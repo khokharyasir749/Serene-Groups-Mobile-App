@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import { CalendarDays, Clock, MapPin, Phone, ShieldCheck, Users } from '@/features/bookings/guest/components/icons';
@@ -47,7 +48,7 @@ export default function BookingScreen() {
 
   return (
     <View style={canvas}>
-      <View style={[styles.barBg, { height: insets.top + 56 }]} />
+      <View style={[styles.barBg, { height: insets.top + 62 }]} />
       <BackBar onBack={() => (router.canGoBack() ? router.back() : router.replace('/trips'))}  />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 72, paddingBottom: insets.bottom + 40, paddingHorizontal: S.gutter }}>
         {isNew && (
@@ -64,7 +65,7 @@ export default function BookingScreen() {
         )}
 
         <Enter delay={isNew ? 1000 : 0} duration={650}>
-          {isNew ? null : <Text style={T.h1} accessibilityRole="header">Your stay</Text>}
+          {isNew ? null : <Title style={T.h1}>Your stay</Title>}
 
           {/* Reference & price */}
           <View style={styles.refCard}>

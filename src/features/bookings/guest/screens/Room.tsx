@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import { Building, Car, Check, Coffee, Dumbbell, MapPin, Star, Utensils, Waves, Wifi } from '@/features/bookings/guest/components/icons';
@@ -60,14 +61,14 @@ export default function RoomDetail() {
 
   return (
     <View style={canvas}>
-      <BackBar onBack={() => router.back()} />
+      <BackBar light onBack={() => router.back()} />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 + insets.bottom }}>
         <HeroGallery photos={photos} height={Math.round(height * 0.58)} />
 
         <View style={{ paddingHorizontal: S.gutter, paddingTop: 28 }}>
           {/* Overview */}
-          <Text style={T.h1} accessibilityRole="header">{t.name.replace(' Apartment', '')}</Text>
+          <Title style={T.h1}>{t.name.replace(' Apartment', '')}</Title>
           <Text style={[T.body, { marginTop: 8 }]}>{t.tagline}</Text>
 
           <View style={styles.tiles}>
@@ -92,7 +93,7 @@ export default function RoomDetail() {
 
           {/* Prices */}
           <View style={styles.prices}>
-            <Text style={[T.h2, { color: C.cream }]}>Your stay</Text>
+            <Title dark style={[T.h2, { color: C.cream }]}>Your stay</Title>
             <Text style={[T.small, { color: C.cream70, marginTop: 4, marginBottom: 14 }]}>Total for your stay, taxes included. No prepayment.</Text>
             <StayBar stay={stay} onDates={openStay} onGuests={openGuests} />
             {bookable ? (

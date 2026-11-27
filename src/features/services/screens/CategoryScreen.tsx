@@ -45,7 +45,7 @@ export default function CategoryScreen() {
           <Enter order={1}>
             <Text style={styles.over}>{category.kind === "care" ? "Complimentary" : "Billed to your room"}</Text>
           </Enter>
-          <Headline mount text={category.label} style={styles.title} />
+          <Headline mount soft={category.label.includes(" ") ? 1 : 0} softStyle={styles.titleSoft} text={category.label} style={styles.title} />
         </View>
       }
     >
@@ -67,6 +67,7 @@ export default function CategoryScreen() {
 
 const styles = StyleSheet.create({
   over: { ...type.eyebrow, color: tone.champagne, marginBottom: 6 },
+  titleSoft: { color: tone.champagne },
   title: { ...type.hero, fontSize: 38, lineHeight: 46, color: tone.plate },
   line: { ...type.lead, color: tone.ink },
 });

@@ -1,13 +1,12 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import { StatusBar } from 'expo-status-bar';
-import { Keyboard, Pressable, StyleSheet, View } from 'react-native';
+import { Keyboard, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Text } from '@/features/bookings/guest/components/Text';
-import { C, FONTS, S } from '@/features/bookings/guest/theme';
+import { FloatingHeader } from '@/core/components/FloatingHeader';
+import { C } from '@/features/bookings/guest/theme';
 
-/** Sticky top bar for the menu's sub-screens: a back button, a centred serif title and an optional right action. */
+/** The header of the menu's sub-screens: the Serene Groups pushed-page header itself (back plate, serif title, action). */
 export default function PageHeader({ title, right }: { title: string; right?: React.ReactNode }) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -22,20 +21,9 @@ export default function PageHeader({ title, right }: { title: string; right?: Re
   };
 
   return (
-    <View style={[styles.bar, { paddingTop: insets.top + 8 }]}>
+    <View style={{ paddingTop: insets.top, backgroundColor: C.sand }}>
       <StatusBar style="dark" />
-      <Pressable onPress={handleBack} hitSlop={12} accessibilityLabel="Back" style={styles.round}>
-        <Ionicons name="chevron-back-outline" size={20} color={C.ink} />
-      </Pressable>
-      <Text style={styles.title} numberOfLines={1}>{title}</Text>
-      <View style={styles.side}>{right}</View>
+      <FloatingHeader title={title} onBack={handleBack} action={right} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  bar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: S.gutter - 4, paddingBottom: 10, backgroundColor: C.sand },
-  round: { width: 46, height: 46, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: C.pureWhite, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line },
-  title: { flex: 1, textAlign: 'center', fontFamily: FONTS.display, fontSize: 24, color: C.ink },
-  side: { width: 46, alignItems: 'flex-end' },
-});

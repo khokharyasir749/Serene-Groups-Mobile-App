@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
 
-import { bookingColors, bookingHex, bookingPine, bookingWell, fonts } from '@/core/constants/theme';
+import { bookingColors, bookingHex, bookingPine, bookingWell, explore, fonts, groups } from '@/core/constants/theme';
 
 // Every colour lives in the Groups theme (src/core/constants/theme.ts); the module only re-exports it under its own names.
-export const C = bookingColors;
+// Pine and gold are Serene Groups' own: its Pine for buttons and chips, its bright gold on dark surfaces (words on light pages use goldInk).
+export const C = { ...bookingColors, pine: groups.pine, pineDeep: groups.pine, gold: explore.gold } as const;
 export const HEX = bookingHex;
 export const pine = bookingPine;
 
@@ -13,7 +14,7 @@ export const FONTS = { ...fonts, display: fonts.displaySemi, displayMedium: font
 export const F = { display: FONTS.display, sans: FONTS.ui };
 
 // radius: buttons & inputs · card: cards & photos · tabBar: height of the floating dock.
-export const S = { gutter: 20, radius: 20, card: 28, photo: 26, tabBar: 64, well: bookingWell };
+export const S = { gutter: 20, radius: 20, card: 28, photo: 26, tabBar: 72, well: bookingWell };
 
 /** Bottom padding a tab screen needs so its last item clears the floating dock. */
 /** Distance from the top safe-area edge to the brand lockup — the same on every screen, so the logo never shifts when you change screens. */
@@ -32,7 +33,7 @@ export const shadow = {
 //   h1 screen titles · h2 section headings · h3 card titles · body copy · small meta · caps labels · price.
 // Display sizes are tuned for Cormorant's small x-height; numbers use tabular figures.
 export const T = StyleSheet.create({
-  h1: { fontFamily: FONTS.display, fontSize: 42, lineHeight: 44, letterSpacing: -0.8, color: C.ink },
+  h1: { fontFamily: FONTS.display, fontSize: 46, lineHeight: 47, letterSpacing: -1, color: C.ink },
   h2: { fontFamily: FONTS.display, fontSize: 32, lineHeight: 35, letterSpacing: -0.5, color: C.ink },
   h3: { fontFamily: FONTS.display, fontSize: 24, lineHeight: 28, letterSpacing: -0.2, color: C.ink },
   eyebrow: { fontFamily: FONTS.uiSemi, fontSize: 13.5, lineHeight: 19, color: C.goldInk },

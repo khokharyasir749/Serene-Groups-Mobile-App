@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import type { ComponentProps } from 'react';
@@ -94,7 +95,7 @@ export default function Location() {
             <View style={{ flex: 1 }} />
             <View style={{ padding: 20 }}>
               <Text style={styles.heroKicker}>Nathia Gali, 7,906 ft</Text>
-              <Text style={styles.heroTitle}>Getting here</Text>
+              <Title dark style={styles.heroTitle}>Getting here</Title>
             </View>
           </View>
           <Text style={[T.body, { marginTop: 16 }]}>
@@ -106,7 +107,7 @@ export default function Location() {
         {/* Contact */}
         <View style={styles.section}>
           <Text style={T.eyebrow}>Contact</Text>
-          <Text style={[T.h2, { marginTop: 4, marginBottom: 14 }]}>Talk to us</Text>
+          <Title style={[T.h2, { marginTop: 4, marginBottom: 14 }]}>Talk to us</Title>
           <View style={styles.card}>
             {CONTACT.lines.map((l, i) => (
               <ContactRow key={l.label} first={i === 0} icon={l.icon} label={l.label} value={l.value} cta={l.cta} href={l.href} />
@@ -124,7 +125,7 @@ export default function Location() {
         {/* Route */}
         <View style={styles.section}>
           <Text style={T.eyebrow}>The route</Text>
-          <Text style={[T.h2, { marginTop: 4 }]}>Your journey up</Text>
+          <Title style={[T.h2, { marginTop: 4 }]}>Your journey up</Title>
           <Text style={[T.small, { marginTop: 3, marginBottom: 14 }]}>Distances by road to the resort.</Text>
           <View style={styles.card}>
             {ROUTE.map((d, i) => (
@@ -174,7 +175,7 @@ export default function Location() {
         {/* FAQ */}
         <View style={styles.section}>
           <Text style={T.eyebrow}>FAQ</Text>
-          <Text style={[T.h2, { marginTop: 4 }]}>Good to know</Text>
+          <Title style={[T.h2, { marginTop: 4 }]}>Good to know</Title>
           <Text style={[T.small, { marginTop: 3, marginBottom: 10 }]}>Quick answers before you travel. Anything else? Call or WhatsApp us any time.</Text>
           {FAQS.map((f, i) => (
             <Accordion key={f.q} first={i === 0} title={f.q}>

@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import { HEX, pine } from '@/features/bookings/guest/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
@@ -44,7 +45,7 @@ export default function FloorPlans() {
       return (
         <View style={{ paddingHorizontal: S.gutter, paddingTop: 16 }}>
           <Text style={T.eyebrow}>Floor plans</Text>
-          <Text style={[T.h1, { marginTop: 4 }]}>Find your apartment</Text>
+          <Title style={[T.h1, { marginTop: 4 }]}>Find your apartment</Title>
           <Text style={[T.body, { marginTop: 8 }]}>
             {APARTMENTS.length} one-bedroom apartments across the G1 to 8th floors, each with a bedroom, sitting room with kitchenette, bathroom and a balcony or terrace.
           </Text>
@@ -65,7 +66,7 @@ export default function FloorPlans() {
         <View style={{ marginTop: 28 }}>
           <View style={{ paddingHorizontal: S.gutter }}>
             <Text style={T.eyebrow}>By floor</Text>
-            <Text style={[T.h2, { marginTop: 4 }]}>{floor.label}</Text>
+            <Title style={[T.h2, { marginTop: 4 }]}>{floor.label}</Title>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
             {FLOORS.map((f) => {
@@ -110,7 +111,7 @@ export default function FloorPlans() {
     return (
       <View style={{ marginTop: S.well, paddingHorizontal: S.gutter }}>
         <Text style={T.eyebrow}>Bookable layouts</Text>
-        <Text style={[T.h2, { marginTop: 4 }]}>Apartment types</Text>
+        <Title style={[T.h2, { marginTop: 4 }]}>Apartment types</Title>
         <Text style={[T.small, { marginTop: 3, marginBottom: 14 }]}>Every layout on these plans is one of five bookable types.</Text>
         {ROOM_TYPES.map((t, i) => (
           <TypeCard

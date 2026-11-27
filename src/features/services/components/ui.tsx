@@ -27,7 +27,7 @@ export function GroupsBack({ onPhoto }: { onPhoto?: boolean }) {
 export function RoundButton({ icon, label, onPress, finish = "glass", size = 44 }: { icon: Glyph; label: string; onPress: () => void; finish?: Finish; size?: number }) {
   const ink = finish === "clear" || finish === "frost" || finish === "pine" ? colors.white : colors.ink;
   return (
-    <SurfacePress finish={finish} radius={size / 2} onPress={onPress} hitSlop={6} accessibilityLabel={label} style={[styles.center, { width: size, height: size }, finish === "clear" && styles.onPhoto]}>
+    <SurfacePress finish={finish} radius={size * 0.32} onPress={onPress} hitSlop={6} accessibilityLabel={label} style={[styles.center, { width: size, height: size }, finish === "clear" && styles.onPhoto]}>
       <Ionicons name={icon} size={20} color={ink} />
     </SurfacePress>
   );

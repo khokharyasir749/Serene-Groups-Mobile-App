@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import { memo, useState } from 'react';
@@ -43,7 +44,7 @@ export default function Amenities() {
               <View style={{ flex: 1 }} />
               <View style={{ padding: 20 }}>
                 <Text style={styles.heroKicker}>Amenities</Text>
-                <Text style={styles.heroTitle}>50+ Resort Facilities</Text>
+                <Title dark style={styles.heroTitle}>50+ Resort Facilities</Title>
               </View>
             </View>
             <Text style={[T.body, { marginTop: 16 }]}>Everything for a winter escape or a summer retreat, without leaving the resort.</Text>
@@ -124,7 +125,7 @@ function Section({ label, title, sub }: { label: string; title: string; sub?: st
   return (
     <View style={{ paddingHorizontal: S.gutter, marginBottom: 16 }}>
       <Text style={T.eyebrow}>{label}</Text>
-      <Text style={[T.h2, { marginTop: 4 }]}>{title}</Text>
+      <Title style={[T.h2, { marginTop: 4 }]}>{title}</Title>
       {sub && <Text style={[T.small, { marginTop: 3 }]}>{sub}</Text>}
     </View>
   );
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
   groupHead: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 16, paddingHorizontal: 18 },
   groupTitle: { fontFamily: FONTS.display, fontSize: 23, lineHeight: 26, color: C.ink },
   groupSub: { fontFamily: FONTS.ui, fontSize: 14, color: C.ink55, marginTop: 2 },
-  groupCount: { fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0, color: C.gold, marginTop: 6 },
+  groupCount: { fontFamily: FONTS.uiBold, fontSize: 12, letterSpacing: 0, color: C.goldInk, marginTop: 6 },
   chev: { width: S.well, height: S.well, borderRadius: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.goldLine, backgroundColor: C.pureWhite },
   chevOpen: { backgroundColor: C.pine, borderColor: C.pine },
   list: { marginHorizontal: 18, paddingBottom: 6, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: C.goldLine },

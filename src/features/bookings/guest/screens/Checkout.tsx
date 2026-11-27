@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
 import { Check, Lock } from '@/features/bookings/guest/components/icons';
@@ -103,7 +104,7 @@ export default function Checkout() {
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView ref={scrollRef} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 72, paddingBottom: 28, paddingHorizontal: S.gutter }}>
           <BookingSteps current={2} />
-          <Text style={[T.h1, { marginTop: 26 }]} accessibilityRole="header">Almost there</Text>
+          <Title style={[T.h1, { marginTop: 26 }]}>Almost there</Title>
 
           {!user && (
             <Pressable onPress={() => router.push({ pathname: '/login', params: { reason: 'booking' } })} style={styles.signin}>

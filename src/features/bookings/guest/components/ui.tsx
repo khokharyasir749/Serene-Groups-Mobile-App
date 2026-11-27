@@ -1,10 +1,12 @@
 import { Image, type ImageStyle } from 'expo-image';
-import { ChevronLeft, Minus, Plus, X } from '@/features/bookings/guest/components/icons';
+import { Minus, Plus } from '@/features/bookings/guest/components/icons';
+import { FloatingHeader } from '@/core/components/FloatingHeader';
+import { PlateButton } from '@/core/components/PlateButton';
+import { Sheet as SpringSheet, useDismiss } from '@/features/services/components/DeskSheet';
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, View, type GestureResponderEvent, type PressableProps, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import { Text } from '@/features/bookings/guest/components/Text';
-import { Animated, Easing } from 'react-native';
-import { EASE } from '@/features/bookings/guest/components/motion';
+import { Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { photo } from '@/features/bookings/guest/data/photos';
@@ -108,12 +110,10 @@ export function BackBar({ onBack, title, right, light }: { onBack: () => void; t
   const insets = useSafeAreaInsets();
   const fg = light ? C.sand : C.ink;
   return (
-    <View style={[styles.backBar, { paddingTop: insets.top + 6 }]}>
-      <Pressable onPress={onBack} hitSlop={12} accessibilityLabel="Back" style={[styles.round, { width: 40, height: 40, borderRadius: 20, borderColor: light ? C.cream45 : 'rgba(255,255,255,0.7)', backgroundColor: light ? 'rgba(28,38,34,0.25)' : 'rgba(245,242,235,0.94)' }]}>
-        <ChevronLeft size={18} color={fg} strokeWidth={1.5} />
-      </Pressable>
+    <View style={[styles.backBar, { paddingTop: insets.top + 8 }]}>
+      <PlateButton glass={light} icon="arrow-back-outline" label="Back" onPress={onBack} />
       {title ? <Caps color={fg} style={{ flex: 1, textAlign: 'center' }}>{title}</Caps> : <View style={{ flex: 1 }} />}
-      <View style={{ minWidth: 38, alignItems: 'flex-end' }}>{right}</View>
+      <View style={{ minWidth: 46, alignItems: 'flex-end' }}>{right}</View>
     </View>
   );
 }
@@ -156,51 +156,48 @@ export function Stepper({ label, hint, value, min, max, onChange }: { label: str
   );
 }
 
-// ── Full-screen page that glides up (sort, cancel) ──────────────────────
+// ── Full-screen sheet (sort, cancel): rises on a spring, drags down by its handle or closes with ✕ ──
 export function Sheet({ open, onClose, title, children, footer }: { open: boolean; onClose: () => void; title: string; children: ReactNode; footer?: ReactNode }) {
-  const insets = useSafeAreaInsets();
+  // Stays mounted until it has slid away, however it was closed.
   const [mounted, setMounted] = useState(open);
-  const p = useRef(new Animated.Value(0)).current;
+  if (open && !mounted) setMounted(true);
+  if (!mounted) return null;
+  const gone = () => {
+    setMounted(false);
+    onClose();
+  };
+  return (
+    <Modal transparent visible statusBarTranslucent animationType="none" onRequestClose={gone}>
+      <SpringSheet onClosed={gone} handle="dark">
+        <SheetBody open={open} title={title} footer={footer}>
+          {children}
+        </SheetBody>
+      </SpringSheet>
+    </Modal>
+  );
+}
 
+function SheetBody({ open, title, children, footer }: { open: boolean; title: string; children: ReactNode; footer?: ReactNode }) {
+  const insets = useSafeAreaInsets();
+  const dismiss = useDismiss();
   useEffect(() => {
-    if (open) {
-      setMounted(true);
-      Animated.timing(p, { toValue: 1, duration: 420, easing: EASE, useNativeDriver: true }).start();
-    } else if (mounted) {
-      Animated.timing(p, { toValue: 0, duration: 260, easing: Easing.in(Easing.quad), useNativeDriver: true }).start();
-      const t = setTimeout(() => setMounted(false), 270);
-      return () => clearTimeout(t);
-    }
+    if (!open) dismiss();
+    // Only a change of `open` closes it; `dismiss` is stable in effect.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
-
-  const backdrop = { opacity: p };
-  const panel = { transform: [{ translateY: p.interpolate({ inputRange: [0, 1], outputRange: [1100, 0] }) }] };
-
-  if (!mounted) return null;
   return (
-    <Modal transparent visible statusBarTranslucent animationType="none" onRequestClose={onClose}>
-      <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: C.sand }, backdrop]} />
-      <Animated.View style={[styles.sheet, { paddingTop: insets.top, paddingBottom: insets.bottom + 12 }, panel]}>
-        <View style={styles.sheetHead}>
-          <Text style={T.h3}>{title}</Text>
-          <Pressable onPress={onClose} hitSlop={12} style={[styles.round, { borderColor: C.line }]}>
-            <X size={16} color={C.ink} strokeWidth={1.5} />
-          </Pressable>
-        </View>
-        <View style={{ flex: 1 }}>{children}</View>
-        {footer && <View style={{ paddingHorizontal: S.gutter, paddingTop: 12 }}>{footer}</View>}
-      </Animated.View>
-    </Modal>
+    <View style={[styles.sheet, { paddingTop: insets.top + 22, paddingBottom: insets.bottom + 12 }]}>
+      <FloatingHeader title={title} action={<PlateButton icon="close-outline" label="Close" onPress={dismiss} />} />
+      <View style={{ flex: 1 }}>{children}</View>
+      {footer && <View style={{ paddingHorizontal: S.gutter, paddingTop: 12 }}>{footer}</View>}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   btn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 58, paddingVertical: 14, paddingHorizontal: 26, borderWidth: 1, borderRadius: 999 },
-  backBar: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8 },
-  round: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
+  backBar: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingBottom: 8 },
   stepperRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },
   stepBtn: { width: 46, height: 46, borderRadius: 23, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, alignItems: 'center', justifyContent: 'center' },
-  sheet: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: C.sand },
-  sheetHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: S.gutter, paddingTop: 14, paddingBottom: 10 },
+  sheet: { flex: 1, backgroundColor: C.sand },
 });

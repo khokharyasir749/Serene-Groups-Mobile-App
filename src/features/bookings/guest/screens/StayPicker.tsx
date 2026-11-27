@@ -1,3 +1,4 @@
+import Title from '@/features/bookings/guest/components/Title';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from '@/features/bookings/guest/lib/nav';
@@ -68,7 +69,7 @@ export default function StayModal() {
               </View>
             )}
           </View>
-          <Text style={styles.heroTitle}>{picking === 'out' ? 'Now choose check-out' : `${nights}-night stay`}</Text>
+          <Title dark style={styles.heroTitle}>{picking === 'out' ? 'Now choose check-out' : `${nights}-night stay`}</Title>
           <View style={styles.dates}>
             <DateBlock label="Check-in" iso={draft.checkIn} active={tab === 'dates' && picking === 'in'} onPress={() => { setTab('dates'); setPicking('in'); }} />
             <Ionicons name="arrow-forward-outline" size={16} color={C.gold} />
