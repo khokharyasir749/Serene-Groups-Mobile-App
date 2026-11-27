@@ -76,7 +76,7 @@ export function AltitudeStory() {
   return (
     <View style={styles.wrap} onLayout={(e) => setAt(e.nativeEvent.layout.y)}>
       <View style={[styles.map, { height: art * 0.92 }]}>
-        <Animated.View style={{ transform: [{ translateY: drift }, { scale: 1.16 }] }}>
+        <Animated.View renderToHardwareTextureAndroid shouldRasterizeIOS style={{ transform: [{ translateY: drift }, { scale: 1.16 }] }}>
           <Contours width={width} line={explore.contour} major={explore.contourMajor} pin />
         </Animated.View>
         <LinearGradient pointerEvents="none" colors={explore.deepTop} style={styles.mapTop} />

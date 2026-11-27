@@ -55,7 +55,7 @@ export function SuiteGallery() {
           return (
             <Animated.View key={r.slug} style={{ width: card, transform: [{ scale: still ? 1 : at(0.95, 1) }] }}>
               <PressScale onPress={() => open(r.slug)} style={[styles.card, { height: Math.round(card * 1.42) }]} accessibilityLabel={`${r.name}. ${r.tagline}. ${r.size}, ${r.guests}. View`}>
-                <Animated.View style={[styles.photo, { transform: [{ translateX: still ? 0 : slide }] }]}>
+                <Animated.View renderToHardwareTextureAndroid style={[styles.photo, { transform: [{ translateX: still ? 0 : slide }] }]}>
                   <Image cachePolicy="memory-disk" source={photo(PHOTO[r.slug]) as ImageSource} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
                 </Animated.View>
                 <LinearGradient pointerEvents="none" colors={explore.tileFade} style={StyleSheet.absoluteFill} />

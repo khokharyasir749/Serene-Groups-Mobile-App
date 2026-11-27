@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/features/services/components/Text";
 import { CONTACT } from "@/core/constants/serene";
-import { colors, fonts } from "@/core/constants/theme";
+import { colors, explore, font, fonts, radius } from "@/core/constants/theme";
 import { openWhatsApp } from "@/core/lib/whatsappShare";
 import { toast } from "@/core/stores/uiStore";
 import { Image } from "expo-image";
@@ -35,10 +35,10 @@ function Open() {
 }
 
 /** Frosted glass over the photo: a white tint, light caught along the top, a bright edge. */
-function GlassFill({ strong }: { strong?: boolean }) {
+function GlassFill() {
   return (
     <>
-      <LinearGradient pointerEvents="none" colors={strong ? tone.deskGlassStrong : tone.deskGlass} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+      <LinearGradient pointerEvents="none" colors={tone.deskGlass} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
       <LinearGradient pointerEvents="none" colors={tone.deskGlassSheen} style={styles.sheen} />
     </>
   );
@@ -47,8 +47,7 @@ function GlassFill({ strong }: { strong?: boolean }) {
 function Round({ icon, hint, onPress }: { icon: Glyph; hint: string; onPress: () => void }) {
   return (
     <Press onPress={onPress} accessibilityLabel={hint} style={styles.round}>
-      <GlassFill />
-      <Ionicons name={icon} size={22} color={colors.white} />
+      <Ionicons name={icon} size={20} color={colors.white} />
     </Press>
   );
 }
@@ -71,8 +70,7 @@ export const FrontDesk = memo(function FrontDesk() {
       </View>
       <View style={styles.row}>
         <Press onPress={callDesk} accessibilityLabel="Call Front Desk" style={styles.call}>
-          <GlassFill strong />
-          <Ionicons name="call-outline" size={19} color={colors.white} />
+          <Ionicons name="call-outline" size={19} color={explore.deep} />
           <Text style={styles.callText}>Call</Text>
         </Press>
         <Round icon="chatbubble-ellipses-outline" hint="Quick Message to Desk" onPress={openMessage} />
@@ -93,8 +91,9 @@ const styles = StyleSheet.create({
   words: { gap: 2 },
   title: { ...type.page, fontSize: 34, lineHeight: 42, color: colors.white, ...SHADOW },
   number: { ...type.figure, color: colors.white, ...SHADOW },
-  row: { flexDirection: "row", gap: 10 },
-  call: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 9, height: 50, borderRadius: 25, overflow: "hidden", borderWidth: 1, borderColor: tone.deskGlassEdge },
-  callText: { ...type.button, fontSize: 16, color: colors.white },
-  round: { width: 50, height: 50, borderRadius: 25, alignItems: "center", justifyContent: "center", overflow: "hidden", borderWidth: 1, borderColor: tone.deskGlassEdge },
+  // The buttons of a Serene Groups photo card: one gold pill, then clear glass circles.
+  row: { flexDirection: "row", gap: 8 },
+  call: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, height: 52, borderRadius: radius.pill, backgroundColor: explore.gold },
+  callText: { color: explore.deep, fontSize: font.md, fontFamily: fonts.uiBold },
+  round: { width: 52, height: 52, borderRadius: 26, backgroundColor: explore.glass, borderWidth: 1, borderColor: explore.glassEdge, alignItems: "center", justifyContent: "center" },
 });

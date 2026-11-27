@@ -37,7 +37,7 @@ function Photo({ frame, on, still }: { frame: Frame; on: boolean; still: boolean
     Animated.timing(scale, { toValue: 1.08, duration: HOLD_MS + FADE_MS * 2, easing: Easing.out(Easing.quad), useNativeDriver: true }).start();
   }, [on, still, opacity, scale]);
   return (
-    <Animated.View style={[StyleSheet.absoluteFill, { opacity, transform: [{ scale }] }]}>
+    <Animated.View renderToHardwareTextureAndroid style={[StyleSheet.absoluteFill, { opacity, transform: [{ scale }] }]}>
       <Image cachePolicy="memory-disk" source={frame.image} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: frame.focus ?? "50%", top: "50%" }} />
     </Animated.View>
   );

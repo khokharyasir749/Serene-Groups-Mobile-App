@@ -46,7 +46,7 @@ export function GroupFooter() {
   return (
     <View style={styles.wrap} onLayout={(e) => setAt(e.nativeEvent.layout.y)}>
       <View style={styles.photo}>
-        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateY: drift }, { scale: 1.22 }] }]}>
+        <Animated.View renderToHardwareTextureAndroid style={[StyleSheet.absoluteFill, { transform: [{ translateY: drift }, { scale: 1.22 }] }]}>
           <Image cachePolicy="memory-disk" source={PHOTO} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition={{ left: "72%", top: "50%" }} transition={300} />
         </Animated.View>
         <LinearGradient pointerEvents="none" colors={explore.finaleFade} style={StyleSheet.absoluteFill} />

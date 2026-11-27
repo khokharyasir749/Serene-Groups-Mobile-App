@@ -22,7 +22,7 @@ export function SharePlanner({ onInvest }: { onInvest?: boolean }) {
       <ChapterTitle title={WEB.investors.title} soft={WEB.investors.soft} />
       <View style={styles.card} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
         {width ? (
-          <View pointerEvents="none" style={styles.art}>
+          <View pointerEvents="none" renderToHardwareTextureAndroid shouldRasterizeIOS style={styles.art}>
             <Contours width={width} line={explore.contourInk} major={explore.contourInk} />
           </View>
         ) : null}
