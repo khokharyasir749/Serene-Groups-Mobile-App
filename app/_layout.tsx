@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { View } from "react-native";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -20,6 +20,7 @@ import { store } from "@/core/stores/store";
 import { hydrateSession } from "@/core/auth/session";
 import { useUiStore } from "@/core/stores/uiStore";
 import { ToastHost } from "@/core/components/Toast";
+import { LaunchSplash } from "@/core/components/LaunchSplash";
 import { colors, fonts } from "@/core/constants/theme";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -38,10 +39,10 @@ export default function RootLayout() {
 
   const typeReady = fontsReady || Boolean(fontError);
 
-  // Hide the native splash once the type is ready.
-  useEffect(() => {
-    if (typeReady) SplashScreen.hideAsync().catch(() => {});
-  }, [typeReady]);
+  // The native splash hands over to the branded LaunchSplash once its first frame is up (same Pine, same crest).
+  const handOver = useCallback(() => {
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
 
   useEffect(() => {
     void hydrateSession();
@@ -50,7 +51,7 @@ export default function RootLayout() {
   }, []);
 
   // The native splash stays up until the type is ready (a font error falls back to system type).
-  if (!typeReady) return <View style={{ flex: 1, backgroundColor: colors.splashCanvas }} />;
+  if (!typeReady) return <View style={{ flex: 1, backgroundColor: colors.pineBrand }} />;
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -59,6 +60,7 @@ export default function RootLayout() {
           <StatusBar style="dark" />
           <Slot />
           <ToastHost />
+          <LaunchSplash onShown={handOver} />
         </SafeAreaProvider>
       </Provider>
     </GestureHandlerRootView>

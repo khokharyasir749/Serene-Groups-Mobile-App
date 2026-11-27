@@ -9,10 +9,10 @@ import { endSwitch, useSwitchStore, type MiniApp } from "@/core/stores/switchSto
 
 // 200 in + 620 hold + 280 out = 1.1 s.
 const IN_MS = 200;
-const RISE_MS = 480;
-const HOLD_MS = 620;
-const OUT_MS = 280;
-const EASE = Easing.bezier(0.22, 1, 0.36, 1);
+export const RISE_MS = 480;
+export const HOLD_MS = 620;
+export const OUT_MS = 280;
+export const EASE = Easing.bezier(0.22, 1, 0.36, 1);
 
 // iOS presents modals above the React root, so the cover gets its own window there; on Android it already sits above every screen.
 const Layer = Platform.OS === "ios" ? FullWindowOverlay : Fragment;
